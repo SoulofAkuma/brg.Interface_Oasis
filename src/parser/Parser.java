@@ -1,7 +1,6 @@
 package parser;
 
 import java.util.ArrayList;
-import java.util.regex.*;
 import java.util.Arrays;
 
 /* This class can apply one or multiple different 
@@ -10,21 +9,12 @@ import java.util.Arrays;
 
 public class Parser {
 	
-	private Pattern regex;
 	private Rule rule;
-	private ParserType type;
 	private ArrayList<Rule> rules = new ArrayList<Rule>();
 	private ArrayList<String> log = new ArrayList<String>();
 	
-	
-	public Parser(Pattern regex) {
-		this.regex = regex;
-		this.type = ParserType.Regex;
-	}
-	
 	public Parser(Rule rule) {
 		this.rule = rule;
-		this.type = ParserType.Rule;
 	}
 	
 	public Parser(ArrayList<Rule> rules) {
@@ -40,40 +30,22 @@ public class Parser {
 		}
 	}
 	
-	public Rule getRule() {
-		return this.rule;
-	}
-	
-	public ParserType getParserType() {
-		return this.type;
-	}
-	
+	//Apply all rules to the string
 	public ArrayList<String> parse(String input) {
-		ArrayList<String> output = new ArrayList<String>();
-		output.add(input);
+		this.log.add("Starting parsing");
 		
-		switch (this.type) {
-			case Regex:
-				output.remove(0); //If Regex is called via parse, it is not stacked and hence ignores the input String as first element
-				Matcher matcher = this.regex.matcher(input);
-				this.log.add("Starting regex isolation");
-				while (matcher.find()) {
-					output.add(matcher.group());
-					this.log.add("Found \"" + matcher.group() + "\" at " + matcher.start());
-				}
-				this.log.add("Finished regex isolation");
-			break;
-			case Rule:
-				output = rule.apply(output);
-			break;
-			case Parser:
-				this.log.add("Starting to apply stacked parsers");
-				for (Rule rule : this.rules) {
-					output = rule.apply(output);
-				}
-			break;
+		ArrayList<String> strList = new ArrayList<String>();
+		strList.add(input);
+		
+		for (Rule rule : this.rules) {
+			this.log.add("Applying " + rule.printRule());
+			strList = rule.apply(strList);
+			this.log.add("--- Start rule log ---");			
+			this.log.addAll(rule.printLog());
+			this.log.add("--- End rule log ---");						
 		}
 		
-		return output;
+		
+		return strList;
 	}
 }
