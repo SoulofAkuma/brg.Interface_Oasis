@@ -4,5 +4,6 @@ public enum RuleType {
 	Replace,
 	Cut,
 	Discard,
-	Isolate
+	Isolate,
+	Split
 }

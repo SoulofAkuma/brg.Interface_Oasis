@@ -7,26 +7,25 @@ import java.util.Arrays;
  * parsing rules to an input string. The output will
  * consist of an ArrayList of Strings */
 
-public class Parser {
-	
-	private Rule rule;
-	private ArrayList<Rule> rules = new ArrayList<Rule>();
+public class Parser<T> {
+
+	private ArrayList<T> elements = new ArrayList<T>();
 	private ArrayList<String> log = new ArrayList<String>();
 	
-	public Parser(Rule rule) {
-		this.rule = rule;
+	public Parser(T element) {
+		this.elements.add(element);
 	}
 	
-	public Parser(ArrayList<Rule> rules) {
-		for (Rule rule: rules) {
-			this.rules.add(rule);
+	public Parser(ArrayList<T> elements) {
+		for (T element: elements) {
+			this.elements.add(element);
 		}
 	}
 	
-	public Parser(Rule ruleArray[]) throws Exception {
-		ArrayList<Rule> rules = new ArrayList<Rule>(Arrays.asList(ruleArray));
-		for (Rule rule : rules) {
-			this.rules.add(rule);
+	public Parser(T elementArray[]) {
+		ArrayList<T> elements = new ArrayList<T>(Arrays.asList(elementArray));
+		for (T element: elements) {
+			this.elements.add(element);
 		}
 	}
 	
@@ -37,15 +36,19 @@ public class Parser {
 		ArrayList<String> strList = new ArrayList<String>();
 		strList.add(input);
 		
-		for (Rule rule : this.rules) {
-			this.log.add("Applying " + rule.printRule());
-			strList = rule.apply(strList);
-			this.log.add("--- Start rule log ---");			
-			this.log.addAll(rule.printLog());
-			this.log.add("--- End rule log ---");						
+		for (T element: this.elements) {
+			this.log.add("Applying " + ((ParserInterface) element).printElement());
+			strList = (((ParserInterface) element).apply(strList));
+			this.log.add("--- Start log ---");			
+			this.log.addAll((((ParserInterface) element).printLog()));
+			this.log.add("--- End log ---");						
 		}
-		
-		
 		return strList;
 	}
+	
+	public ArrayList<String> printLog() {
+		return this.log;
+	}
+	
+	
 }

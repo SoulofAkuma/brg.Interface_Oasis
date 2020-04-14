@@ -13,10 +13,10 @@ public class Discard extends Rule {
 	
 	private String find; //String to find in the input
 	private boolean inverted; //If inverted the rule will discard all strings which match the condition
-	private boolean regex; 
-	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, s: shift discarded elements to the end of the result list instead of deleting them, u: shift all elements to the beginning of the result list instead of deleting them
+	private boolean regex;
+	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
 	private ArrayList<String> log = new ArrayList<String>(); //Log for the rule
-	public final RuleType ruleType = RuleType.Discard;
+	private final RuleType ruleTypeValue = RuleType.Discard;
 	
 	public Discard(String find, boolean inverted, boolean regex, String flags[]) {
 		this.find = find;
@@ -25,36 +25,74 @@ public class Discard extends Rule {
 		this.flags = flags;
 	}
 	
-	public String printRule() {
+	@Override
+	public String printElement() {
 		return "Discard - find = \"" + this.find + "\" | inverted = " + String.valueOf(this.inverted) + " | regex = " + String.valueOf(this.regex) + " | flags = " + String.join(",", this.flags);
 	}
 	
+	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}
 	
+	@Override
+	public RuleType ruleType() {
+		return this.ruleTypeValue;
+	}
+	
+	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {
 		ArrayList<String> output = new ArrayList<String>();
 		ArrayList<String> discarded = new ArrayList<String>();
-		for (int i = 0; i < input.size(); i++) {
-			this.log.add("Applying Rule on \"" + input.get(i) + "\"");
-			boolean match = (regex) ? hasRegexMatch(input.get(i)) : input.get(i).contains(this.find);
+		boolean s = false;
+		for (String element : input) {
+			this.log.add("Applying Rule on \"" + element + "\"");
+			if (s) {
+				this.log.add("Discarding element due to discard subsequent flag");
+				discarded.add(element);
+				continue;
+			}
+			boolean match = (regex) ? hasRegexMatch(element) : element.contains(this.find);
 			if (match) {
-				for (int ii = 0; ii < this.flags.length; ii++) {
-					switch (this.flags[ii]) {
+				this.log.add("Match found");
+				for (String flag : this.flags) {
+					switch (flag) {
 						case "s":
-							for (int iii = 0; iii < output.size(); iii++) {
-								discarded.add(output.get(iii));
+							this.log.add("Applying discard subsequent flag");
+							s = true;
+						break;
+						case "p":
+							this.log.add("Applying discard preceding flag");
+							for (String outputElement : output) {
+								this.log.add("Discarded " + outputElement);
+								discarded.add(outputElement);
 							}
 							output = new ArrayList<String>();
+						break;
 					}
 				}
 			}
 			if (!inverted && match) {
-				output.add(input.get(i));
-			} else if (inverted && match) {
-				output.add(input.get(i));
+				this.log.add("Adding " + element + " to the result list");
+				output.add(element);
+			} else if (inverted && !match) {
+				this.log.add("Adding " + element + " to the result list");
+				output.add(element);
 			}
+		}
+		if (Arrays.asList(this.flags).contains("z")) {
+			for (String element : discarded) {
+				output.add(element);
+			}
+		} else if(Arrays.asList(this.flags).contains("a")) {
+			ArrayList<String> dummy = new ArrayList<String>();
+			for (String element : discarded) {
+				dummy.add(element);
+			}
+			for (String element : output) {
+				dummy.add(element);
+			}
+			output = dummy;
 		}
 		return output;
 	}
@@ -69,4 +107,3 @@ public class Discard extends Rule {
 		}
 	}
 }
-+

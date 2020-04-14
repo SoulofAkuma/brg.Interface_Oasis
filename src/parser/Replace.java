@@ -12,7 +12,7 @@ public class Replace extends Rule {
 	private String replace; //Replacement String
 	private boolean regex; //Find is a regular expression
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
-	public final RuleType ruleType = RuleType.Replace;
+	private final RuleType ruleTypeValue = RuleType.Replace;
 	
 	public Replace(String find, String replace, boolean regex) {
 		this.find = find;
@@ -20,23 +20,32 @@ public class Replace extends Rule {
 		this.regex = regex;
 	}
 	
-	public String printRule() {
+	@Override
+	public String printElement() {
 		return "Replace - find = \"" + this.find + "\" | replace = \"" + this.replace + "\" | regex = " + String.valueOf(this.regex);
 	}
 	
+	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}
 	
+	@Override
+	public RuleType ruleType() {
+		return this.ruleTypeValue;
+	}
+
+	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {
 		ArrayList<String> output = new ArrayList<String>();
-		for (int i = 0; i < input.size(); i++) {
-			this.log.add("Applying Rule on \"" + input.get(i) + "\"");
+		for (String element : input) {
+			this.log.add("Applying Rule on \"" + element + "\"");
 			if (regex) {
-				output.add(replaceRegex(input.get(i)));
+				output.add(replaceRegex(element));
 			} else {
-				output.add(replace(input.get(i)));				
+				output.add(replace(element));				
 			}
+			this.log.add("Application resulted in \"" + output.get(output.size() - 1) + "\"");
 		}
 		return output;
 	}
@@ -53,7 +62,7 @@ public class Replace extends Rule {
 				}
 				matchCount++;
 			}
-			if (matchCount == find.length() - 1) {
+			if (matchCount == find.length()) {
 				this.log.add("Replaced from index " + start + " to " + (start + matchCount));
 				input = input.substring(0, start) + this.replace + input.substring(start + matchCount, input.length());
 				matchCount = 0;
