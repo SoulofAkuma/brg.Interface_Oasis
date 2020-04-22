@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Isolate extends Rule {
+public class Isolate implements ParserInterface {
 	
 	private String find; //Regex to isolate
 	private ArrayList<String> log = new ArrayList<String>();
-	private RuleType ruleTypeValue = RuleType.Isolate;
 
 	public Isolate(String find) {
 		this.find = find;
@@ -23,11 +22,6 @@ public class Isolate extends Rule {
 	public ArrayList<String> printLog() {
 		return this.log;
 	}
-	
-	@Override
-	public RuleType ruleType() {
-		return this.ruleTypeValue;
-	}
 
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {
@@ -40,6 +34,11 @@ public class Isolate extends Rule {
 			}
 		}
 		return output;
+	}
+	
+	@Override
+	public ArrayList<String> endProcedure(ArrayList<String> input) {
+		return input;
 	}
 	
 	private ArrayList<String> isolations(String input) {

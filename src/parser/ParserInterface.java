@@ -12,5 +12,8 @@ public interface ParserInterface {
 	
 	//Prints the log of the rule application
 	public ArrayList<String> printLog();
+	
+	//Is called when all parsing is done and allows final modifications of the list
+	public ArrayList<String> endProcedure(ArrayList<String> input);
 
 }

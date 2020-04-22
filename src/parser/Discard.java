@@ -5,8 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
 
-public class Discard extends Rule {
+public class Discard implements ParserInterface {
 	
+	//Default values
 	public static final boolean INVERTED = false;
 	public static final boolean REGEX = false;
 	public static final char FLAGS[] = new char[0];
@@ -16,7 +17,6 @@ public class Discard extends Rule {
 	private boolean regex;
 	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
 	private ArrayList<String> log = new ArrayList<String>(); //Log for the rule
-	private final RuleType ruleTypeValue = RuleType.Discard;
 	
 	public Discard(String find, boolean inverted, boolean regex, String flags[]) {
 		this.find = find;
@@ -25,20 +25,6 @@ public class Discard extends Rule {
 		this.flags = flags;
 	}
 	
-	@Override
-	public String printElement() {
-		return "Discard - find = \"" + this.find + "\" | inverted = " + String.valueOf(this.inverted) + " | regex = " + String.valueOf(this.regex) + " | flags = " + String.join(",", this.flags);
-	}
-	
-	@Override
-	public ArrayList<String> printLog() {
-		return this.log;
-	}
-	
-	@Override
-	public RuleType ruleType() {
-		return this.ruleTypeValue;
-	}
 	
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {
@@ -95,6 +81,21 @@ public class Discard extends Rule {
 			output = dummy;
 		}
 		return output;
+	}
+	
+	@Override
+	public String printElement() {
+		return "Discard - find = \"" + this.find + "\" | inverted = " + String.valueOf(this.inverted) + " | regex = " + String.valueOf(this.regex) + " | flags = " + String.join(",", this.flags);
+	}
+	
+	@Override
+	public ArrayList<String> printLog() {
+		return this.log;
+	}
+	
+	@Override
+	public ArrayList<String> endProcedure(ArrayList<String> input) {
+		return input;
 	}
 	
 	public boolean hasRegexMatch(String input) {

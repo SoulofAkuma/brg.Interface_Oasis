@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Replace extends Rule {
+public class Replace implements ParserInterface {
 	
+	//Default value
 	public static final boolean REGEX = false;
 	
 	private String find; //String to find
 	private String replace; //Replacement String
 	private boolean regex; //Find is a regular expression
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
-	private final RuleType ruleTypeValue = RuleType.Replace;
 	
 	public Replace(String find, String replace, boolean regex) {
 		this.find = find;
@@ -20,20 +20,6 @@ public class Replace extends Rule {
 		this.regex = regex;
 	}
 	
-	@Override
-	public String printElement() {
-		return "Replace - find = \"" + this.find + "\" | replace = \"" + this.replace + "\" | regex = " + String.valueOf(this.regex);
-	}
-	
-	@Override
-	public ArrayList<String> printLog() {
-		return this.log;
-	}
-	
-	@Override
-	public RuleType ruleType() {
-		return this.ruleTypeValue;
-	}
 
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {
@@ -48,6 +34,21 @@ public class Replace extends Rule {
 			this.log.add("Application resulted in \"" + output.get(output.size() - 1) + "\"");
 		}
 		return output;
+	}
+	
+	@Override
+	public String printElement() {
+		return "Replace - find = \"" + this.find + "\" | replace = \"" + this.replace + "\" | regex = " + String.valueOf(this.regex);
+	}
+	
+	@Override
+	public ArrayList<String> printLog() {
+		return this.log;
+	}
+	
+	@Override
+	public ArrayList<String> endProcedure(ArrayList<String> input) {
+		return input;
 	}
 	
 	//Replace all appearances of a plain String with a plain string

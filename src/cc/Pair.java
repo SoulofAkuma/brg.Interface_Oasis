@@ -1,0 +1,23 @@
+package cc;
+
+import java.util.Iterator;
+
+public class Pair<K, V> {
+	
+	//Class for a List of Key value Pairs without the need of unique keys
+	private final K key;
+	private final V value;
+	
+	public Pair(K key, V value) {
+		this.key = key;
+		this.value = value;
+	}
+	
+	public K getKey() {
+		return this.key;
+	}
+	
+	public V getValue() {
+		return this.value;
+	}
+}

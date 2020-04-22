@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Cut extends Rule {
+public class Cut implements ParserInterface {
 	
+	//Default values
 	public static final int N = 1;
 	public static final boolean KEEP = false;
 	public static final boolean REGEX = false;
@@ -18,7 +19,6 @@ public class Cut extends Rule {
 	private boolean regex; //Find is a regular expression
 	private boolean reEval; //If true the cut of string will be added to the input list
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
-	private final RuleType ruleTypeValue = RuleType.Cut;
 	
 	public Cut(String find, int n, boolean keep, boolean regex, boolean reEval) {
 		this.find = find;
@@ -28,20 +28,6 @@ public class Cut extends Rule {
 		this.reEval = reEval;
 	}
 	
-	@Override
-	public String printElement() {
-		return "Cut - find = \"" + this.find + "\" | n = " + this.n + " | keep = " + String.valueOf(this.keep) + " | regex = " + String.valueOf(this.regex); 
-	}
-	
-	@Override
-	public ArrayList<String> printLog() {
-		return this.log;
-	}
-	
-	@Override
-	public RuleType ruleType() {
-		return this.ruleTypeValue;
-	}
 	
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {
@@ -64,6 +50,20 @@ public class Cut extends Rule {
 		return output;
 	}
 	
+	@Override
+	public String printElement() {
+		return "Cut - find = \"" + this.find + "\" | n = " + this.n + " | keep = " + String.valueOf(this.keep) + " | regex = " + String.valueOf(this.regex); 
+	}
+	
+	@Override
+	public ArrayList<String> printLog() {
+		return this.log;
+	}
+	
+	@Override
+	public ArrayList<String> endProcedure(ArrayList<String> input) {
+		return input;
+	}
 	
 	//Cut the String at the nth appearance of a plain String
 	private String[] cut(String input) {

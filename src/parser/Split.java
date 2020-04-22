@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Split extends Rule {
+public class Split implements ParserInterface {
 	
+	//Default values
 	public static final boolean REGEX = false;
 	public static final int N = 1;
 	
@@ -13,17 +14,11 @@ public class Split extends Rule {
 	private int n; //Splits only at every nth appearance
 	private boolean regex;
 	private ArrayList<String> log = new ArrayList<String>();
-	private final RuleType ruleTypeValue = RuleType.Split;
 	
 	public Split(String find, int n, boolean regex) {
 		this.find = find;
 		this.n = n;
 		this.regex = regex;
-	}
-
-	@Override
-	public RuleType ruleType() {
-		return this.ruleTypeValue;
 	}
 
 	@Override
@@ -48,6 +43,11 @@ public class Split extends Rule {
 	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
+	}
+	
+	@Override
+	public ArrayList<String> endProcedure(ArrayList<String> input) {
+		return input;
 	}
 	
 	private ArrayList<String> split(String input) {
