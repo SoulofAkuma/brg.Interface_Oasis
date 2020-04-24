@@ -2,6 +2,9 @@ package xmlhandler;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.xml.parsers.*;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -66,6 +69,48 @@ public class SettingFunctions {
 		}
 	}
 	
+	public String getRootText() {
+		NodeList children = getRootChildren();
+		ArrayList<Node> textParts = new ArrayList<Node>(); 
+		for (int i = 0; i < children.getLength(); i++) {
+			if (children.item(i).getNodeType() == Node.TEXT_NODE) {
+				textParts.add(children.item(i));
+			}
+		}
+		String text = "";
+		boolean hasReplaced = false;
+		for (int i = 0; i < textParts.size(); i++) {
+			if (!hasEmptyText(textParts.get(i).getTextContent())) {
+				text += textParts.get(i).getTextContent() + "\n";
+				hasReplaced = true;
+			}
+		}
+		text = (hasReplaced) ? text.substring(0, text.length() - 2) : text;
+		return text;
+	}
+	
+	public String getRootNamespaceURI() {
+		return this.rootElement.getNamespaceURI();
+	}
+	
+	public String stripXML(String input) {
+		boolean crlf;
+		String[] lines = null;
+		if (input.contains("\r\n")) {
+			lines = input.split("\\r\\n");
+			crlf = false;
+		} else {
+			input.split("\\x0D\\x0A");
+			crlf = true;
+		}
+		String output = "";
+		for (String line : lines) {	
+			line = line.strip();
+			output += line + ((crlf) ? ((char) 0x0D + (char) 0x0A) : "\r\n");
+		}
+		return output;
+	}
+	
 	public ArrayList<Pair<String, String>> getAttributes(Element input) {
 		ArrayList<Pair<String, String>> output = new ArrayList<Pair<String, String>>();
 		NamedNodeMap attributes = input.getAttributes();
@@ -123,6 +168,55 @@ public class SettingFunctions {
 	
 	public Element getRootElement() {
 		return this.rootElement;
+	}
+	
+	public boolean hasEmptyText(String input) {
+		String codes = "abfnrtv";
+		for (int i = 0; i < codes.length(); i++) {
+			input = input.replaceAll("\\" + codes.charAt(i), "");
+		}
+		input.replace(((char) 0x0A + ""), "");
+		input.replace(((char) 0x0D + ""), "");
+		if (input.isEmpty()) {			
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean hasEmptyText(Node node) {
+		String input = node.getTextContent();
+		String codes = "abfnrtv";
+		for (int i = 0; i < codes.length(); i++) {
+			input = input.replaceAll("\\" + codes.charAt(i), "");
+		}
+		input.replace(((char) 0x0A + ""), "");
+		input.replace(((char) 0x0D + ""), "");
+		if (!input.isEmpty()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean hasChildElement(Node node) {
+		NodeList children = node.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public ArrayList<Node> filterElement(ArrayList<Node> input) {
+		ArrayList<Node> output = new ArrayList<Node>();
+		for (int i = 0; i < input.size(); i++) {
+			if (input.get(i).getNodeType() == Node.ELEMENT_NODE) {
+				output.add(input.get(i));
+			}
+		}
+		return output;
 	}
 	
 	public String nodeListToString(NodeList nodeList) {
