@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 import org.w3c.dom.*;
 
 public class Setting {
+	
+	private static int sIDState = 0;
 
 	/*
 	 * This class accepts raw xml setting input and converts it into one Setting
@@ -20,6 +22,7 @@ public class Setting {
 	private String namespaceURI = null;
 	private String value; // Value of the Setting
 	private int level = -1;
+	private int sID;
 
 	private Node node = null;
 
@@ -90,6 +93,8 @@ public class Setting {
 		this.level = 1;
 		this.name = name;
 		this.node = node;
+		this.sID = Setting.sIDState;
+		Setting.sIDState++;
 	}
 
 	private Setting(String name, ArrayList<Setting> subsettings, Node node, String value,
@@ -101,25 +106,43 @@ public class Setting {
 		this.value = (value.isEmpty()) ? null : value;
 		this.attributes = attributes;
 		this.namespaceURI = namespaceURI;
+		this.sID = Setting.sIDState;
+		Setting.sIDState++;
 	}
 
 	private Setting(NodeList input) {
 		this.level = 1;
-		this.name = null;
+		this.name = "";
 		this.attributes = null;
-		this.value = null;
+		this.value = "";
 		for (int i = 0; i < input.getLength(); i++) {
 			Setting subSetting = Setting.parseSetting(this.functions.nodeToString(input.item(i)), 2);
 			this.subsettings.add(subSetting);
 		}
+		this.sID = Setting.sIDState;
+		Setting.sIDState++;
 	}
 
 	private Setting(Element element, int level) {
 		this.level = level;
 		this.name = element.getNodeName();
 		this.value = element.getTextContent();
-		this.attributes = (this.functions.getAttributes(element) == null) ? this.attributes
-				: this.functions.getAttributes(element);
+		this.attributes = (this.functions.getAttributes(element) == null) ? this.attributes : this.functions.getAttributes(element);
+		this.sID = Setting.sIDState;
+		Setting.sIDState++;
+	}
+	
+	private void replaceAll(Setting setting) {
+		this.name = setting.name;
+		this.attributes = setting.attributes;
+		this.namespaceURI = setting.namespaceURI;
+		this.value = setting.value;
+		this.level = setting.level;
+		this.sID = setting.sID;
+		this.node = setting.node;
+		this.subsettings = setting.subsettings;
+		this.functions = setting.functions;
+		this.corrupt = setting.corrupt;
 	}
 
 	public boolean isCorrupt() {
@@ -131,7 +154,7 @@ public class Setting {
 	}
 
 	public boolean hasSubsettings() {
-		if (this.subsettings.size() == 0 || this.subsettings == null) {
+		if (this.subsettings == null || this.subsettings.size() == 0) {
 			return false;
 		} else {
 			return true;
@@ -224,4 +247,29 @@ public class Setting {
 		}
 		attributeString += "]"; return attributeString;
 	}
+	
+	public ArrayList<Integer> getSettings(String name) {
+		ArrayList<Integer> results = new ArrayList<Integer>();
+		for (int i = 0; i < this.subsettings.size(); i++) {
+			results.addAll(this.subsettings.get(i).getSettings(name));
+		}
+		if (this.name.equals(name)) {
+			results.add(this.sID);
+		}
+		return results;
+	}
+	
+	public boolean replaceID(int sID, Setting setting) {
+		if (this.sID == sID) {
+			replaceAll(setting);
+			return true;
+		}
+		for (int i = 0; i < this.subsettings.size(); i++) {
+			if (this.subsettings.get(i).replaceID(sID, setting)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 }
