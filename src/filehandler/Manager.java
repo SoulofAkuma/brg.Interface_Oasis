@@ -9,18 +9,27 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 public class Manager {
 	
+	public static final String SEPERATOR = File.pathSeparator;
 	private static int fID = 0;
 	private static ArrayList<File> files = new ArrayList<File>();
 	private static ArrayList<String> errorMessages = new ArrayList<String>();
 	
 	public static int newFile(String path) {
 		File file = new File(path);
+		int fileID = newFileID();
+		if (!file.exists()) {
+			try {
+				
+			} catch (Exception e) {
+				setError(fileID, e.getMessage());
+				return -1;
+			}
+		}
 		Manager.files.add(file);
 		Manager.errorMessages.add("");
-		return newFileID();
+		return fileID;
 	}
 	
 	public static boolean writeFile(int fileID, String input, boolean append) {
@@ -28,7 +37,7 @@ public class Manager {
 		if (!file.exists()) {
 			try {
 				file.createNewFile();
-			} catch (IOException e) {
+			} catch (Exception e) {
 				setError(fileID, e.getMessage());
 				return false;
 			}
@@ -75,12 +84,19 @@ public class Manager {
 			String result = "";
 			String line;
 			while ((line = reader.readLine()) != null) {
-				
+				result += line + "\n";
 			}
+			reader.close();
+			fileReader.close();
+			return result;
 		} catch (Exception e) {
 			setError(fileID, e.getMessage());
 			return null;
 		}
+	}
+	
+	public static boolean delFile(int fileID) {
+		return files.get(fileID).delete();
 	}
 	
 	private static void setError(int fileID, String errorMessage) {

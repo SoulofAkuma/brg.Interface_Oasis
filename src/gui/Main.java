@@ -26,8 +26,7 @@ public class Main extends JFrame {
 	 */
 	public static void main(String[] args) {
 		
-		SettingHandler handler = new SettingHandler();
-		handler.handle();
+		SettingHandler.handle();
 		
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");

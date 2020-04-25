@@ -34,6 +34,10 @@ public class Setting {
 	public String getName() {
 		return this.name;
 	}
+	
+	public int getID() {
+		return this.sID;
+	}
 
 	public ArrayList<Setting> getSubsettings() {
 		return this.subsettings;
@@ -132,6 +136,15 @@ public class Setting {
 		Setting.sIDState++;
 	}
 	
+	private Setting(String name, String value, ArrayList<Pair<String, String>> attributes, int level) {
+		this.name = name;
+		this.value = value;
+		this.attributes = attributes;
+		this.level = level;
+		this.sID = Setting.sIDState++;
+		Setting.sIDState++;
+	}
+	
 	private void replaceAll(Setting setting) {
 		this.name = setting.name;
 		this.attributes = setting.attributes;
@@ -171,7 +184,7 @@ public class Setting {
 				if (this.value.contains("\n")) {
 					String[] lines = this.value.split("\\n");
 					for (String line : lines) {
-						setXML += getTabLevel() + line + "\n";
+						setXML += getTabLevel(this.level + 1) + line + "\n";
 					}
 				} else if (this.subsettings.size() == 0) {
 					setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\">");
@@ -248,15 +261,40 @@ public class Setting {
 		attributeString += "]"; return attributeString;
 	}
 	
-	public ArrayList<Integer> getSettings(String name) {
-		ArrayList<Integer> results = new ArrayList<Integer>();
-		for (int i = 0; i < this.subsettings.size(); i++) {
-			results.addAll(this.subsettings.get(i).getSettings(name));
-		}
+	public ArrayList<Setting> getSettings(String name) {
+		ArrayList<Setting> results = new ArrayList<Setting>();
 		if (this.name.equals(name)) {
-			results.add(this.sID);
+			results.add(this);
+			return results;
+		}
+		int lockLevel = -1;
+		for (int i = 0; i < this.subsettings.size(); i++) {
+				results.addAll(this.subsettings.get(i).getSettings(name));				
+		}
+		while (!levelEquality(results)) {
+			for (int i = 0; i < results.size(); i++) {
+				if (lockLevel == -1) {
+					lockLevel = results.get(i).level;
+				} else {
+					if (results.get(i).level != lockLevel) {
+						results.remove(i);
+					}
+				}
+			}
 		}
 		return results;
+	}
+	
+	public boolean levelEquality(ArrayList<Setting> list) {
+		ArrayList<Integer> levels = new ArrayList<Integer>();
+		for (int i = 0; i < list.size(); i++) {
+			if (levels.contains(list.get(i))) {
+				return false;
+			} else {
+				levels.add(list.get(i).level);
+			}
+		}
+		return true;
 	}
 	
 	public boolean replaceID(int sID, Setting setting) {
@@ -270,6 +308,10 @@ public class Setting {
 			}
 		}
 		return false;
+	}
+	
+	public void addSetting(String name, String value, ArrayList<Pair<String, String>> attributes) {
+		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
 	}
 	
 }
