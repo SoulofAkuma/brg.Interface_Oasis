@@ -3,8 +3,6 @@ package settings;
 import cc.Pair;
 import xmlhandler.SettingFunctions;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.w3c.dom.*;
 
@@ -20,7 +18,7 @@ public class Setting {
 	private String name; // Name of the Setting
 	private ArrayList<Pair<String, String>> attributes = new ArrayList<Pair<String, String>>();
 	private String namespaceURI = null;
-	private String value; // Value of the Setting
+	private String value = null; // Value of the Setting
 	private int level = -1;
 	private int sID;
 
@@ -35,8 +33,16 @@ public class Setting {
 		return this.name;
 	}
 	
+	public String getValue() {
+		return this.value;
+	}
+	
 	public int getID() {
 		return this.sID;
+	}
+	
+	public ArrayList<Pair<String, String>> getAttributes() {
+		return this.attributes;
 	}
 
 	public ArrayList<Setting> getSubsettings() {
@@ -44,12 +50,15 @@ public class Setting {
 	}
 
 	public static Setting parseSetting(String input, int level) {
+		if (input == null || input.isBlank()) {
+			return new Setting(true);
+		}
 		SettingFunctions functions = new SettingFunctions();
 		if (level == 1) {
 			input = functions.stripXML(input);
 		}
 		String name = "";
-		String value = "";
+		String value = null;
 		ArrayList<Setting> subsettings = new ArrayList<Setting>();
 		ArrayList<Node> subs = new ArrayList<Node>();
 		ArrayList<Pair<String, String>> attributes = new ArrayList<Pair<String, String>>();
@@ -92,6 +101,10 @@ public class Setting {
 
 		return new Setting(name, subsettings, node, value, attributes, namespaceURI, level);
 	}
+	
+	private Setting(boolean corrupt) {
+		this.corrupt = true;
+	}
 
 	private Setting(String name, Node node) {
 		this.level = 1;
@@ -107,7 +120,7 @@ public class Setting {
 		this.name = name;
 		this.subsettings = subsettings;
 		this.node = node;
-		this.value = (value.isEmpty()) ? null : value;
+		this.value = (value == null || value.isEmpty()) ? null : value; //Main Setting should not have an empty value
 		this.attributes = attributes;
 		this.namespaceURI = namespaceURI;
 		this.sID = Setting.sIDState;
@@ -192,6 +205,9 @@ public class Setting {
 					setXML += "</" + this.name + ">";
 					return setXML;
 				}
+			} else if (this.value == null && !hasSubsettings()) {
+				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">\r\n") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\"/>\r\n");
+				return setXML;
 			}
 			setXML += (this.subsettings.size() > 0) ? (getSubXML() + "\r\n") : "";
 			setXML += getTabLevel() + "</" + this.name + ">";					
@@ -285,6 +301,15 @@ public class Setting {
 		return results;
 	}
 	
+	public Pair<String, String> getAttribute(String name) {
+		for (Pair<String, String> attribute : this.attributes) {
+			if (attribute.getKey().equals(name)) {
+				return attribute;
+			}
+		}
+		return null;
+	}
+	
 	public boolean levelEquality(ArrayList<Setting> list) {
 		ArrayList<Integer> levels = new ArrayList<Integer>();
 		for (int i = 0; i < list.size(); i++) {
@@ -314,4 +339,16 @@ public class Setting {
 		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
 	}
 	
+	public void resetSetting(String name) {
+		if (this.level == 1 && this.corrupt) {
+			this.name = name;
+			this.attributes = new ArrayList<Pair<String, String>>();
+			this.namespaceURI = null;
+			this.value = null;
+			this.node = null;
+			this.subsettings = new ArrayList<Setting>();
+			this.functions = new SettingFunctions();
+			this.corrupt = false;
+		}
+	}
 }
