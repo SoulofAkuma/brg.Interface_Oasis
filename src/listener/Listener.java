@@ -12,21 +12,22 @@ public class Listener implements Runnable {
 	 * This class reads content and responds 
 	 */
 	
-	private final String portString;
-	private final String name;
-	private final int port;
-	private boolean canRun;
-	private String groupID;
-	private String listenerID;
-	private boolean isActive = false;
+	private final String portString; //String value of port
+	private final String name; //Name of Listener
+	private final int port; //int value of port
+	private boolean canRun; //indicates whether the listener can launch (is false if no valid port is provided)
+	private String groupID; //the id of the group the listener is in (for potential backtracking of the corresponding handler class)
+	private String listenerID; //the id of this listener to uniquely identify it
+	private boolean isActive = false; //indicates whether the listener thread is currently listening to the port
 	
-	private ArrayList<Thread> connections = new ArrayList<Thread>();
+	private ArrayList<Thread> connections = new ArrayList<Thread>(); //The threads of ConnectionHandlers to enable multiple requests at once
 	
 	protected Listener(String portString, String name, String groupID, String listenerID) {
 		this.name = name;
 		this.portString = portString;
 		this.groupID = groupID;
 		this.listenerID = listenerID;
+		ListenerHandler.inputs.put(this.groupID, new ArrayList<String>());
 		int tempPort = -1; //This is necessary because the compiler throws an error if the port is modified after it could have been modified in the try/catch phrase; 
 		boolean isValid = false;
 		try {
@@ -67,7 +68,9 @@ public class Listener implements Runnable {
 		while (this.isActive) {
 			try {
 				Socket clientSocket = serverSocket.accept();
-				Runnable 
+				int myID = ListenerHandler.inputs.get(this.listenerID).size();
+				ListenerHandler.inputs.get(this.listenerID).add("");
+				Runnable ConnectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket);
 			} catch (IOException e) {
 				reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
 			}

@@ -18,6 +18,8 @@ public class ListenerHandler {
 	private String groupName;
 	private String handlerID;
 	
+	public static HashMap<String, ArrayList<String>> inputs = new HashMap<String, ArrayList<String>>(); //Holds ArrayLists of the received messages to the corresponding listener IDs 
+	
 	public ListenerHandler(Setting listenerMasterSetting, String groupID, String groupName) {
 		this.listenerMasterSetting = listenerMasterSetting;
 		this.groupID = groupID;

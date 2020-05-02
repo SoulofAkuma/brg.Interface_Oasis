@@ -1,79 +1,32 @@
-package settings;
+package listener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cc.Pair;
-import filehandler.Manager;
-
-public class SettingHandler {
+public class ConnectionHandler implements Runnable {
 	
-	private static int fileID;
-	private static final String FILENAME = "settings.xml";
-	private static final String PATH = System.getProperty("user.home") + Manager.SEPERATOR + "Interface Oasis";
-	private static final String BASESETTING = "Interface Oasis";
-	private static Setting masterSetting;
+	private final int responseID;
+	private final String parentID;
+	private Socket socket;
 	
-	public final static char CR  = (char) 0x0D;
-	public final static char LF  = (char) 0x0A;
-	public final static String CRLF  = "" + CR + LF; 
-	public static Socket socket = null;;
-	
-	public static void handle() {
-		
-		String test = "Accept-Language: en-US,en;q=0.9,de-DE;q=0.8,de;q=0.7";
-		System.out.println(test.length());
-		
-		ServerSocket server;
-		try {
-			server = new ServerSocket(1234);
-			socket = server.accept();
-			run();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			
-			
-		
-		//until here
-		
-		fileID = Manager.newFile(PATH + Manager.SEPERATOR + FILENAME);
-		
-		masterSetting = Setting.parseSetting(Manager.readFile(fileID), 1);
-		
-		if (masterSetting.isCorrupt()) {
-			masterSetting.resetSetting(BASESETTING);
-		}
+	public ConnectionHandler(int responseID, String parentID, Socket socket) {
+		this.responseID = responseID;
+		this.parentID = parentID;
+		this.socket = socket;
 	}
 	
-	public static void createSetting(String name, String value, ArrayList<Pair<String, String>> attributes) {
-		masterSetting.addSetting(name, value, attributes);
-	}
-	
-	public static ArrayList<Setting> getSettings(String name) {
-		return masterSetting.getSettings(name);
-	}
-	
-	public static void replaceSetting(Setting setting) {
-		masterSetting.replaceID(setting.getID(), setting);
-	}
-	
-	public static void run() {
+	@Override
+	public void run() {
 		PrintWriter out = null;
 		BufferedReader in = null;
 		boolean success;
 		try {
-			out = new PrintWriter(socket.getOutputStream());
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out = new PrintWriter(this.socket.getOutputStream());
+			in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			String inputLine;
 			String request = "";
 			int i = 0;
@@ -138,10 +91,10 @@ public class SettingHandler {
 				i++;
 			}
 			success = true;
-			System.out.println(request);
 		} catch(IOException e) {
 			success = false;
 			//errorReport
 		}
 	}
+	
 }
