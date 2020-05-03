@@ -106,5 +106,11 @@ public class Manager {
 	private static int newFileID() {
 		return fID++;
 	}
+	
+	public String checkPath(String path) {
+		
+		
+		return path;
+	}
 
 }

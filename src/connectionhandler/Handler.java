@@ -18,7 +18,6 @@ import gui.MessageType;
 public class Handler {
 	
 	private static Map<String, Pair<ListenerHandler, ResponderHandler>> groups = new HashMap<String, Pair<ListenerHandler, ResponderHandler>>();
-	private static ArrayList<Pair<MessageType, String>> messages = new ArrayList<Pair<MessageType, String>>();
 	private static ArrayList<String> xmlErrors = new ArrayList<String>();
 	
 	public static void init(Setting handlerMasterSetting) {
@@ -41,6 +40,14 @@ public class Handler {
 	
 	public static Pair<ListenerHandler, ResponderHandler> getGroup(String key) {
 		return groups.get(key);
+	}
+	
+	public static ListenerHandler getListenerHandler(String groupID) {
+		return groups.get(groupID).getKey();
+	}
+	
+	public static ResponderHandler getResponderHandler(String groupID) {
+		return groups.get(groupID).getValue();
 	}
 	
 	public static void runGroup(String id) {
@@ -174,43 +181,7 @@ public class Handler {
 		}
 		return true;
 	}
-	
-	public static void reportMessage(String groupID, String groupName, String source, String cause, String errorMessage, boolean isWarning) {
-		if (isWarning) {
-			messages.add(new Pair<MessageType, String>(MessageType.Warning, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] WARNING Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported a warning from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\" with the error message \"" + errorMessage + "\""));
-		} else {			
-			messages.add(new Pair<MessageType, String>(MessageType.Error, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported an error from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\" with the error message \"" + errorMessage + "\""));
-			xmlLog(new String[] {"GroupID","GroupName,Source,Cause","ErrorMessage,Time"}, new String[] {String.valueOf(groupID), groupName, source, cause, errorMessage, DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())});			
-		}
-	}
-
-	public static void reportMessage(String groupName, String source, String cause, boolean isWarning) {
-		if (isWarning) {
-			messages.add(new Pair<MessageType, String>(MessageType.Warning, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] WARNING Group \"" + String.valueOf(groupName) + "\" reported a warning from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-		} else {			
-			messages.add(new Pair<MessageType, String>(MessageType.Error, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] Group \"" + String.valueOf(groupName) + "\" reported an error from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-			xmlLog(new String[] {"GroupName,Source,Cause,Time"}, new String[] {groupName, source, cause, DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())});			
-		}
-	}
-	
-	public static void reportMessage(String groupID, String groupName, String source, String cause, boolean isWarning) {
-		if (isWarning) {
-			messages.add(new Pair<MessageType, String>(MessageType.Warning, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] WARNING Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported a warning from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-		} else {			
-			messages.add(new Pair<MessageType, String>(MessageType.Error, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported an error from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-			xmlLog(new String[] {"GroupID","GroupName","Source","Cause,Time"}, new String[] {String.valueOf(groupID), groupName, source, cause, DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())});			
-		}
-	}
-
-	public static void xmlLog(String[] elements, String[] values) {
-		String errorString = "<Error>";
-		for (int i = 0; i < elements.length; i++) {
-			errorString += "\r\n\t<" + elements[i] + ">" + values[i] + "</" + elements[i] + ">";
-		}
-		errorString += "\r\n</Error>";
-		xmlErrors.add(errorString);
-	}
-	
+		
 	public static boolean matchesRegex(String regex, String subject) {
 		if (subject == null || regex == null) {
 			return false;

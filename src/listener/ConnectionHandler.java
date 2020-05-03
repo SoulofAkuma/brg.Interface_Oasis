@@ -5,13 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.regex.Pattern;
 
 public class ConnectionHandler implements Runnable {
 	
 	private final int responseID;
 	private final String parentID;
 	private Socket socket;
+	private RequestType requestType;
 	
 	public ConnectionHandler(int responseID, String parentID, Socket socket) {
 		this.responseID = responseID;
@@ -23,12 +23,13 @@ public class ConnectionHandler implements Runnable {
 	public void run() {
 		PrintWriter out = null;
 		BufferedReader in = null;
-		boolean success;
+		boolean success = false;
+		String request = "";
+		String body = null;
 		try {
 			out = new PrintWriter(this.socket.getOutputStream());
 			in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 			String inputLine;
-			String request = "";
 			int i = 0;
 			boolean hasBody = false;
 			boolean watchForContentLength = false;
@@ -39,62 +40,94 @@ public class ConnectionHandler implements Runnable {
 					String[] requestBaseInformation = request.split(" ");
 					if (requestBaseInformation.length == 3) {
 						String requestType = requestBaseInformation[0];
-//						String uri = requestBaseInformation[1];
-//						String httpVersion = requestBaseInformation[2];
-//						Pattern uriPattern = Pattern.compile(""); //TODO
-//						Pattern httpVersionPattern = Pattern.compile("HTTP/(1.1|1.0|2)"); TODO Move somewhere else
-//						if (httpVersionPattern.matcher(httpVersion).matches()) {
-//							
-//						} else {
-//							//TODO: Send bad request response							
-//						}
-						
 						if (requestType.equals("GET")) {
+							this.requestType = RequestType.GET;
 							hasBody = false;
 						} else if (requestType.equals("POST")) {
+							this.requestType = RequestType.POST;
 							hasBody = true;
 							watchForContentLength = true;
+						} else if (requestType.equals("HEAD")) {
+							this.requestType = RequestType.HEAD;
+							hasBody = false;
+						} else {
+							out.write(getResponse(500, "Not Implemented"));
+							out.flush();
+							break;
 						}
 					} else {							
-						//TODO: Send bad request response
+						out.write(getResponse(400, "Bad Request"));
+						out.flush();
+						break;
 					}
 				}
 				if (watchForContentLength) {
 					if (inputLine.matches("Content-Length: [0-9]+")) {
 						try {
 							contentLength = Integer.parseInt(inputLine.split(" ")[1]);					
-						} catch (Exception e) {
-							//This cannot fail
-						}
+						} catch (Exception e) {}
+						watchForContentLength = false;
 					}
 				}
 				if (inputLine.length() == 0) {
 					if (hasBody) {
 						if (contentLength != -1) {
-							String body;
-							if (contentLength > 2) {
-								body = "\r\n";
-							} else {
-								char[] bodyBuffer = new char[contentLength - 2];
-								in.read(bodyBuffer);
-								body = "\r\n" +String.valueOf(bodyBuffer);
-							}
-							request += body;
+							char[] bodyBuffer = new char[contentLength];
+							in.read(bodyBuffer);
+							body = String.valueOf(bodyBuffer);
+							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"));
+							out.flush();
+							success = true;
 							break;
 						} else {
-							//TODO: Send bad request
+							out.write(getResponse(400, "Bad Request"));
+							out.flush();
+							break;
 						}
 					} else {
+						if (this.requestType == RequestType.HEAD) {
+							out.write(getResponse(200, "OK"));
+						} else {
+							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"));							
+						}
+						out.flush();
+						success = true;
 						break;
 					}
 				}
 				i++;
 			}
-			success = true;
+			in.close();
+			out.close();
+			this.socket.close();
 		} catch(IOException e) {
-			success = false;
-			//errorReport
+
+		}
+		if (success) {
+			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
+		} else {
+			ListenerHandler.inputs.get(this.parentID).set(this.responseID, null);
 		}
 	}
+	
+	private String getResponse(int responseCode, String responseMessage, String contentType, String content) {
+		String response = "";
+		response += "HTTP/1.1 " + responseCode + " " + responseMessage + "\r\n";
+		response += "Connection: Closed\r\n";
+		response += "Server: InterfaceOasis/0.7\r\n";
+		response += "Content-Length: " + content.length() + "\r\n";
+		response += "Content-Type: " + contentType + "; charset=utf-8";
+		response += "\r\n" + content;
+		return response;
+	}
+	
+	private String getResponse(int responseCode, String responseMessage) {
+		String response = "";
+		response += "HTTP/1.1 " + responseCode + " " + responseMessage + "\r\n";
+		response += "Connection: Closed\r\n";
+		response += "Server: InterfaceOasis/0.7\r\n\r\n";
+		return response;
+	}
+	
 	
 }
