@@ -18,7 +18,7 @@ public class ResponderHandler {
 		
 	}
 	
-	public void run() {
+	public void stopResponder() {
 		
 	}
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import cc.Pair;
 import settings.Setting;
-import connectionhandler.Handler;;
 
 public class ListenerHandler {
 
@@ -20,7 +19,7 @@ public class ListenerHandler {
 	private boolean controllerRunning = false; //Indicates whether the handler has a TimeoutController for its listeners
 	
 	protected static HashMap<String, Pair<TimeoutController, Thread>> timerController = new HashMap<String, Pair<TimeoutController, Thread>>(); //Threads canceling connectionHandlers whenever they time out (Content-Length not accurate, Wrong formatting, body too long) stored by groupID, thread 
-	public static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body} 
+	protected static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body} 
 	
 	public ListenerHandler(Setting listenerMasterSetting, String groupID, String groupName) {
 		this.listenerMasterSetting = listenerMasterSetting;
@@ -36,7 +35,7 @@ public class ListenerHandler {
 			String name = listenerSetting.getAttribute("name").getValue();
 			String port = listenerSetting.getAttribute("port").getValue();
 			String listenerID = listenerSetting.getAttribute("id").getValue();
-			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID));
+			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);
 		}
@@ -89,11 +88,7 @@ public class ListenerHandler {
 		this.listenerThreadStatus.replace(listenerID, status);
 	}
 	
-	public void reportError(String nameVal, String portVal, String listenerID, String cause, String errorMessage) {
-		Handler.reportMessage(this.groupID, this.groupName, "ListenerID " + listenerID + " \"" + nameVal + "\":" + portVal, cause, errorMessage, false);
+	public static ArrayList<String[]> getRequest(String listenerID) {
+		return ListenerHandler.inputs.get(listenerID);
 	}
-	
-	public void reportError(String nameVal, String portVal, String listenerID, String cause) {
-		Handler.reportMessage(this.groupID, this.groupName, "ListenerID " + listenerID + " \"" + nameVal + "\":" + portVal, cause, false);
-	}	
 }

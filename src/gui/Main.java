@@ -12,6 +12,9 @@ import java.awt.Insets;
 import java.awt.Color;
 import java.awt.SystemColor;
 import javax.swing.border.LineBorder;
+
+import connectionhandler.Handler;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -26,13 +29,22 @@ public class Main extends JFrame {
 	 */
 	public static void main(String[] args) {
 		
-		SettingHandler.handle();
+		Logger.init();
+		SettingHandler.init();
 		
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 			System.out.println("Error");			
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				SettingHandler.close();
+				Handler.close();
+				System.out.println("Ended");
+			}
+		});
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -44,7 +56,7 @@ public class Main extends JFrame {
 			}
 		});
 	}
-
+	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!
 	/**
 	 * Create the frame.
 	 */
@@ -79,5 +91,9 @@ public class Main extends JFrame {
 		btnSetup.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 		btnSetup.setBounds(875, 424, 100, 30);
 		MainPanel.add(btnSetup);
+	}
+	
+	public static void fatalError(String message) {
+		
 	}
 }

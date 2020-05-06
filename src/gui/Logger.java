@@ -1,51 +1,93 @@
 package gui;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import cc.Pair;
-
-public class Logger {
+public class Logger implements Runnable {
 	
 	private static ArrayList<MessageObject> messages = new ArrayList<MessageObject>(); //Messages to be viewable in log
-	
-	public static void reportMessage(String groupID, String groupName, String source, String cause, String errorMessage, MessageType type, MessageOrigin origin) {
-		if (type == MessageType.Warning) {
-			messages.add(new Pair<MessageType, String>(MessageType.Warning, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] WARNING Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported a warning from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\" with the error message \"" + errorMessage + "\""));
-		} else if (type == MessageType.Error) {			
-			messages.add(new Pair<MessageType, String>(MessageType.Error, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported an error from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\" with the error message \"" + errorMessage + "\""));
-			xmlLog(new String[] {"GroupID","GroupName,Source,Cause","ErrorMessage,Time"}, new String[] {String.valueOf(groupID), groupName, source, cause, errorMessage, DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())});			
-		} else if (type == MessageType.Information) {
-			messages.add(new Pair<Pair<MessageOrigin, MessageType>, String>())
-		}
-	}
+	private static ArrayList<String> errorElements = new ArrayList<String>();
+	private static Thread myThread;
 
-	public static void reportMessage(String groupName, String source, String cause, boolean isWarning) {
-		if (isWarning) {
-			messages.add(new Pair<MessageType, String>(MessageType.Warning, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] WARNING Group \"" + String.valueOf(groupName) + "\" reported a warning from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-		} else {			
-			messages.add(new Pair<MessageType, String>(MessageType.Error, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] Group \"" + String.valueOf(groupName) + "\" reported an error from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-			xmlLog(new String[] {"GroupName,Source,Cause,Time"}, new String[] {groupName, source, cause, DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())});			
+	public static boolean logXML = false;
+	public static boolean runMe = false;
+	
+	public static void addMessage(MessageType type, MessageOrigin origin, String message, String id, String[] elements, String[] values, boolean isFatal) {
+		MessageObject messageObject = new MessageObject(type, origin, message, id);
+		Logger.messages.add(messageObject);
+		if (Logger.logXML && type == MessageType.Error && elements != null && values != null && values.length == elements.length) { //TODO: Store property in setting handler
+			ArrayList<String> elementList = new ArrayList<String>();
+			ArrayList<String> valueList = new ArrayList<String>();
+			elementList.add("Origin");
+			valueList.add(type.name());
+			elementList.addAll(Arrays.asList(elements));
+			valueList.addAll(Arrays.asList(values));
+			elementList.add("Time");
+			valueList.add(messageObject.time);
+			elementList.add("PrintedMessage");
+			valueList.add(message);
+			addXMLError(elementList.toArray(new String[elementList.size()]), valueList.toArray(new String[valueList.size()]));
+		}
+		if (isFatal) {
+			if (elements != null && values != null && elements.length == values.length) {
+				ArrayList<String> elementList = new ArrayList<String>();
+				ArrayList<String> valueList = new ArrayList<String>();
+				elementList.add("Origin");
+				valueList.add(type.name());
+				elementList.addAll(Arrays.asList(elements));
+				valueList.addAll(Arrays.asList(values));
+				elementList.add("Time");
+				elementList.add("PrintedMessage");
+				valueList.add(message);
+				valueList.add(messageObject.time);
+				Main.fatalError(getXMLError(elementList.toArray(new String[elementList.size()]), valueList.toArray(new String[valueList.size()])));
+			}
+			
 		}
 	}
 	
-	public static void reportMessage(String groupID, String groupName, String source, String cause, boolean isWarning) {
-		if (isWarning) {
-			messages.add(new Pair<MessageType, String>(MessageType.Warning, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] WARNING Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported a warning from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-		} else {			
-			messages.add(new Pair<MessageType, String>(MessageType.Error, "[" + DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()) + "] Group " + groupID + " \"" + String.valueOf(groupName) + "\" reported an error from \"" + String.valueOf(source) + "\" caused by \"" + String.valueOf(cause) + "\""));
-			xmlLog(new String[] {"GroupID","GroupName","Source","Cause,Time"}, new String[] {String.valueOf(groupID), groupName, source, cause, DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now())});			
-		}
-	}
-
-	public static void xmlLog(String[] elements, String[] values) {
+	public static String getXMLError(String[] elements, String[] values) {
 		String errorString = "<Error>";
 		for (int i = 0; i < elements.length; i++) {
 			errorString += "\r\n\t<" + elements[i] + ">" + values[i] + "</" + elements[i] + ">";
 		}
 		errorString += "\r\n</Error>";
-		xmlErrors.add(errorString);
+		return errorString;
+	}
+
+	public static void addXMLError(String[] elements, String[] values) {
+		String errorString = "<Error>";
+		for (int i = 0; i < elements.length; i++) {
+			errorString += "\r\n\t<" + elements[i] + ">" + values[i] + "</" + elements[i] + ">";
+		}
+		errorString += "\r\n</Error>";
+		errorElements.add(errorString);
+	}
+	
+	public static void init() {
+		Logger.myThread = new Thread(new Logger());
+		Logger.runMe = true;
+		Logger.myThread.start();
+	}
+	
+	@Override
+	public void run() {
+		int size = 0;
+		while (Logger.runMe) {
+			if (messages.size() > size) {
+				for (int i = size; i < messages.size(); i++) {
+					System.out.println(messages.get(i).print());
+					//TODO: Show in GUI
+				}
+				size = messages.size();
+			}
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				break;
+			}
+		}
 	}
 
 }

@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import connectionhandler.Handler;
+import gui.Logger;
+import gui.MessageOrigin;
+import gui.MessageType;
 
 public class Listener implements Runnable {
 	/*
@@ -17,7 +20,8 @@ public class Listener implements Runnable {
 	private final String name; //Name of Listener
 	private final int port; //int value of port
 	private boolean canRun; //indicates whether the listener can launch (is false if no valid port is provided)
-	private String groupID; //the id of the group the listener is in (for potential backtracking of the corresponding handler class)
+	private String groupID; //the id of the group the listener is in
+	private String groupName; //The name of the group the listener is part of
 	private String listenerID; //the id of this listener to uniquely identify it
 	private boolean isActive = false; //indicates whether the listener thread is currently listening to the port
 	private ServerSocket serverSocket = null;
@@ -25,10 +29,11 @@ public class Listener implements Runnable {
 	private ArrayList<Thread> connections = new ArrayList<Thread>(); //The threads of ConnectionHandlers to enable multiple requests at once
 	private static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //A List of the received requests[0] and request bodies[1] to the corresponding listener IDs 
 	
-	protected Listener(String portString, String name, String groupID, String listenerID) {
+	protected Listener(String portString, String name, String groupID, String listenerID, String groupName) {
 		this.name = name;
 		this.portString = portString;
 		this.groupID = groupID;
+		this.groupName = groupName;
 		this.listenerID = listenerID;
 		ListenerHandler.inputs.put(this.groupID, new ArrayList<String[]>());
 		int tempPort = -1; //This is necessary because the compiler throws an error if the port is modified after it could have been modified in the try/catch phrase; 
@@ -60,8 +65,7 @@ public class Listener implements Runnable {
 			try {
 				this.serverSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				reportError("Could not close the ServerSocket on port" + this.port, e.getMessage());
 			}
 		}
 	}
@@ -91,12 +95,11 @@ public class Listener implements Runnable {
 		Handler.getListenerHandler(this.groupID).changeStatus(this.listenerID, false);
 	}
 
-	private void reportError(String cause, String errorMessage) {
-		Handler.getGroup(this.groupID).getKey().reportError(this.name, this.portString, this.listenerID, cause, errorMessage);
-	}
-	
-	private void reportError(String cause) {
-		Handler.getGroup(this.groupID).getKey().reportError(this.name, this.portString, this.listenerID, cause);
+	private void reportError(String causes, String errorMessage) {
+		String message = this.name + " in " + this.groupName + " reported " + causes + " caused by " + errorMessage;
+		String elements[] = {"GroupName", "GroupID", "ListenerName", "ListenerID", "ListenerPort", "Causes", "ErrorMessage"};
+		String values[] = {this.groupName, this.groupID, this.name, this.listenerID, this.portString, causes, errorMessage};
+		Logger.addMessage(MessageType.Error, MessageOrigin.Listener, message, this.listenerID, elements, values, false);
 	}
 
 

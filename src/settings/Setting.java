@@ -21,6 +21,7 @@ public class Setting {
 	private String value = null; // Value of the Setting
 	private int level = -1;
 	private int sID;
+	private boolean isEmpty = false;
 
 	private Node node = null;
 
@@ -48,10 +49,16 @@ public class Setting {
 	public ArrayList<Setting> getSubsettings() {
 		return this.subsettings;
 	}
+	
+	public boolean reset() {
+		return this.isEmpty;
+	}
 
 	public static Setting parseSetting(String input, int level) {
-		if (input == null || input.isBlank()) {
-			return new Setting(true);
+		if ((input == null || input.isBlank()) && level != 1) {
+			return new Setting(true, level);
+		} else if ((input == null | input.isBlank()) && level == 1) {
+			return new Setting(true, true, level);
 		}
 		SettingFunctions functions = new SettingFunctions();
 		if (level == 1) {
@@ -70,7 +77,7 @@ public class Setting {
 			node = functions.getRootElement();
 			attributes = (functions.getAttributes(functions.getRootElement()) == null) ? attributes
 					: functions.getAttributes(functions.getRootElement());
-			value = functions.getRootText();
+			value = (functions.getRootText().isEmpty()) ? null : functions.getRootText();
 			if (level == 1 && functions.getRootNamespaceURI() != null) {
 				namespaceURI = functions.getRootNamespaceURI();
 			}
@@ -102,8 +109,14 @@ public class Setting {
 		return new Setting(name, subsettings, node, value, attributes, namespaceURI, level);
 	}
 	
-	private Setting(boolean corrupt) {
+	private Setting(boolean corrupt, int level) {
 		this.corrupt = true;
+		this.level = level;
+	}
+	
+	private Setting(boolean placeholder, boolean isEmpty, int level) {
+		this.isEmpty = true;
+		this.level = level;
 	}
 
 	private Setting(String name, Node node) {
@@ -131,7 +144,7 @@ public class Setting {
 		this.level = 1;
 		this.name = "";
 		this.attributes = null;
-		this.value = "";
+		this.value = null;
 		for (int i = 0; i < input.getLength(); i++) {
 			Setting subSetting = Setting.parseSetting(this.functions.nodeToString(input.item(i)), 2);
 			this.subsettings.add(subSetting);
@@ -143,7 +156,7 @@ public class Setting {
 	private Setting(Element element, int level) {
 		this.level = level;
 		this.name = element.getNodeName();
-		this.value = element.getTextContent();
+		this.value = (element.getTextContent().isEmpty()) ? null : element.getTextContent();
 		this.attributes = (this.functions.getAttributes(element) == null) ? this.attributes : this.functions.getAttributes(element);
 		this.sID = Setting.sIDState;
 		Setting.sIDState++;
@@ -169,6 +182,7 @@ public class Setting {
 		this.subsettings = setting.subsettings;
 		this.functions = setting.functions;
 		this.corrupt = setting.corrupt;
+		this.isEmpty = setting.isEmpty;
 	}
 
 	public boolean isCorrupt() {
@@ -197,16 +211,20 @@ public class Setting {
 				if (this.value.contains("\n")) {
 					String[] lines = this.value.split("\\n");
 					for (String line : lines) {
-						setXML += getTabLevel(this.level + 1) + line + "\n";
+						setXML += getTabLevel(this.level + 1) + line + "\r\n";
 					}
-				} else if (this.subsettings.size() == 0) {
+				} else {
+					setXML += getTabLevel(this.level + 1) + this.value + "\r\n";
+				}
+				if (this.subsettings.size() == 0) {
 					setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\">");
 					setXML += value;
 					setXML += "</" + this.name + ">";
 					return setXML;
 				}
-			} else if (this.value == null && !hasSubsettings()) {
-				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">\r\n") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\"/>\r\n");
+			} else if (this.value == null && !hasSubsettings() && level != 1) {
+				System.out.println("true");
+				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + "/>") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\"/>");
 				return setXML;
 			}
 			setXML += (this.subsettings.size() > 0) ? (getSubXML() + "\r\n") : "";
@@ -340,7 +358,7 @@ public class Setting {
 	}
 	
 	public void resetSetting(String name) {
-		if (this.level == 1 && this.corrupt) {
+		if (this.level == 1 && this.isEmpty) {
 			this.name = name;
 			this.attributes = new ArrayList<Pair<String, String>>();
 			this.namespaceURI = null;
@@ -349,6 +367,7 @@ public class Setting {
 			this.subsettings = new ArrayList<Setting>();
 			this.functions = new SettingFunctions();
 			this.corrupt = false;
+			this.isEmpty = false;
 		}
 	}
 }

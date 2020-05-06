@@ -14,6 +14,10 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 import cc.Pair;
+import gui.Logger;
+import gui.MessageOrigin;
+import gui.MessageType;
+import settings.SettingHandler;
 
 public class SettingFunctions {
 	
@@ -104,6 +108,9 @@ public class SettingFunctions {
 			crlf = true;
 		}
 		String output = "";
+		if (lines == null) {
+			return input;
+		}
 		for (String line : lines) {	
 			line = line.strip();
 			output += line + ((crlf) ? ((char) 0x0D + (char) 0x0A) : "\r\n");
@@ -114,7 +121,7 @@ public class SettingFunctions {
 	public ArrayList<Pair<String, String>> getAttributes(Element input) {
 		ArrayList<Pair<String, String>> output = new ArrayList<Pair<String, String>>();
 		NamedNodeMap attributes = input.getAttributes();
-		for (int i = 0; i < attributes.getLength() - 1; i++) {
+		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
 			Pair<String, String> kvp = new Pair<String, String>(attribute.getNodeName(), attribute.getNodeValue());
 			output.add(kvp);
@@ -284,5 +291,12 @@ public class SettingFunctions {
 			return false;
 		}
 		
+	}
+	
+	private static void reportError(String source, String causes, String errorMessage) {
+		String[] elements = {"GroupID", "GroupName", "Source", "Causes", "ErrorMessage"};
+		String[] values = {SettingHandler.SETTINGPARSINGID, SettingHandler.SETTINGPARSINGID, source, causes, errorMessage};
+		String message = source + " in " + SettingHandler.SETTINGPARSINGNAME + " reported " + causes + " caused by " + errorMessage;
+		Logger.addMessage(MessageType.Error, MessageOrigin.Settings, errorMessage, SettingHandler.SETTINGPARSINGID, elements, values, false);
 	}
 }
