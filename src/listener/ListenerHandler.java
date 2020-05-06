@@ -2,7 +2,9 @@ package listener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cc.Pair;
 import settings.Setting;
@@ -18,8 +20,10 @@ public class ListenerHandler {
 	private String handlerID; //The unique id of the handler
 	private boolean controllerRunning = false; //Indicates whether the handler has a TimeoutController for its listeners
 	
+	private static HashMap<String, String> activePorts = new HashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
+	private static HashMap<String, String> idToName = new HashMap<String, String>(); //Names of all listeners stored by id, name
 	protected static HashMap<String, Pair<TimeoutController, Thread>> timerController = new HashMap<String, Pair<TimeoutController, Thread>>(); //Threads canceling connectionHandlers whenever they time out (Content-Length not accurate, Wrong formatting, body too long) stored by groupID, thread 
-	protected static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body} 
+	protected static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
 	
 	public ListenerHandler(Setting listenerMasterSetting, String groupID, String groupName) {
 		this.listenerMasterSetting = listenerMasterSetting;
@@ -38,6 +42,7 @@ public class ListenerHandler {
 			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);
+			ListenerHandler.idToName.put(listenerID, port);
 		}
 	}
 	
@@ -80,12 +85,35 @@ public class ListenerHandler {
 		}
 	}
 	
-	public String getListenerName(String listenerID) {
-		return this.listeners.get(listenerID).getName();
+	public static String getListenerName(String listenerID) {
+		return ListenerHandler.idToName.get(listenerID);
 	}
 	
 	public void changeStatus(String listenerID, boolean status) {
 		this.listenerThreadStatus.replace(listenerID, status);
+	}
+	
+	public static void addActivePort(String listenerID, String port) {
+		ListenerHandler.activePorts.put(listenerID, port);
+	}
+	
+	public static void removeActivePort(String listenerID) {
+		Iterator<Entry<String, String>> ite = ListenerHandler.activePorts.entrySet().iterator();
+		Map.Entry<String, String> activePort = null;
+		for (; ite.hasNext(); activePort = (Map.Entry<String, String>)ite.next()) {
+			if (activePort.getKey().equals(listenerID)) {
+				ite.remove();
+			}
+		}
+	}
+	
+	public static String isListening(String port) {
+		for (Map.Entry<String, String> activePort : ListenerHandler.activePorts.entrySet()) {
+			if (activePort.getValue().equals(port)) {
+				return activePort.getKey();
+			}
+		}
+		return null;
 	}
 	
 	public static ArrayList<String[]> getRequest(String listenerID) {

@@ -77,7 +77,11 @@ public class Listener implements Runnable {
 			this.serverSocket = new ServerSocket(this.port);
 		} catch (IOException e) {
 			this.isActive = false;
-			reportError("Could not bind ServerSocket to port " + this.port, e.getMessage());
+			String listeningID = ListenerHandler.isListening(this.portString);
+			if (listeningID != null) {
+				reportError("Port " + this.port + " is already occupied by listener " + listeningID + " \"" + ListenerHandler.getListenerName(listeningID) + "\"", e.getMessage());
+			}
+			reportError("Could not bind ServerSocket to port" + this.port, e.getMessage());
 		}
 		while (this.isActive) {
 			try {

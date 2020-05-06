@@ -14,6 +14,7 @@ public class Trigger implements Runnable {
 	private String groupName;
 	private String listenerID;
 	private boolean trigger = false;
+	private boolean crossGroup;
 	private boolean runMe = false;
 	private int cooldown;
 	
