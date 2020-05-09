@@ -351,7 +351,7 @@ public class Setting {
 	public boolean levelEquality(ArrayList<Setting> list) {
 		ArrayList<Integer> levels = new ArrayList<Integer>();
 		for (int i = 0; i < list.size(); i++) {
-			if (levels.contains(list.get(i))) {
+			if (levels.contains(list.get(i).level)) {
 				return false;
 			} else {
 				levels.add(list.get(i).level);

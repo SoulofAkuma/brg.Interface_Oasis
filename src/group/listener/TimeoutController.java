@@ -1,9 +1,8 @@
-package listener;
+package group.listener;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import cc.Pair;
 

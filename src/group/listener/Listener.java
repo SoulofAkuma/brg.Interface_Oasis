@@ -1,4 +1,4 @@
-package listener;
+package group.listener;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import group.GroupHandler;
 import gui.Logger;
-import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
 

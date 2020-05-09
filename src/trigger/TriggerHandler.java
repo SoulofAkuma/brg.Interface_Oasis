@@ -3,9 +3,9 @@ package trigger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import responder.Responder;
+import group.listener.Listener;
+import group.responder.Responder;
 import settings.Setting;
-import listener.Listener;
 
 public class TriggerHandler {
 	

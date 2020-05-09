@@ -1,6 +1,5 @@
 package settings;
 
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +11,8 @@ import gui.Logger;
 import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
-import listener.Listener;
+import parser.ParserHandler;
+import trigger.TriggerHandler;
 
 //This class sets up all setting parsing, checks the syntax and forwards the setting processing to the corresponding classes ()
 public class SettingHandler {
@@ -129,6 +129,8 @@ public class SettingHandler {
 		SettingHandler.ParserMasterSetting = tempParserMasterSetting;
 		
 		GroupHandler.init(SettingHandler.groupMasterSetting);
+		TriggerHandler.init(SettingHandler.triggerMasterSetting);
+		ParserHandler.init(SettingHandler.ParserMasterSetting);
 		
 	}
 	
@@ -181,7 +183,7 @@ public class SettingHandler {
 	//Syntax Checkers
 	private static boolean checkGroupSetting(Setting checkMe, int ite) {
 		if (!checkMe.getName().equals("Group")) {
-			reportSyntaxError("Group Handler Checker", "Unknown Group \"" + checkMe.getName() + "\"", true);
+			reportSyntaxError("Group Name Checker", "Unknown Group \"" + checkMe.getName() + "\"", true);
 			return false;
 		}
 		int count = 0;
@@ -198,12 +200,13 @@ public class SettingHandler {
 				break;
 				case "id":
 					if (!matchesRegex("[0-9]+", attribute.getValue())) {
-						reportSyntaxError("Group Attribute checker", "Invalid name value \"" + attribute.getValue() + "\"", false);
+						reportSyntaxError("Group Attribute checker", "Invalid id value \"" + attribute.getValue() + "\"", false);
 						return false;
 					} else {
 						id = attribute.getValue();
 						count++;
 					}
+				break;
 			}
 		}
 		if (count != 2) {
@@ -302,6 +305,45 @@ public class SettingHandler {
 				reportSyntaxError("Group Master Element Checker", "Unknown Group Element \"" + group.getName() + "\"", true);
 			}
 		}
+		return true;
+	}
+	
+	public static boolean checkParserSetting(Setting checkMe, int ite) {
+		if (!checkMe.getName().equals("Parser")) {
+			reportSyntaxError("Parser Name Checker", "Unknown Group \"" + checkMe.getName() + "\"", true);
+			return false;
+		}
+		int count = 0;
+		for (Pair<String, String> attribute : checkMe.getAttributes()) {
+			switch (attribute.getKey()) {
+				case "name":
+					if (!matchesRegex("[0-9A-Za-z_.()-;,:/!?& ]+", attribute.getValue())) {
+						reportSyntaxError("Parser Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false);
+						return false;
+					} else {
+						count++;
+					}
+				break;
+				case "id":
+					if (!matchesRegex("[0-9]+", attribute.getValue())) {
+						reportSyntaxError("Parser Attribute checker", "Invalid name value \"" + attribute.getValue() + "\"", false);
+						return false;
+					} else {
+						count++;
+					}
+				break;
+			}
+		}
+		if (count != 2) {
+			reportSyntaxError("Parser Attribute checker", (2 - count) + " missing attribute(s) in " + ite + ". Parser", false);
+			return false;
+		}
+		//Further syntax checking is not necessary. The parser consists of many rules which are independently checked by the corresponding rule
+		return true;
+	}
+	
+	public static boolean checkTriggerSetting(Setting checkMe, int ite) {
+		//TODO: Develop trigger storage model
 		return true;
 	}
 	

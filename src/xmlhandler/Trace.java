@@ -1,15 +1,16 @@
 package xmlhandler;
 
 import cc.Pair;
+import parser.ParserHandler;
+import parser.Rule;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.io.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
-public class Trace implements parser.Rule {
+public class Trace implements Rule {
 	
 	//Default values
 	public static final String ENCODING = "UTF-8";
@@ -38,7 +39,46 @@ public class Trace implements parser.Rule {
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
-		String nodes[] = ParserHandler.
+		String nodeStrings[] = ParserHandler.returnStringArrayIfExists(constructorArgs, "nodes");
+		if (nodeStrings == null || nodeStrings.length / 2 != Math.round(nodeStrings.length / 2)) {
+			ParserHandler.reportGenRuleError("nodes", this.getClass().getName());
+			return null;
+		}
+		ArrayList<Pair<Short, String>> nodes = new ArrayList<Pair<Short, String>>();
+		for (int i = 0; i < nodeStrings.length; i += 2) {
+			if (!ParserHandler.isShort(nodeStrings[i])) {
+				ParserHandler.reportGenRuleError("nodes", this.getClass().getName());
+				return null;
+			} else {
+				nodes.add(new Pair<Short, String>(Short.parseShort(nodeStrings[i]), nodeStrings[i + 1]));
+			}
+		}
+		Boolean getName = ParserHandler.returnBooleanIfExists(constructorArgs, "getName");
+		if (getName == null) {
+			ParserHandler.reportGenRuleError("getName", this.getClass().getName());
+			return null;
+			
+		}
+		String nStrings[] = ParserHandler.returnStringArrayIfExists(constructorArgs, "n");
+		if (nStrings == null) {
+			ParserHandler.reportGenRuleError("n", this.getClass().getName());
+			return null;
+		}
+		ArrayList<Integer> n = new ArrayList<Integer>();
+		for (String nString : nStrings) {
+			if (!ParserHandler.isInt(nString)) {
+				ParserHandler.reportGenRuleError("n", this.getClass().getName());
+				return null;
+			} else {
+				n.add(Integer.parseInt(nString));
+			}
+		}
+		String encoding = ParserHandler.returnStringIfExists(constructorArgs, "encoding");
+		if (encoding == null) {
+			ParserHandler.reportGenRuleError("encoding", this.getClass().getName());
+			return null;
+		}
+		return new Trace(nodes, getName, n, encoding);
 	}
 	
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable
@@ -253,6 +293,4 @@ public class Trace implements parser.Rule {
 	private void errorLog(String message) {
 		this.log.add(message + " - Quitting xmlparser");
 	}
-	
-
 }

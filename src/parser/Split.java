@@ -33,7 +33,7 @@ public class Split implements Rule {
 		} else if (n == null) {
 			ParserHandler.reportGenRuleError("n", this.getClass().getName());
 			return null;
-		} else if (regex = null) {
+		} else if (regex == null) {
 			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
 			return null;
 		} else {

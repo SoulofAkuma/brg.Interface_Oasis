@@ -1,4 +1,4 @@
-package responder;
+package group.responder;
 
 import settings.Setting;
 

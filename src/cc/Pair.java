@@ -1,7 +1,5 @@
 package cc;
 
-import java.util.Iterator;
-
 public class Pair<K, V> {
 	
 	//Class for a List of Key value Pairs without the need of unique keys

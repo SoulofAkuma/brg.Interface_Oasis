@@ -36,12 +36,11 @@ public class MessageObject {
 		return message;
 	}
 	
-	private String genSpacing(int count) {
-		String spaces = "";
-		for (int i = 0; i < count; i++) {
-			spaces += " ";
-		}
-		return spaces;
-	}
-
+//	private String genSpacing(int count) {
+//		String spaces = "";
+//		for (int i = 0; i < count; i++) {
+//			spaces += " ";
+//		}
+//		return spaces;
+//	}
 }

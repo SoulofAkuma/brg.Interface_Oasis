@@ -16,6 +16,7 @@ import xmlhandler.Trace;
 public class ParserHandler {
 	
 	private static ArrayList<Parser> parsers = new ArrayList<Parser>();
+	@SuppressWarnings("rawtypes")
 	private static HashMap<String, Class> stdRules = new HashMap<String, Class>();
 	
 	private static final String getParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
@@ -42,6 +43,7 @@ public class ParserHandler {
 					break;
 				}
 				try {
+					@SuppressWarnings("unchecked")
 					Method createRule = ParserHandler.stdRules.get(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
 					Rule newRule = (Rule) createRule.invoke(null, constructorArgs);
 					if (newRule != null) {
@@ -93,15 +95,24 @@ public class ParserHandler {
 	}
 	
 	public static void reportGenRuleError(String missingName, String ruleType) {
-		String message = "Rule creation of "+ ruleType + " rule failed, because ";
-		String elements[] = {"GroupID", "GroupName", "Cause", "RuleType"};
-		String values[] = {SettingHandler.PARSERHANDLERID, SettingHandler.PARSERHANDLERNAME, cause, ruleType};
+		String message = "Rule creation of "+ ruleType + " rule failed, because " + missingName + "is missing or incorrectly formatted";
+		String elements[] = {"GroupID", "GroupName", "Missing", "RuleType"};
+		String values[] = {SettingHandler.PARSERHANDLERID, SettingHandler.PARSERHANDLERNAME, missingName, ruleType};
 		Logger.addMessage(MessageType.Error, MessageOrigin.Parser, message, SettingHandler.PARSERHANDLERID, elements, values, true);
 	}
 	
-	private static boolean isInt(String string) {
+	public static boolean isInt(String string) {
 		try {
 			Integer.parseInt(string);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	public static boolean isShort(String string) {
+		try {
+			Short.parseShort(string);
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -116,7 +127,7 @@ public class ParserHandler {
 		}
 	}
 	
-	protected static String returnStringIfExists(HashMap<String, String> map, String name) {
+	public static String returnStringIfExists(HashMap<String, String> map, String name) {
 		if (map.containsKey(name)) {
 			return map.get(name);
 		} else {
@@ -124,7 +135,7 @@ public class ParserHandler {
 		}
 	}
 	
-	protected static Integer returnIntIfExists(HashMap<String, String> map, String name) {
+	public static Integer returnIntIfExists(HashMap<String, String> map, String name) {
 		if (map.containsKey(name) && isInt(map.get(name))) {
 			return Integer.parseInt(map.get(name));
 		} else {
@@ -132,7 +143,7 @@ public class ParserHandler {
 		}
 	}
 	
-	protected static String[] returnStringArrayIfExists(HashMap<String, String> map, String name) {
+	public static String[] returnStringArrayIfExists(HashMap<String, String> map, String name) {
 		if (map.containsKey(name)) {
 			return map.get(name).split(",");
 		} else {
@@ -140,7 +151,7 @@ public class ParserHandler {
 		}
 	}
 	
-	protected static Boolean returnBooleanIfExists(HashMap<String, String> map, String name) {
+	public static Boolean returnBooleanIfExists(HashMap<String, String> map, String name) {
 		if (map.containsKey(name) && isBoolean(map.get(name))) {
 			return Boolean.parseBoolean(map.get(name));
 		} else {

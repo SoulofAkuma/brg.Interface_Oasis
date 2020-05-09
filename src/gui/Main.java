@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -10,10 +9,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Color;
-import java.awt.SystemColor;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.border.LineBorder;
@@ -22,16 +19,14 @@ import cc.Shell;
 import group.GroupHandler;
 
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import settings.*;
 
+@SuppressWarnings("serial")
 public class Main extends JFrame {
 
 	private JPanel contentPane;
 	
-	private static Main frame;
-
 	/**
 	 * Launch the application.
 	 */
@@ -54,7 +49,6 @@ public class Main extends JFrame {
 			public void run() {
 				try {
 					Main frame = new Main();
-					Main.frame = frame;
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

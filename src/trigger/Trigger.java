@@ -2,11 +2,10 @@ package trigger;
 
 import java.util.ArrayList;
 
+import group.listener.ListenerHandler;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
-import listener.ListenerHandler;
-import responder.ResponderHandler;
 
 public class Trigger implements Runnable {
 	

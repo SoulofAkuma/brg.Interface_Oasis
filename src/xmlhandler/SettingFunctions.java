@@ -2,8 +2,6 @@ package xmlhandler;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.OutputKeys;
@@ -14,10 +12,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 import cc.Pair;
-import gui.Logger;
-import gui.MessageOrigin;
-import gui.MessageType;
-import settings.SettingHandler;
 
 public class SettingFunctions {
 	
@@ -293,10 +287,10 @@ public class SettingFunctions {
 		
 	}
 	
-	private static void reportError(String source, String causes, String errorMessage) {
-		String[] elements = {"GroupID", "GroupName", "Source", "Causes", "ErrorMessage"};
-		String[] values = {SettingHandler.SETTINGPARSINGID, SettingHandler.SETTINGPARSINGID, source, causes, errorMessage};
-		String message = source + " in " + SettingHandler.SETTINGPARSINGNAME + " reported " + causes + " caused by " + errorMessage;
-		Logger.addMessage(MessageType.Error, MessageOrigin.Settings, errorMessage, SettingHandler.SETTINGPARSINGID, elements, values, false);
-	}
+//	private static void reportError(String source, String causes, String errorMessage) {
+//		String[] elements = {"GroupID", "GroupName", "Source", "Causes", "ErrorMessage"};
+//		String[] values = {SettingHandler.SETTINGPARSINGID, SettingHandler.SETTINGPARSINGID, source, causes, errorMessage};
+//		String message = source + " in " + SettingHandler.SETTINGPARSINGNAME + " reported " + causes + " caused by " + errorMessage;
+//		Logger.addMessage(MessageType.Error, MessageOrigin.Settings, errorMessage, SettingHandler.SETTINGPARSINGID, elements, values, false);
+//	}
 }

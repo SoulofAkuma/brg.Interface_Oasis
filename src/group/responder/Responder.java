@@ -1,4 +1,4 @@
-package responder;
+package group.responder;
 
 public class Responder {
 
