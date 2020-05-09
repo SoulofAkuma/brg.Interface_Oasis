@@ -5,5 +5,6 @@ public enum MessageOrigin {
 	Responder,
 	Parser,
 	Settings,
-	Setup
+	Setup,
+	Trigger
 }

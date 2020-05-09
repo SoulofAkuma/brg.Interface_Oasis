@@ -9,22 +9,22 @@ import java.util.Arrays;
 
 public class Parser {
 
-	private ArrayList<ParserInterface> elements = new ArrayList<ParserInterface>();
+	private ArrayList<Rule> elements = new ArrayList<Rule>();
 	private ArrayList<String> log = new ArrayList<String>();
 	
-	public Parser(ParserInterface element) {
+	public Parser(Rule element) {
 		this.elements.add(element);
 	}
 	
-	public Parser(ArrayList<ParserInterface> elements) {
-		for (ParserInterface element: elements) {
+	public Parser(ArrayList<Rule> elements) {
+		for (Rule element: elements) {
 			this.elements.add(element);
 		}
 	}
 	
-	public Parser(ParserInterface elementArray[]) {
-		ArrayList<ParserInterface> elements = new ArrayList<ParserInterface>(Arrays.asList(elementArray));
-		for (ParserInterface element: elements) {
+	public Parser(Rule elementArray[]) {
+		ArrayList<Rule> elements = new ArrayList<Rule>(Arrays.asList(elementArray));
+		for (Rule element: elements) {
 			this.elements.add(element);
 		}
 	}
@@ -36,15 +36,15 @@ public class Parser {
 		ArrayList<String> strList = new ArrayList<String>();
 		strList.add(input);
 		
-		for (ParserInterface element: this.elements) {
-			this.log.add("Applying " + ((ParserInterface) element).printElement());
-			strList = (((ParserInterface) element).apply(strList));
+		for (Rule element: this.elements) {
+			this.log.add("Applying " + ((Rule) element).printElement());
+			strList = (((Rule) element).apply(strList));
 			this.log.add("--- Start log ---");			
-			this.log.addAll((((ParserInterface) element).printLog()));
+			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
 		}
 		if (this.elements.size() > 0) {
-			strList = ((ParserInterface) this.elements.get(this.elements.size() - 1)).endProcedure(strList);
+			strList = ((Rule) this.elements.get(this.elements.size() - 1)).endProcedure(strList);
 		}
 		return strList;
 	}

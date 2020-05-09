@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import responder.Responder;
+import settings.Setting;
 import listener.Listener;
 
 public class TriggerHandler {
@@ -12,8 +13,10 @@ public class TriggerHandler {
 	private static HashMap<String, Responder> responders = new HashMap<String, Responder>();
 	private static HashMap<String, Listener> listeners = new HashMap<String, Listener>();
 	
-	public static void init() {
-		
+	public static void init(Setting triggerMasterSetting) {
+		for (Setting trigger : triggerMasterSetting.getSubsettings()) {
+			
+		}
 	}
 	
 	protected static Responder getResponder(String id) {

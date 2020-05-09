@@ -1,16 +1,28 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Isolate implements ParserInterface {
+public class Isolate implements Rule {
 	
 	private String find; //Regex to isolate
 	private ArrayList<String> log = new ArrayList<String>();
 
 	public Isolate(String find) {
 		this.find = find;
+	}
+	
+	@Override
+	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
+		if (find == null) {
+			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			return null;
+		} else {
+			return new Isolate(find);
+		}
 	}
 
 	@Override

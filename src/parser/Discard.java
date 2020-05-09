@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
+import java.util.HashMap;
 
-public class Discard implements ParserInterface {
+public class Discard implements Rule {
 	
 	//Default values
 	public static final boolean INVERTED = false;
@@ -23,6 +24,29 @@ public class Discard implements ParserInterface {
 		this.inverted = inverted;
 		this.regex = regex;
 		this.flags = flags;
+	}
+	
+	@Override
+	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
+		Boolean inverted = ParserHandler.returnBooleanIfExists(constructorArgs, "inverted");
+		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
+		String[] flags = ParserHandler.returnStringArrayIfExists(constructorArgs, "flags");
+		if (find == null) {
+			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			return null;
+		} else if (inverted == null) {
+			ParserHandler.reportGenRuleError("inverted", this.getClass().getName());
+			return null;
+		} else if (regex == null) {
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			return null;
+		} else if (flags == null) {
+			ParserHandler.reportGenRuleError("flags", this.getClass().getName());
+			return null;
+		} else {
+			return new Discard(find, inverted, regex, flags);
+		}
 	}
 	
 	

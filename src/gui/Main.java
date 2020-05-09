@@ -4,16 +4,22 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Color;
 import java.awt.SystemColor;
+import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.border.LineBorder;
 
-import connectionhandler.Handler;
+import cc.Shell;
+import group.GroupHandler;
 
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -23,38 +29,41 @@ import settings.*;
 public class Main extends JFrame {
 
 	private JPanel contentPane;
+	
+	private static Main frame;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		
-		Logger.init();
-		SettingHandler.init();
-		
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 			System.out.println("Error");			
 		}
+		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {
 				SettingHandler.close();
-				Handler.close();
-				System.out.println("Ended");
+				GroupHandler.close();
 			}
 		});
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					Main frame = new Main();
+					Main.frame = frame;
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		
+		Logger.init();
+		SettingHandler.init();
 	}
 	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!
 	/**
@@ -95,5 +104,30 @@ public class Main extends JFrame {
 	
 	public static void fatalError(String message) {
 		
+	}
+	
+	public static void popupMessage(String message) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				JOptionPane.showMessageDialog(null, message);
+			}
+		});
+	}
+	
+	public static int askMessage(String question, String title) {
+		final Shell<Integer> returnVal = new Shell<Integer>();
+		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				@Override
+				public void run() {
+					int test = JOptionPane.showConfirmDialog(null, question, title, JOptionPane.YES_NO_OPTION);
+					returnVal.setValue(test);
+				}
+			});
+		} catch (InvocationTargetException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		return returnVal.getValue();
 	}
 }

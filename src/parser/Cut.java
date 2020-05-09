@@ -1,10 +1,11 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Cut implements ParserInterface {
+public class Cut implements Rule {
 	
 	//Default values
 	public static final int N = 1;
@@ -26,6 +27,33 @@ public class Cut implements ParserInterface {
 		this.keep = keep;
 		this.regex = regex;
 		this.reEval = reEval;
+	}
+	
+	@Override
+	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
+		Integer n = ParserHandler.returnIntIfExists(constructorArgs, "n");
+		Boolean keep = ParserHandler.returnBooleanIfExists(constructorArgs, "keep");
+		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
+		Boolean reEval = ParserHandler.returnBooleanIfExists(constructorArgs, "reEval");
+		if (find == null) {
+			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			return null;
+		} else if (n == null) {
+			ParserHandler.reportGenRuleError("n", this.getClass().getName());
+			return null;
+		} else if (keep == null ) {
+			ParserHandler.reportGenRuleError("keep", this.getClass().getName());
+			return null;
+		} else if (regex == null) {
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			return null;
+		} else if (reEval == null) {
+			ParserHandler.reportGenRuleError("reEval", this.getClass().getName());
+			return null;
+		} else {
+			return new Cut(find, n, keep, regex, reEval);
+		}
 	}
 	
 	

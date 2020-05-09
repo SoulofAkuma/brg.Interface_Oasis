@@ -1,8 +1,11 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public interface ParserInterface {
+public interface Rule {
+	
+	public Rule genRule(HashMap<String, String> contructorArgs);
 	
 	//Applies the rule to the Parser
 	public ArrayList<String> apply(ArrayList<String> input);

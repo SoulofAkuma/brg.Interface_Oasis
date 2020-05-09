@@ -81,6 +81,26 @@ public class Manager {
 		}
 	}
 	
+	public static String copyFile(int fileID) {
+		String oldContent = readFile(fileID);
+		String oldPath = getDirPath(fileID);
+		String newPath = oldPath + Manager.SEPERATOR + "Setting Backup";
+		int i = 1;
+		for (boolean unique = false; !unique; ) {
+			String addon = " (" + i + ")";
+			if (!Files.exists(Path.of(newPath + addon))) {
+				newPath += addon;
+				unique = true;
+			} else {
+				i++;
+			}
+		}
+		newPath += ".xml";
+		int copyTo = newFile(newPath);
+		Manager.writeFile(copyTo, oldContent, false);
+		return newPath;
+	}
+	
 	public static boolean delFile(int fileID) {
 		return files.get(fileID).delete();
 	}
@@ -99,6 +119,18 @@ public class Manager {
 		}
 
 		return path;
+	}
+	
+	public static String getDirPath(int fileID) {
+		return Manager.files.get(fileID).getAbsoluteFile().getParent();
+	}
+	
+	public static String getPath(int fileID) {
+		return Manager.files.get(fileID).getAbsolutePath();
+	}
+	
+	public String getFileName(int fileID) {
+		return Manager.files.get(fileID).getName();
 	}
 	
 	private static void reportError(String source, String causes, String errorMessage, boolean isFatal) {

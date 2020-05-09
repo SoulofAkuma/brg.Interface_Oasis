@@ -1,10 +1,11 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Replace implements ParserInterface {
+public class Replace implements Rule {
 	
 	//Default value
 	public static final boolean REGEX = false;
@@ -20,6 +21,24 @@ public class Replace implements ParserInterface {
 		this.regex = regex;
 	}
 	
+	@Override
+	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
+		String replace = ParserHandler.returnStringIfExists(constructorArgs, "replace");
+		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
+		if (find == null) {
+			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			return null;
+		} else if (replace == null) {
+			ParserHandler.reportGenRuleError("replace", this.getClass().getName());
+			return null;
+		} else if (regex == null) {
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			return null;
+		} else {
+			return new Replace(find, replace, regex);
+		}
+	}
 
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input) {

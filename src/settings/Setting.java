@@ -11,8 +11,8 @@ public class Setting {
 	private static int sIDState = 0;
 
 	/*
-	 * This class accepts raw xml setting input and converts it into one Setting
-	 * Object containing Setting Objects or values
+	 * This class is an interface for DOM Nodes and accepts raw XML which is then parsed into settings 
+	 * It offers setting functionality node doesn't, but builds a setting tree of a similar kind than a node tree
 	 */
 
 	private String name; // Name of the Setting
@@ -53,7 +53,12 @@ public class Setting {
 	public boolean reset() {
 		return this.isEmpty;
 	}
-
+	
+	public int getLevel() {
+		return this.level;
+	}
+	
+	//Parses an xml String into a setting
 	public static Setting parseSetting(String input, int level) {
 		if ((input == null || input.isBlank()) && level != 1) {
 			return new Setting(true, level);
@@ -185,14 +190,17 @@ public class Setting {
 		this.isEmpty = setting.isEmpty;
 	}
 
+	//Returns whether this setting is corrupt
 	public boolean isCorrupt() {
 		return this.corrupt;
 	}
 
+	//Adds a subsetting to this settings subsettings
 	public void addSubsetting(Setting setting) {
 		this.subsettings.add(setting);
 	}
 
+	//Returns whether the setting has subsettings
 	public boolean hasSubsettings() {
 		if (this.subsettings == null || this.subsettings.size() == 0) {
 			return false;
@@ -201,6 +209,7 @@ public class Setting {
 		}
 	}
 
+	//Returns the whole setting in xml format
 	public String getXML() {
 		String setXML = "";
 		if (this.name == null) {
@@ -223,7 +232,6 @@ public class Setting {
 					return setXML;
 				}
 			} else if (this.value == null && !hasSubsettings() && level != 1) {
-				System.out.println("true");
 				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + "/>") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\"/>");
 				return setXML;
 			}
@@ -233,6 +241,7 @@ public class Setting {
 		return setXML;
 	}
 
+	//Returns all subsettings of the setting in xml format
 	public String getSubXML() {
 		String subXML = "";
 		for (Setting sub : this.subsettings) {
@@ -242,6 +251,7 @@ public class Setting {
 		return subXML;
 	}
 
+	//Returns all attributes of the setting in xml format
 	public String getAttrXML() {
 		String attrXML = " ";
 		for (Pair<String, String> attribute : this.attributes) {
@@ -273,11 +283,12 @@ public class Setting {
 		return tabs;
 	}
 
-	
+	//Returns the whole setting in json format
 	public String printSetting() { 
 		return "{\n\t\"level\"=\"" + this.level +"\"\n\t\"name\"=\"" + this.name + "\",\n\t\"value\"=\"" + String.valueOf(this.value) + "\",\n\t\"attributes\"=" + printAttributes() + ",\n\t\"subsettings\"= " + printSubsettings() + "}"; 
 	}
-	  
+	
+	//Returns all subsettings of the setting in json format
 	public String printSubsettings() { 
 		String subsettingsString = "[\n";
 		for (Setting subsetting : this.subsettings) {
@@ -286,7 +297,8 @@ public class Setting {
 		subsettingsString += "]"; 
 		return subsettingsString;
 	}
-	  
+	
+	//Returns all attributes of the settin in json format
 	public String printAttributes() { 
 		String attributeString = "[\n"; 
 		for (Pair<String,String> attribute : this.attributes) {
@@ -295,6 +307,7 @@ public class Setting {
 		attributeString += "]"; return attributeString;
 	}
 	
+	//Returns all Settings with a specified name (which are on the same level)
 	public ArrayList<Setting> getSettings(String name) {
 		ArrayList<Setting> results = new ArrayList<Setting>();
 		if (this.name.equals(name)) {
@@ -319,6 +332,12 @@ public class Setting {
 		return results;
 	}
 	
+	//Returns whether the setting hsa a setting of a specified name
+	public boolean hasSetting(String name) {
+		return (this.getSettings(name).size() > 0);
+	}
+	
+	//Returns an attribute with a defined name
 	public Pair<String, String> getAttribute(String name) {
 		for (Pair<String, String> attribute : this.attributes) {
 			if (attribute.getKey().equals(name)) {
@@ -328,6 +347,7 @@ public class Setting {
 		return null;
 	}
 	
+	//Returns whether a list of settings has duplicate levels
 	public boolean levelEquality(ArrayList<Setting> list) {
 		ArrayList<Integer> levels = new ArrayList<Integer>();
 		for (int i = 0; i < list.size(); i++) {
@@ -340,6 +360,7 @@ public class Setting {
 		return true;
 	}
 	
+	//Returns whether replacing the one setting with another one identified by the sID worked
 	public boolean replaceID(int sID, Setting setting) {
 		if (this.sID == sID) {
 			replaceAll(setting);
@@ -353,10 +374,19 @@ public class Setting {
 		return false;
 	}
 	
+	//Adds a custom setting this setting on the level below
 	public void addSetting(String name, String value, ArrayList<Pair<String, String>> attributes) {
+		if (attributes == null) {
+			attributes = new ArrayList<Pair<String, String>>();
+		}
 		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
 	}
 	
+	public void removeSetting(int index) {
+		this.subsettings.remove(index);
+	}
+	
+	//Reset this setting to an empty setting with only a name defined
 	public void resetSetting(String name) {
 		if (this.level == 1 && this.isEmpty) {
 			this.name = name;

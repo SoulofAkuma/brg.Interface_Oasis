@@ -6,8 +6,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import connectionhandler.Handler;
+import group.GroupHandler;
 import gui.Logger;
+import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
 
@@ -36,7 +37,7 @@ public class Listener implements Runnable {
 		this.groupName = groupName;
 		this.listenerID = listenerID;
 		ListenerHandler.inputs.put(this.groupID, new ArrayList<String[]>());
-		int tempPort = -1; //This is necessary because the compiler throws an error if the port is modified after it could have been modified in the try/catch phrase; 
+		int tempPort = -1; //This is necessary because the compiler throws an error if the port is modified after it could have been modified in the try/catch phrase
 		boolean isValid = false;
 		try {
 			tempPort = Integer.parseInt(portString);
@@ -96,7 +97,7 @@ public class Listener implements Runnable {
 				reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
 			}
 		}
-		Handler.getListenerHandler(this.groupID).changeStatus(this.listenerID, false);
+		GroupHandler.getListenerHandler(this.groupID).changeStatus(this.listenerID, false);
 	}
 
 	private void reportError(String causes, String errorMessage) {

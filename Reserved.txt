@@ -1,2 +1,4 @@
-Reserved GroupIDs: 00000 (Static File Handler), 000001 (Static Group Handler), 000002 (Static Setting Handler), 000003 (Non-Static Setting/SettingFunction)
-Reserved GroupNames: File Handler (Manager), Group Handler (Handler), Setting Handler (SettingHandler), Setting Parser (Setting, SettingFunctions)
+Reserved GroupIDs: 000000 (Static File Handler), 000001 (Static Group Handler), 000002 (Static Setting Handler), 000003 (Non-Static Setting/SettingFunction), 000004 (Static Parser Handler)
+Reserved GroupNames: File Handler (Manager), Group Handler (Handler), Setting Handler (SettingHandler), Setting Parser (Setting, SettingFunctions), Parser Handler (ParserHandler)
+
+Reserved ParserIDs: 000000 (Standard GET Parser)

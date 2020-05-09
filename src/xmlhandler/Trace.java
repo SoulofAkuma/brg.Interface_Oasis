@@ -9,7 +9,7 @@ import java.io.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
-public class Trace implements parser.ParserInterface {
+public class Trace implements parser.Rule {
 	
 	//Default values
 	public static final String ENCODING = "UTF-8";
@@ -34,6 +34,11 @@ public class Trace implements parser.ParserInterface {
 		} else {
 			this.n = n;
 		}
+	}
+	
+	@Override
+	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String nodes[] = ParserHandler.
 	}
 	
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable

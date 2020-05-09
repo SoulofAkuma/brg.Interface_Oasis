@@ -1,10 +1,11 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Split implements ParserInterface {
+public class Split implements Rule {
 	
 	//Default values
 	public static final boolean REGEX = false;
@@ -19,6 +20,25 @@ public class Split implements ParserInterface {
 		this.find = find;
 		this.n = n;
 		this.regex = regex;
+	}
+	
+	@Override
+	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
+		Integer n = ParserHandler.returnIntIfExists(constructorArgs, "n");
+		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
+		if (find == null) {
+			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			return null;
+		} else if (n == null) {
+			ParserHandler.reportGenRuleError("n", this.getClass().getName());
+			return null;
+		} else if (regex = null) {
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			return null;
+		} else {
+			return new Split(find, n, regex);
+		}
 	}
 
 	@Override

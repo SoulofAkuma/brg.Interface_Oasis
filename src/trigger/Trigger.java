@@ -2,6 +2,9 @@ package trigger;
 
 import java.util.ArrayList;
 
+import gui.Logger;
+import gui.MessageOrigin;
+import gui.MessageType;
 import listener.ListenerHandler;
 import responder.ResponderHandler;
 
@@ -10,6 +13,8 @@ public class Trigger implements Runnable {
 	private TriggerType type; //Type of the trigger
 	private ArrayList<String> responderIDs = new ArrayList<String>(); //IDs of responders to trigger
 	private ArrayList<String> parserIDs = new ArrayList<String>(); //Parsers to be applied on the 
+	private String triggerID;
+	private String triggerName;
 	private String groupID;
 	private String groupName;
 	private String listenerID;
@@ -32,6 +37,7 @@ public class Trigger implements Runnable {
 			case Manual:
 				while (runMe) {
 					if (trigger) {
+						reportTrigger("manually");
 						triggerMe();
 					}
 					try {
@@ -43,6 +49,7 @@ public class Trigger implements Runnable {
 				int size = ListenerHandler.getRequest(this.listenerID).size();
 				while (runMe) {
 					if (ListenerHandler.getRequest(this.listenerID).size() > size) {
+						reportTrigger("by Listener " + this.listenerID + " \"" + ListenerHandler.getListenerName(this.listenerID) + "\"");
 						triggerMe(process(ListenerHandler.getRequest(this.listenerID).get(size)));
 						size++;
 					}
@@ -55,6 +62,7 @@ public class Trigger implements Runnable {
 				int passed = 0;
 				while (runMe) {
 					if (this.cooldown == passed) {
+						reportTrigger("by internal timer");
 						triggerMe();
 						passed = 0;
 					}
@@ -86,6 +94,11 @@ public class Trigger implements Runnable {
 	
 	public void trigger() {
 		this.trigger = true;
+	}
+	
+	private void reportTrigger(String reason) {
+		String message = "Trigger " + this.triggerID + " \"" + this.triggerName + "\" triggered " + reason;
+		Logger.addMessage(MessageType.Information, MessageOrigin.Trigger, message, this.triggerID, null, null, false);
 	}
 
 }
