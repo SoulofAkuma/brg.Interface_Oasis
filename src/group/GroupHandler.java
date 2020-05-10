@@ -3,6 +3,7 @@ package group;
 import cc.Pair;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
@@ -10,7 +11,7 @@ import settings.Setting;
 
 public class GroupHandler {
 	
-	private static HashMap<String, Pair<ListenerHandler, ResponderHandler>> groups = new HashMap<String, Pair<ListenerHandler, ResponderHandler>>();
+	private static ConcurrentHashMap<String, Pair<ListenerHandler, ResponderHandler>> groups = new ConcurrentHashMap<String, Pair<ListenerHandler, ResponderHandler>>();
 	
 	public static void init(Setting handlerMasterSetting) {
 		for (Setting handlerGroup : handlerMasterSetting.getSubsettings()) {

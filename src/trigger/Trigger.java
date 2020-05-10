@@ -48,8 +48,13 @@ public class Trigger implements Runnable {
 				int size = ListenerHandler.getRequest(this.listenerID).size();
 				while (runMe) {
 					if (ListenerHandler.getRequest(this.listenerID).size() > size) {
+						while (ListenerHandler.getRequest(this.listenerID).get(size) == null) {
+							try {
+								Thread.sleep(10); //Wait until the connection handler has finished its job
+							} catch (InterruptedException e) {}
+						}
 						reportTrigger("by Listener " + this.listenerID + " \"" + ListenerHandler.getListenerName(this.listenerID) + "\"");
-						triggerMe(process(ListenerHandler.getRequest(this.listenerID).get(size)));
+						triggerMe(ListenerHandler.getRequest(this.listenerID).get(size));
 						size++;
 					}
 					try {
@@ -73,19 +78,13 @@ public class Trigger implements Runnable {
 		}
 	}
 	
-	private String process(String[] request) {
-		String result = "";
-		
-		return result;
-	}
-	
 	private void triggerMe() {
 		for (String responderID : this.responderIDs) {
 			TriggerHandler.getResponder(responderID).repond();
 		}
 	}
 	
-	private void triggerMe(String response) {
+	private void triggerMe(String[] response) {
 		for (String responderID : this.responderIDs) {
 			TriggerHandler.getResponder(responderID).repond(response);
 		}		

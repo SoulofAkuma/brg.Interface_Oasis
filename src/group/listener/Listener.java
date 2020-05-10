@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import group.GroupHandler;
 import gui.Logger;
@@ -27,7 +26,6 @@ public class Listener implements Runnable {
 	private ServerSocket serverSocket = null;
 	
 	private ArrayList<Thread> connections = new ArrayList<Thread>(); //The threads of ConnectionHandlers to enable multiple requests at once
-	private static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //A List of the received requests[0] and request bodies[1] to the corresponding listener IDs 
 	
 	protected Listener(String portString, String name, String groupID, String listenerID, String groupName) {
 		this.name = name;
@@ -87,7 +85,7 @@ public class Listener implements Runnable {
 			try {
 				Socket clientSocket = this.serverSocket.accept();
 				int myID = ListenerHandler.inputs.get(this.listenerID).size();
-				ListenerHandler.inputs.get(this.listenerID).add(new String[2]);
+				ListenerHandler.inputs.get(this.listenerID).add(null);
 				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket);
 				this.connections.add(new Thread(connectionHandler));
 				this.connections.get(this.connections.size() - 1).start();

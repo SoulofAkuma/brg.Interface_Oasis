@@ -106,7 +106,7 @@ public class ConnectionHandler implements Runnable {
 		if (success) {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
 		} else {
-			ListenerHandler.inputs.get(this.parentID).set(this.responseID, null);
+			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {null, null});
 		}
 	}
 	

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
 import settings.Setting;
@@ -20,10 +21,10 @@ public class ListenerHandler {
 	private String handlerID; //The unique id of the handler
 	private boolean controllerRunning = false; //Indicates whether the handler has a TimeoutController for its listeners
 	
-	private static HashMap<String, String> activePorts = new HashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
-	private static HashMap<String, String> idToName = new HashMap<String, String>(); //Names of all listeners stored by id, name
-	protected static HashMap<String, Pair<TimeoutController, Thread>> timerController = new HashMap<String, Pair<TimeoutController, Thread>>(); //Threads canceling connectionHandlers whenever they time out (Content-Length not accurate, Wrong formatting, body too long) stored by groupID, thread 
-	protected static HashMap<String, ArrayList<String[]>> inputs = new HashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
+	private static ConcurrentHashMap<String, String> activePorts = new ConcurrentHashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
+	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
+	protected static ConcurrentHashMap<String, Pair<TimeoutController, Thread>> timerController = new ConcurrentHashMap<String, Pair<TimeoutController, Thread>>(); //Threads canceling connectionHandlers whenever they time out (Content-Length not accurate, Wrong formatting, body too long) stored by groupID, thread 
+	protected static ConcurrentHashMap<String, ArrayList<String[]>> inputs = new ConcurrentHashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
 	
 	public ListenerHandler(Setting listenerMasterSetting, String groupID, String groupName) {
 		this.listenerMasterSetting = listenerMasterSetting;

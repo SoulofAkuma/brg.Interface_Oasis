@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
 import gui.Logger;
@@ -17,7 +18,7 @@ public class ParserHandler {
 	
 	private static ArrayList<Parser> parsers = new ArrayList<Parser>();
 	@SuppressWarnings("rawtypes")
-	private static HashMap<String, Class> stdRules = new HashMap<String, Class>();
+	private static ConcurrentHashMap<String, Class> stdRules = new ConcurrentHashMap<String, Class>();
 	
 	private static final String getParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
 	
