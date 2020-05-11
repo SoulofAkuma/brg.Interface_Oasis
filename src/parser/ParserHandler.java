@@ -16,11 +16,16 @@ import xmlhandler.Trace;
 
 public class ParserHandler {
 	
-	private static ArrayList<Parser> parsers = new ArrayList<Parser>();
+	private static HashMap<String, Parser> parsers = new HashMap<String, Parser>();
+	private static HashMap<String, String> indexAssigners = new HashMap<String, String>();
 	@SuppressWarnings("rawtypes")
 	private static ConcurrentHashMap<String, Class> stdRules = new ConcurrentHashMap<String, Class>();
 	
-	private static final String getParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
+	private static final String stdGetParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
+	
+	public static Parser getParser(String parserID) {
+		return ParserHandler.parsers.get(parserID);
+	}
 	
 	public static void init(Setting parserMasterSetting) {
 		initStdList();
@@ -30,44 +35,46 @@ public class ParserHandler {
 			String name = parser.getAttribute("name").getValue();
 			ArrayList<Rule> rules = new ArrayList<Rule>();
 			for (Setting rule : parser.getSettings("Rule")) {
-				ArrayList<Pair<String, String>> attributes = rule.getAttributes();
-				HashMap<String, String> constructorArgs = new HashMap<String, String>();
-				for (Pair<String, String> attribute : attributes) {
-					constructorArgs.put(attribute.getKey(), attribute.getValue());
-				}
-				if (!constructorArgs.containsKey("type")) {
-					reportError("rule type not set in rules of parser " + id + " "+ name, true);
-					break;
-				}
-				if (!ParserHandler.stdRules.containsKey(constructorArgs.get("type"))) {
-					reportError("unkown rule type in rules of parser " + id + " " + name, true);
-					break;
-				}
-				try {
-					@SuppressWarnings("unchecked")
-					Method createRule = ParserHandler.stdRules.get(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
-					Rule newRule = (Rule) createRule.invoke(null, constructorArgs);
-					if (newRule != null) {
-						rules.add(newRule);						
-					} else {
+				if (rule.getName().equals("Rule")) {
+					ArrayList<Pair<String, String>> attributes = rule.getAttributes();
+					HashMap<String, String> constructorArgs = new HashMap<String, String>();
+					for (Pair<String, String> attribute : attributes) {
+						constructorArgs.put(attribute.getKey(), attribute.getValue());
+					}
+					if (!constructorArgs.containsKey("type")) {
+						reportError("rule type not set in rules of parser " + id + " "+ name, true);
 						break;
 					}
-				} catch (NoSuchMethodException | SecurityException e) {
-					reportError("rule type found, but method \"genRule\" couldn't be found",e.getMessage(), true);
-					break;
-				} catch (IllegalAccessException e) {
-					reportError("rule type found, but method \"genRule\" couldn't be accessed",e.getMessage(), true);
-					break;
-				} catch (IllegalArgumentException e) {
-					reportError("rule type found, but method \"genRule\" does not require the interface defined parameters",e.getMessage(), true);
-					break;
-				} catch (InvocationTargetException e) {
-					reportError("rule type found, but method \"genRule\" couldn't be invoked",e.getMessage(), true);
-					break;
+					if (!ParserHandler.stdRules.containsKey(constructorArgs.get("type"))) {
+						reportError("unkown rule type in rules of parser " + id + " " + name, true);
+						break;
+					}
+					try {
+						@SuppressWarnings("unchecked")
+						Method createRule = ParserHandler.stdRules.get(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
+						Rule newRule = (Rule) createRule.invoke(null, constructorArgs);
+						if (newRule != null) {
+							rules.add(newRule);						
+						} else {
+							break;
+						}
+					} catch (NoSuchMethodException | SecurityException e) {
+						reportError("rule type found, but method \"genRule\" couldn't be found",e.getMessage(), true);
+						break;
+					} catch (IllegalAccessException e) {
+						reportError("rule type found, but method \"genRule\" couldn't be accessed",e.getMessage(), true);
+						break;
+					} catch (IllegalArgumentException e) {
+						reportError("rule type found, but method \"genRule\" does not require the interface defined parameters",e.getMessage(), true);
+						break;
+					} catch (InvocationTargetException e) {
+						reportError("rule type found, but method \"genRule\" couldn't be invoked",e.getMessage(), true);
+						break;
+					}
 				}
 			}
 			if (success) {
-				ParserHandler.parsers.add(new Parser(rules));
+				ParserHandler.parsers.put(id, new Parser(rules));
 			}
 		}
 	}
