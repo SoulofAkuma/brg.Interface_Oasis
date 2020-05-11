@@ -8,11 +8,17 @@ public class Constant {
 	private ArrayList<String> values;
 	private ArrayList<String> dynamicValues;
 	private boolean isDynamic;
+	private boolean useHeader;
 	
-	public Constant(ArrayList<String> values, ArrayList<String> dynamicValues, boolean isDynamic) {
+	public Constant(ArrayList<String> values, ArrayList<String> dynamicValues, boolean isDynamic, boolean useHeader) {
 		this.values = values;
 		this.dynamicValues = dynamicValues;
 		this.isDynamic = isDynamic;
+		this.useHeader = useHeader;
+	}
+	
+	public boolean usesHeader() {
+		return this.useHeader;
 	}
 	
 	public void insertValue(int index, String value) {

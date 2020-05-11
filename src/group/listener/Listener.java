@@ -15,9 +15,9 @@ public class Listener implements Runnable {
 	 * This class reads content and responds 
 	 */
 	
-	private final String portString; //String value of port
-	private final String name; //Name of Listener
-	private final int port; //int value of port
+	private String portString; //String value of port
+	private String name; //Name of Listener
+	private int port; //int value of port
 	private boolean canRun; //indicates whether the listener can launch (is false if no valid port is provided)
 	private String groupID; //the id of the group the listener is in
 	private String groupName; //The name of the group the listener is part of
@@ -34,7 +34,7 @@ public class Listener implements Runnable {
 		this.groupName = groupName;
 		this.listenerID = listenerID;
 		ListenerHandler.inputs.put(this.groupID, new ArrayList<String[]>());
-		int tempPort = -1; //This is necessary because the compiler throws an error if the port is modified after it could have been modified in the try/catch phrase
+		int tempPort = -1;
 		boolean isValid = false;
 		try {
 			tempPort = Integer.parseInt(portString);
@@ -70,6 +70,9 @@ public class Listener implements Runnable {
 	
 	@Override
 	public void run() {
+		if (!this.canRun) {
+			return;
+		}
 		this.isActive = true;
 		try {
 			this.serverSocket = new ServerSocket(this.port);
