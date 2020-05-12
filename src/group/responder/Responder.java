@@ -26,8 +26,9 @@ public class Responder {
 	private String groupID;
 	private String responderID;
 	
-	public Responder(String responderID, String parserID, ArrayList<Constant> constants, String portString, Constant url, String groupName) {
+	public Responder(String responderID, String parserID, ArrayList<Constant> constants, String portString, Constant url, String groupName, String groupID) {
 		this.responderID = responderID;
+		this.groupID = groupID;
 		this.parserID = parserID;
 		this.constants = constants;
 		this.portString = portString;
@@ -97,6 +98,8 @@ public class Responder {
 			}
 		} catch (IOException e) {
 			reportError("Couldn't connect socket", e.getMessage());
+		} catch (InterruptedException e) {
+			reportError("Interrupted responder response", e.getMessage());
 		}
 	}
 	

@@ -11,22 +11,17 @@ public class Trigger implements Runnable {
 	
 	private TriggerType type; //Type of the trigger
 	private ArrayList<String> responderIDs = new ArrayList<String>(); //IDs of responders to trigger
-	private ArrayList<String> parserIDs = new ArrayList<String>(); //Parsers to be applied on the 
 	private String triggerID;
 	private String triggerName;
-	private String groupID;
-	private String groupName;
-	private String listenerID;
+	private String actionID;
 	private boolean trigger = false;
-	private boolean crossGroup;
 	private boolean runMe = false;
 	private int cooldown;
 	
-	public Trigger(TriggerType type, ArrayList<String> responderIDs, String groupID, String groupName) {
+	public Trigger(TriggerType type, ArrayList<String> responderIDs, String actionID) {
 		this.type = type;
 		this.responderIDs.addAll(responderIDs);
-		this.groupID = groupID;
-		this.groupName = groupName;
+		this.actionID = actionID;
 	}
 	
 	@Override
@@ -34,7 +29,7 @@ public class Trigger implements Runnable {
 		this.runMe = true;
 		switch (this.type) {
 			case Manual:
-				while (runMe) {
+				while (this.runMe) {
 					if (trigger) {
 						reportTrigger("manually");
 						triggerMe();
@@ -45,16 +40,16 @@ public class Trigger implements Runnable {
 				}
 			break;
 			case Listener:
-				int size = ListenerHandler.getRequest(this.listenerID).size();
-				while (runMe) {
-					if (ListenerHandler.getRequest(this.listenerID).size() > size) {
-						while (ListenerHandler.getRequest(this.listenerID).get(size) == null) {
+				int size = ListenerHandler.getRequest(this.actionID).size();
+				while (this.runMe) {
+					if (ListenerHandler.getRequest(this.actionID).size() > size) {
+						while (ListenerHandler.getRequest(this.actionID).get(size) == null) {
 							try {
 								Thread.sleep(10); //Wait until the connection handler has finished its job
 							} catch (InterruptedException e) {}
 						}
-						reportTrigger("by Listener " + this.listenerID + " \"" + ListenerHandler.getListenerName(this.listenerID) + "\"");
-						triggerMe(ListenerHandler.getRequest(this.listenerID).get(size));
+						reportTrigger("by Listener " + this.actionID + " \"" + ListenerHandler.getListenerName(this.actionID) + "\"");
+						triggerMe(ListenerHandler.getRequest(this.actionID).get(size));
 						size++;
 					}
 					try {
@@ -64,7 +59,7 @@ public class Trigger implements Runnable {
 			break;
 			case Timer:
 				int passed = 0;
-				while (runMe) {
+				while (this.runMe) {
 					if (this.cooldown == passed) {
 						reportTrigger("by internal timer");
 						triggerMe();
@@ -73,6 +68,11 @@ public class Trigger implements Runnable {
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {}
+				}
+			break;
+			case Responder:
+				while (this.runMe) {
+					
 				}
 			break;
 		}

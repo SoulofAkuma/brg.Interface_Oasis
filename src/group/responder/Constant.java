@@ -10,10 +10,10 @@ public class Constant {
 	private boolean isDynamic;
 	private boolean useHeader;
 	
-	public Constant(ArrayList<String> values, ArrayList<String> dynamicValues, boolean isDynamic, boolean useHeader) {
+	public Constant(ArrayList<String> values, ArrayList<String> dynamicValues, boolean useHeader) {
 		this.values = values;
 		this.dynamicValues = dynamicValues;
-		this.isDynamic = isDynamic;
+		this.isDynamic = (dynamicValues.size() > 0) ? true : false;
 		this.useHeader = useHeader;
 	}
 	
