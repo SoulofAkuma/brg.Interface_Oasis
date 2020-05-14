@@ -2,3 +2,5 @@ Reserved GroupIDs: 000000 (Static File Handler), 000001 (Static Group Handler), 
 Reserved GroupNames: File Handler (Manager), Group Handler (Handler), Setting Handler (SettingHandler), Setting Parser (Setting, SettingFunctions), Parser Handler (ParserHandler)
 
 Reserved ParserIDs: 000000 (Standard GET Parser)
+
+Reserved Constant Names: URL

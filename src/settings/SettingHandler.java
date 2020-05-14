@@ -1,6 +1,9 @@
 package settings;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,8 +39,13 @@ public class SettingHandler {
 	public static final String SETTINGHANDLERNAME = "Setting Handler";
 	public static final String SETTINGPARSINGNAME = "Setting Parser";
 	public static final String PARSERHANDLERNAME = "Parser Handler";
+	public static final ConcurrentHashMap<String, ArrayList<String>> RESERVEDID = new ConcurrentHashMap<String, ArrayList<String>>();
+	
+	private static HashMap<String, Boolean> missingTable; //Reusable for attribute checking
 	
 	public static void init() {
+		
+		initReserved();
 		
 		fileID = Manager.newFile(Manager.checkPath(PATH) + Manager.SEPERATOR + FILENAME);
 		
@@ -95,7 +103,11 @@ public class SettingHandler {
 		ArrayList<Integer> removeParserIndexes = new ArrayList<Integer>();
 		
 		for (int i = 0; i < tempGroupMasterSetting.getSubsettings().size(); i++) {
-			if (!checkGroupSetting(tempGroupMasterSetting.getSubsettings().get(i), i)) {
+			int settingID = tempGroupMasterSetting.getSubsettings().get(i).getID();
+			Setting finalSetting;
+			if ((finalSetting = checkGroupSetting(tempGroupMasterSetting.getSubsettings().get(i), i)) != null) {
+				tempGroupMasterSetting.replaceID(settingID, finalSetting);
+			} else {
 				removeGroupIndexes.add(i);
 			}
 		}
@@ -132,6 +144,19 @@ public class SettingHandler {
 		TriggerHandler.init(SettingHandler.triggerMasterSetting);
 		ParserHandler.init(SettingHandler.ParserMasterSetting);
 		
+	}
+	
+	public static void initReserved() {
+		ArrayList<String> group = new ArrayList<String>();
+		group.add("000000"); //FileHandler
+		group.add("000001"); //GroupHandler
+		group.add("000002"); //SettingHandler
+		group.add("000003"); //SettingFunctions
+		group.add("000004"); //ParserHandler
+		SettingHandler.RESERVEDID.put("Group", group);
+		ArrayList<String> parser = new ArrayList<String>();
+		parser.add("000000"); //Standard GET Parser
+		SettingHandler.RESERVEDID.put("Parser", parser);
 	}
 	
 	public static void close() {
@@ -181,37 +206,43 @@ public class SettingHandler {
 	}
 	
 	//Syntax Checkers
-	private static boolean checkGroupSetting(Setting checkMe, int ite) {
+	private static Setting checkGroupSetting(Setting checkMe, int ite) {
+		ArrayList<Integer> removeIDs = new ArrayList<Integer>();
 		if (!checkMe.getName().equals("Group")) {
 			reportSyntaxError("Group Name Checker", "Unknown Group \"" + checkMe.getName() + "\"", true);
-			return false;
+			return null;
 		}
-		int count = 0;
+		createMissingTable("name", "id");
 		String id = null;
 		for (Pair<String, String> attribute : checkMe.getAttributes()) {
 			switch (attribute.getKey()) {
 				case "name":
 					if (!matchesRegex("[0-9A-Za-z_.()-;,:/!?& ]+", attribute.getValue())) {
-						reportSyntaxError("Group Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false);
-						return false;
+						reportSyntaxError("Group Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\". Skipping Group", false);
+						return null;
 					} else {
-						count++;
+						updateMissing("name");
 					}
 				break;
 				case "id":
 					if (!matchesRegex("[0-9]+", attribute.getValue())) {
-						reportSyntaxError("Group Attribute checker", "Invalid id value \"" + attribute.getValue() + "\"", false);
-						return false;
+						reportSyntaxError("Group Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\". Skipping Group", false);
+						return null;
 					} else {
-						id = attribute.getValue();
-						count++;
+						if (SettingHandler.RESERVEDID.get("Group").contains(attribute.getValue())) {
+							reportSyntaxError("Group Attribute Checker", "Reserved Group ID found " + attribute.getValue() + ". Skipping Group", false);
+							return null;
+						} else {
+							id = attribute.getValue();
+							updateMissing("id");
+						}
 					}
 				break;
 			}
 		}
-		if (count != 2) {
-			reportSyntaxError("Group Attribute checker", (2 - count) + " missing attribute(s) in " + ite + ". Group", false);
-			return false;
+		if (!hasAll()) {
+			reportSyntaxError("Group Attribute checker", "Missing attribute(s) in " + ite + ". Group (" + printMissing() + ")", false);
+			return null;
 		}
 		boolean hadListener = false;
 		boolean hadResponder = false;
@@ -221,91 +252,186 @@ public class SettingHandler {
 					reportSyntaxError("Group Element Checker", "Duplicate Responder Definition in GroupID " + id, true);
 				}
 				hadListener = true;
-				int attrCount = 0;
+				createMissingTable("name", "port", "id");
 				for (Setting subject : group.getSubsettings()) {
 					if (!subject.getName().equals("Listener")) {
 						reportSyntaxError("Group Listeners Element Checker", "Unknown Element \"" + subject.getName() + "\"", true);
+						removeIDs.add(subject.getID());
 						continue;
 					}
+					boolean next = false;
 					for (Pair<String, String> attribute : subject.getAttributes()) {
 						switch (attribute.getKey()) {
 						case "name":
 							if (!matchesRegex("[0-9A-Za-z_.()-;,:/!?& ]+", subject.getValue())) {
 								reportSyntaxError("Group Listener Attribute Checker", "Invalid name value \"" + String.valueOf(subject.getValue()) + "\"", false);
-								return false;
+								removeIDs.add(subject.getID());
+								next = true;
+								break;
 							} else {
-								attrCount++;
+								updateMissing("name");
 							}
 							break;
 						case "port":
 							if (!matchesRegex("[0-9]+", subject.getValue())) {
 								reportSyntaxError("Group Listener Attribute Checker", "Invalid port value \"" + String.valueOf(subject.getValue()) + "\"", false);
-								return false;
+								removeIDs.add(subject.getID());
+								next = true;
+								break;
 							} else {
-								attrCount++;
+								updateMissing("port");
 							}
 							break;
 						case "id":
 							if (!matchesRegex("[0-9]+", subject.getValue())) {
 								reportSyntaxError("Group Listener Attribute Checker", "Invalid id value \""  + String.valueOf(subject.getValue()) + "\"", false);
-								return false;
+								removeIDs.add(subject.getID());
+								next = true;
+								break;
 							} else {
-								attrCount++;
+								updateMissing("id");
 							}
 							break;
 						default:
 							reportSyntaxError("Group Listener Attribute Checker", "Unknown Listener Attribute \"" + subject.getName() + "\"", true);
 						}
+						if (next) {
+							continue;
+						}
 					}
-					if (attrCount != 3) {
-						reportSyntaxError("Group Listener Attribute Checker", (3 - attrCount) + " Missing attribute(s)", true);
-						return false;
+					if (!hasAll()) {
+						reportSyntaxError("Group Listener Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", true);
+						checkMe.removeSetting(subject.getID());
+						continue;
 					}
 				}
 			} else if (group.getName().equals("Responders")) {
 				if (hadResponder) {
-					reportSyntaxError("Group Element Checker", "Duplicate Responder Definition in GroupID " + id, true); //TODO: Assignment of IDs, calling of handlers
+					reportSyntaxError("Group Element Checker", "Duplicate Responder Definition in GroupID " + id, true);
 				}
 				hadResponder = true;
-				int attrCount = 0;
 				for (Setting subject : group.getSubsettings()) {
-					switch (subject.getName()) {
-						case "name":
-							if (!matchesRegex("[0-9A-Za-z_.()-;,:/!?& ]+", subject.getValue())) {
-								reportSyntaxError("Group Responder Value Checker", "Invalid name value", false);
-								return false;
-							} else {
-								attrCount++;
-							}
-						break;
-						case "port":
-							if (!matchesRegex("[0-9]+", subject.getValue())) {
-								reportSyntaxError("Group Responder Value Checker", "Invalid port value", false);
-								return false;
-							} else {
-								attrCount++;
-							}
-						break;
-						case "id":
-							if (!matchesRegex("[0-9]+", subject.getValue())) {
-								reportSyntaxError("Group Responder Value Checker", "Invalid id value", false);
-								return false;
-							} else {
-								attrCount++;
-							}
-						break;
-					default:
-						reportSyntaxError("Group Responder Value Checker", "Unknown Responder Element \"" + subject.getName() + "\"", true);
+					createMissingTable("name", "port", "id");
+					String name = "";
+					boolean next = false;
+					if (!subject.getName().equals("Responder")) {
+						reportSyntaxError("Group Responder Element Checker", "Unknown Element \"" + subject.getName() + "\"", true);
+						continue;
 					}
-				}
-				if (attrCount != 3) {
-					return false;
+					for (Pair<String, String> attribute : subject.getAttributes()) {
+						switch (attribute.getKey()) {
+							case "name":
+								if (!matchesRegex("[0-9A-Za-z_.()-;,:/!?& ]+", attribute.getValue())) {
+									reportSyntaxError("Group Responder Value Checker", "Invalid name value", false);
+									removeIDs.add(subject.getID());
+									next = true;
+									break;
+								} else {
+									name = attribute.getValue();
+									updateMissing("name");;
+								}
+							break;
+							case "port":
+								if (!matchesRegex("[0-9]+", attribute.getValue())) {
+									reportSyntaxError("Group Responder Value Checker", "Invalid port value", false);
+									removeIDs.add(subject.getID());
+									next = true;
+									break;
+								} else {
+									updateMissing("port");
+								}
+							break;
+							case "id":
+								if (!matchesRegex("[0-9]+", attribute.getValue())) {
+									reportSyntaxError("Group Responder Value Checker", "Invalid id value", false);
+									removeIDs.add(subject.getID());
+									next = true;
+									break;
+								} else {
+									updateMissing("id");
+								}
+							break;
+						default:
+							reportSyntaxError("Group Responder Value Checker", "Unknown Responder Element \"" + subject.getName() + "\"", true);
+						}
+					}
+					if (next) {
+						continue;
+					}
+					if (!hasAll()) {
+						reportSyntaxError("Group Responder Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", true);
+						checkMe.removeSetting(subject.getID());
+						continue;
+					}
+					if (subject.hasSetting("Constants")) {
+						boolean nextt = false;
+						for (Setting constant : subject.getSettings("Constants").get(0).getSubsettings()) {
+							createMissingTable("name", "useHeader", "id");
+							for (Pair<String, String> attribute : constant.getAttributes()) {
+								switch (attribute.getKey()) {
+									case "name":
+										if (!matchesRegex("[0-9A-Za-z_.()-;,:/!?& ]+", attribute.getValue())) {
+											reportSyntaxError("Group Responder Constant Attribute Checker", "Invalid name value", false);
+											removeIDs.add(subject.getID());
+											next = true;
+											break;
+										} else {
+											updateMissing("name");
+										}
+									break;
+									case "useHeader":
+										if (!matchesRegex("(true|false)", attribute.getValue())) {
+											reportSyntaxError("Group Responder Constant Attribute Checker", "Invalid useHeader value", false);
+											removeIDs.add(subject.getID());
+											next = true;
+											break;
+										} else {
+											updateMissing("useHeader");
+										}
+									break;
+									case "id":
+										if (matchesRegex("[0-9]+", attribute.getValue())) {
+											reportSyntaxError("Group Responder Constant Attribute Checker", "Invalid id value", false);
+											removeIDs.add(subject.getID());
+											next = true;
+											break;
+										} else {
+											updateMissing("id");
+										}
+									break;
+									default:
+										reportSyntaxError("Group Responder Attribute Checker", "Unknown Attribute\"" + attribute.getValue() + "\"", true);
+								}
+							}
+							if (constant.hasSetting("Values")) {
+								if (constant.getSettings("Values").size() > 1) {
+									reportSyntaxError("Group Responder Element Checker", "Multiple Values Elements, using the first one", true);
+								}//TODO: Do constant syntax checking
+								
+							} else {
+								reportSyntaxError("Group Responder Constant Checker", "Missing Constant Values Element, Skipping Responder " + name, false);
+								removeIDs.add(subject.getID());
+								nextt = true;
+								break;
+							}
+						}
+						if (nextt) {
+							continue;
+						}
+					} else {
+						reportSyntaxError("Group Responder Constant Checker", "Missing Consant Setting in Responder " + name + ". Ignoring Responder", false);
+						removeIDs.add(subject.getID());
+						continue;
+					}
 				}
 			} else {
 				reportSyntaxError("Group Master Element Checker", "Unknown Group Element \"" + group.getName() + "\"", true);
 			}
 		}
-		return true;
+		for (int removeID : removeIDs) {
+			checkMe.removeSetting(removeID);
+		}
+		return checkMe;
 	}
 	
 	public static boolean checkParserSetting(Setting checkMe, int ite) {
@@ -340,6 +466,41 @@ public class SettingHandler {
 		}
 		//Further syntax checking is not necessary. The parser consists of many rules which are independently checked by the corresponding rule
 		return true;
+	}
+	
+	public static void createMissingTable(String... keys) {
+		HashMap<String, Boolean> table = new HashMap<String, Boolean>();
+		for (String key : keys) {
+			table.put(key, false);
+		}
+		SettingHandler.missingTable = table;
+	}
+	
+	public static void updateMissing(String key) {
+		SettingHandler.missingTable.remove(key);
+		SettingHandler.missingTable.put(key, true);
+	}
+	
+	public static String printMissing() {
+		String missingString = "";
+		for (Map.Entry<String, Boolean> entry : SettingHandler.missingTable.entrySet()) {
+			if (!entry.getValue()) {
+				if (!missingString.isEmpty()) {
+					missingString += ", ";
+				}
+				missingString += entry.getKey();
+			}
+		}
+		return missingString;
+	}
+	
+	public static boolean hasAll() {
+		for (Map.Entry<String, Boolean> entry : SettingHandler.missingTable.entrySet()) {
+			if (!entry.getValue()) {
+				return false;
+			}
+		}
+		return false;
 	}
 	
 	public static boolean checkTriggerSetting(Setting checkMe, int ite) {

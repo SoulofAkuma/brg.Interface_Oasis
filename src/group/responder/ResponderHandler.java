@@ -26,9 +26,12 @@ public class ResponderHandler {
 			String responderID = responder.getAttribute("id").getValue();
 			String portString = responder.getAttribute("port").getValue();
 			String parserID = responder.getAttribute("parserID").getValue();
-			Constant url = parseConstant(responder.getSettings("Url").get(0));
+			Constant url;
 			ArrayList<Constant> constants = new ArrayList<Constant>();
 			for (Setting constantSetting : responder.getSettings("Constant")) {
+				if (constantSetting.getName().equals("Url")) {
+					url = parseConstant(constantSetting);
+				}
 				constants.add(parseConstant(constantSetting));
 			}
 			this.responders.put(responderID, new Responder(responderID, parserID, constants, portString, url, responderName, parserID));
@@ -37,6 +40,7 @@ public class ResponderHandler {
 	}
 	
 	private Constant parseConstant(Setting constant) {
+		//Acquire information by tags and NOT by attributes. Tags will be named "Value" and "DynamicValue"
 		String[] values = constant.getAttribute("values").getValue().split(",");
 		String[] dynamicValues = constant.getAttribute("dynamicValues").getValue().split(",");
 		boolean useHeader = Boolean.parseBoolean(constant.getAttribute("useHeader").getValue());

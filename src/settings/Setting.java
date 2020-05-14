@@ -332,7 +332,7 @@ public class Setting {
 		return results;
 	}
 	
-	//Returns whether the setting hsa a setting of a specified name
+	//Returns whether the setting has a setting of a specified name
 	public boolean hasSetting(String name) {
 		return (this.getSettings(name).size() > 0);
 	}
