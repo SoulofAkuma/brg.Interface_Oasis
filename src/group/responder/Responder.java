@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import group.listener.RequestType;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
@@ -25,8 +26,9 @@ public class Responder {
 	private String groupName;
 	private String groupID;
 	private String responderID;
+	private RequestType requestType;
 	
-	public Responder(String responderID, String parserID, ArrayList<Constant> constants, String portString, Constant url, String groupName, String groupID) {
+	public Responder(String responderID, String parserID, ArrayList<Constant> constants, String portString, Constant url, String groupName, String groupID, RequestType requestType) {
 		this.responderID = responderID;
 		this.groupID = groupID;
 		this.parserID = parserID;
@@ -48,6 +50,7 @@ public class Responder {
 		this.port = tempPort;
 		this.url = url;
 		this.groupName = groupName;
+		this.requestType = requestType;
 	}
 
 	public void repond() {

@@ -41,7 +41,7 @@ public class ResponderHandler {
 	
 	private Constant parseConstant(Setting constant) {
 		//Acquire information by tags and NOT by attributes. Tags will be named "Value" and "DynamicValue"
-		String[] values = constant.getAttribute("values").getValue().split(",");
+		String[] values = constant.getAttribute("values").getValue().split(","); //TODO: Get the null values in there
 		String[] dynamicValues = constant.getAttribute("dynamicValues").getValue().split(",");
 		boolean useHeader = Boolean.parseBoolean(constant.getAttribute("useHeader").getValue());
 		return new Constant(new ArrayList<String>(Arrays.asList(values)),new ArrayList<String>(Arrays.asList(dynamicValues)), useHeader);
