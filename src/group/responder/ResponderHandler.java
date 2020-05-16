@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import constant.Constant;
 import settings.Setting;
 
 public class ResponderHandler {
@@ -28,7 +29,7 @@ public class ResponderHandler {
 			String parserID = responder.getAttribute("parserID").getValue();
 			Constant url;
 			ArrayList<Constant> constants = new ArrayList<Constant>();
-			for (Setting constantSetting : responder.getSettings("Constant")) {
+			for (Setting constantSetting : responder.getSettings("Constants").get(0).getSettings("Constant")) {
 				if (constantSetting.getName().equals("Url")) {
 					url = parseConstant(constantSetting);
 				}
@@ -41,13 +42,12 @@ public class ResponderHandler {
 	
 	private Constant parseConstant(Setting constant) {
 		//Acquire information by tags and NOT by attributes. Tags will be named "Value" and "DynamicValue"
-		String[] values = constant.getAttribute("values").getValue().split(","); //TODO: Get the null values in there
-		String[] dynamicValues = constant.getAttribute("dynamicValues").getValue().split(",");
 		boolean useHeader = Boolean.parseBoolean(constant.getAttribute("useHeader").getValue());
-		return new Constant(new ArrayList<String>(Arrays.asList(values)),new ArrayList<String>(Arrays.asList(dynamicValues)), useHeader);
+		String name = constant.getAttribute("name").getValue();
+		String id = constant.getAttribute("id").getValue();
+		return new Constant();
 	}
 	
 	public void stopResponder() {
-		
 	}
 }

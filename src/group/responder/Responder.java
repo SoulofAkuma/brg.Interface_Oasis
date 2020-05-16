@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import constant.Constant;
 import group.listener.RequestType;
 import gui.Logger;
 import gui.MessageOrigin;

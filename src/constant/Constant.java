@@ -1,4 +1,4 @@
-package group.responder;
+package constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;

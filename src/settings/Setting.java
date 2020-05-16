@@ -58,6 +58,10 @@ public class Setting {
 		return this.level;
 	}
 	
+	public Setting getBackup() {
+		return new Setting(this);
+	}
+	
 	//Parses an xml String into a setting
 	public static Setting parseSetting(String input, int level) {
 		if ((input == null || input.isBlank()) && level != 1) {
@@ -174,6 +178,19 @@ public class Setting {
 		this.level = level;
 		this.sID = Setting.sIDState++;
 		Setting.sIDState++;
+	}
+	
+	private Setting(Setting obj) {
+		this.attributes = (ArrayList<Pair<String, String>>) obj.attributes.clone();
+		this.corrupt = obj.corrupt;;
+		this.isEmpty = obj.isEmpty;
+		this.level = obj.level;
+		this.name = obj.name;
+		this.namespaceURI = String.valueOf(obj.namespaceURI);
+		this.node = obj.node.cloneNode(true);
+		this.sID = obj.sID;
+		this.subsettings = (ArrayList<Setting>) obj.subsettings.clone();
+		this.value = String.valueOf(obj.value);
 	}
 	
 	private void replaceAll(Setting setting) {
