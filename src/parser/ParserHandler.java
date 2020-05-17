@@ -90,23 +90,23 @@ public class ParserHandler {
 	
 	private static void reportError(String cause, boolean onInit) {
 		String message = (onInit) ? "Parser creation failed with " + cause : "Parsing failed with " + cause;
-		String elements[] = {"GroupID", "GroupName", "Cause", "SettingRelated"};
-		String values[] = {SettingHandler.PARSERHANDLERID, SettingHandler.PARSERHANDLERNAME, cause, String.valueOf(onInit)};
-		Logger.addMessage(MessageType.Error, MessageOrigin.Parser, message, SettingHandler.PARSERHANDLERID, elements, values, true);
+		String elements[] = {"ID", "Origin", "Cause", "SettingRelated"};
+		String values[] = {SettingHandler.PARSERHANDLERID, MessageOrigin.ParserHandler.name(), cause, String.valueOf(onInit)};
+		Logger.addMessage(MessageType.Error, MessageOrigin.ParserHandler, message, SettingHandler.PARSERHANDLERID, elements, values, true);
 	}
 	
 	private static void reportError(String cause, String errorMessage, boolean onInit) {
-		String message = (onInit) ? "Parser creation reported " + errorMessage + "because of " + cause : "Parsing failed with " + errorMessage + " due to " + cause;
-		String elements[] = {"GroupID", "GroupName", "Cause", "SettingRelated", "ErrorMessage"};
-		String values[] = {SettingHandler.PARSERHANDLERID, SettingHandler.PARSERHANDLERNAME, cause, String.valueOf(onInit), errorMessage};
-		Logger.addMessage(MessageType.Error, MessageOrigin.Parser, message, SettingHandler.PARSERHANDLERID, elements, values, true);		
+		String message = (onInit) ? "Parser creation reported " + errorMessage + "because of " + cause : "Parsing failed with " + errorMessage;
+		String elements[] = {"ID", "Origin", "Cause", "SettingRelated", "ErrorMessage"};
+		String values[] = {SettingHandler.PARSERHANDLERID, MessageOrigin.ParserHandler.name(), cause, String.valueOf(onInit), errorMessage};
+		Logger.addMessage(MessageType.Error, MessageOrigin.ParserHandler, message, SettingHandler.PARSERHANDLERID, elements, values, true);		
 	}
 	
 	public static void reportGenRuleError(String missingName, String ruleType) {
 		String message = "Rule creation of "+ ruleType + " rule failed, because " + missingName + "is missing or incorrectly formatted";
-		String elements[] = {"GroupID", "GroupName", "Missing", "RuleType"};
-		String values[] = {SettingHandler.PARSERHANDLERID, SettingHandler.PARSERHANDLERNAME, missingName, ruleType};
-		Logger.addMessage(MessageType.Error, MessageOrigin.Parser, message, SettingHandler.PARSERHANDLERID, elements, values, true);
+		String elements[] = {"ID", "Origin", "Missing", "RuleType"};
+		String values[] = {SettingHandler.PARSERHANDLERID, MessageOrigin.ParserHandler.name(), missingName, ruleType};
+		Logger.addMessage(MessageType.Error, MessageOrigin.ParserHandler, message, SettingHandler.PARSERHANDLERID, elements, values, true);
 	}
 	
 	public static boolean isInt(String string) {

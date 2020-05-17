@@ -1,0 +1,21 @@
+<InterfaceOasis>
+  <Groups>
+    <Group name="sampleGroup" id="123456">
+      <Listeners>
+
+      </Listeners>
+      <Responders>
+
+      </Responders>
+    </Group>
+  </Groups>
+  <Triggers>
+
+  </Triggers>
+  <Parsers>
+
+  </Parsers>
+  <Constants>
+
+  </Constants>
+</InterfaceOasis>

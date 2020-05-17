@@ -3,8 +3,9 @@ package gui;
 public enum MessageOrigin {
 	Listener,
 	Responder,
-	Parser,
-	Settings,
-	Setup,
-	Trigger
+	ParserHandler,
+	SettingHandler,
+	SettingParser,
+	Trigger,
+	FileHandler
 }

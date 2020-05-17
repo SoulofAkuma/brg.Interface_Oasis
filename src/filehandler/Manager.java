@@ -134,9 +134,9 @@ public class Manager {
 	}
 	
 	private static void reportError(String source, String causes, String errorMessage, boolean isFatal) {
-		String message = source + " in " + SettingHandler.FILEHANDLERNAME + " reported " + causes + " caused by " + errorMessage;
-		String[] elements = {"GroupID", "GroupName", "Source", "Causes", "ErrorMessage"};
-		String[] values = {SettingHandler.FILEHANDLERID, SettingHandler.FILEHANDLERNAME, source, causes, errorMessage};
+		String message = source + " in the File Handler reported " + causes + " caused by " + errorMessage;
+		String[] elements = {"ID", "Origin", "Source", "Causes", "ErrorMessage"};
+		String[] values = {SettingHandler.FILEHANDLERID, MessageOrigin.FileHandler.name(), source, causes, errorMessage};
 		Logger.addMessage(MessageType.Error, MessageOrigin.Setup, message, SettingHandler.FILEHANDLERID, elements, values, isFatal);
 	}
 }
