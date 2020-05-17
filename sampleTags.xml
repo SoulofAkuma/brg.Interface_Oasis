@@ -1,8 +1,8 @@
 <InterfaceOasis>
   <Groups>
-    <Group name="sampleGroup" id="123456">
+    <Group name="SampleGroup" id="000000000">
       <Listeners>
-
+        <Listener name="SampleListener" id=""
       </Listeners>
       <Responders>
 
