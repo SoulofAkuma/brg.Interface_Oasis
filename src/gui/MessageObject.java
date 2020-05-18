@@ -30,7 +30,7 @@ public class MessageObject {
 				message += timePrefix + " WARINING " + this.origin.name() + " " + this.id + ": " + this.message;
 			break;
 			case Error:
-				message += timePrefix + "Error " + this.origin.name() + " " + this.id + ": " + this.message;
+				message += timePrefix + " Error " + this.origin.name() + " " + this.id + ": " + this.message;
 			break;
 		}
 		return message;

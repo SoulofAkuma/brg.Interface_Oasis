@@ -18,7 +18,7 @@
       <Rule type="Discard" find="discardMe" inverted="false" regex="false" flags="s,a"/>
       <Rule type="Isolate" find="[0-9]+"/>
       <Rule type="Replace" find="hello" replace="olleh" regex="false"/>
-      <Rule type="Split" find ="," n="1" regex="alse"
+      <Rule type="Split" find ="," n="1" regex="false"/>
     </Parser>
   </Parsers>
   <Constants>

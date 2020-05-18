@@ -187,7 +187,7 @@ public class Setting {
 		this.level = obj.level;
 		this.name = obj.name;
 		this.namespaceURI = String.valueOf(obj.namespaceURI);
-		this.node = obj.node.cloneNode(true);
+		this.node = obj.node;
 		this.sID = obj.sID;
 		this.subsettings = (ArrayList<Setting>) obj.subsettings.clone();
 		this.value = String.valueOf(obj.value);

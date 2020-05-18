@@ -74,6 +74,7 @@ public class SettingHandler {
 			wasEmpty = true;
 		}
 		
+		
 		if (!masterSetting.hasSetting("Groups") || masterSetting.getSettings("Groups").get(0).getLevel() != 2) {
 			resetInformation("No Groups found - Resetting to default");
 			masterSetting.addSetting("Groups", null, null);
@@ -133,7 +134,7 @@ public class SettingHandler {
 		for (int i = 0; i < tempGroupMasterSetting.getSubsettings().size(); i++) {
 			int settingID = tempGroupMasterSetting.getSubsettings().get(i).getID();
 			Setting finalSetting;
-			if ((finalSetting = checkGroupSetting(tempGroupMasterSetting.getSubsettings().get(i), i)) != null) {
+			if ((finalSetting = checkGroupSetting(tempGroupMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempGroupMasterSetting.replaceID(settingID, finalSetting);
 			} else {
 				removeGroupIndexes.add(i);
@@ -143,7 +144,7 @@ public class SettingHandler {
 		for (int i = 0; i < tempTriggerMasterSetting.getSubsettings().size(); i++) {
 			int settingID = tempGroupMasterSetting.getSubsettings().get(i).getID();
 			Setting finalSetting;
-			if ((finalSetting = checkTriggerSetting(tempTriggerMasterSetting.getSubsettings().get(i), i)) != null) {
+			if ((finalSetting = checkTriggerSetting(tempTriggerMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempGroupMasterSetting.replaceID(settingID, finalSetting);
 			} else {
 				removeGroupIndexes.add(i);
@@ -153,7 +154,7 @@ public class SettingHandler {
 		for (int i = 0; i < tempParserMasterSetting.getSubsettings().size(); i++) {
 			int settingID = tempParserMasterSetting.getSubsettings().get(i).getID();
 			Setting finalSetting;
-			if ((finalSetting = checkParserSetting(tempParserMasterSetting.getSubsettings().get(i), i)) != null) {
+			if ((finalSetting = checkParserSetting(tempParserMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempParserMasterSetting.replaceID(settingID, finalSetting);
 			} else {
 				removeParserIndexes.add(i);
@@ -163,7 +164,7 @@ public class SettingHandler {
 		for (int i = 0; i < tempConstantMasterSetting.getSubsettings().size(); i++) {
 			int settingID = tempConstantMasterSetting.getSubsettings().get(i).getID();
 			Setting finalSetting;
-			if ((finalSetting = checkConstantSetting(tempConstantMasterSetting.getSubsettings().get(i), i)) != null) {
+			if ((finalSetting = checkConstantSetting(tempConstantMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempConstantMasterSetting.replaceID(settingID, finalSetting);
 			} else {
 				removeConstantIndexes.add(i);
@@ -197,10 +198,10 @@ public class SettingHandler {
 		SettingHandler.parserMasterSetting = tempParserMasterSetting;
 		SettingHandler.constantMasterSetting = tempConstantMasterSetting;
 		
-		GroupHandler.init(SettingHandler.groupMasterSetting);
-		TriggerHandler.init(SettingHandler.triggerMasterSetting);
-		ParserHandler.init(SettingHandler.parserMasterSetting);
-		ConstantHandler.init(SettingHandler.constantMasterSetting);
+//		GroupHandler.init(SettingHandler.groupMasterSetting);
+//		TriggerHandler.init(SettingHandler.triggerMasterSetting);
+//		ParserHandler.init(SettingHandler.parserMasterSetting);
+//		ConstantHandler.init(SettingHandler.constantMasterSetting);
 	}
 	
 	public static void initReserved() {
@@ -274,7 +275,7 @@ public class SettingHandler {
 		MessageOrigin origin = MessageOrigin.SettingHandler;
 		String[] elements = {"ID", "Origin", "Source", "Message"};
 		String[] values = {SettingHandler.SETTINGHANDLERID, MessageOrigin.SettingHandler.name(), source, message};
-		String objectMessage = source + " in the setting syntax checker reported " + message + " (ID: " + id +"Element Iteration: " + String.valueOf(iteration) + ")";
+		String objectMessage = source + " in the setting syntax checker reported " + message + " (ID: " + id +" Element Iteration: " + String.valueOf(iteration) + ")";
 		Logger.addMessage(type, origin, objectMessage, SettingHandler.SETTINGHANDLERID, elements, values, false);
 	}
 	
@@ -283,7 +284,7 @@ public class SettingHandler {
 			Logger.addMessage(MessageType.Warning, MessageOrigin.SettingHandler, "Duplicate " + name + " setting - Every Setting except the first one is ignored", SettingHandler.SETTINGHANDLERID, null, null, false);
 		}
 	}
-	
+	//TODO: Rework attribute acquisition of setting parser
 	//Syntax Checkers
 	private static Setting checkGroupSetting(Setting checkMe, int ite) {
 		ArrayList<Integer> removeIDs = new ArrayList<Integer>();
@@ -325,7 +326,7 @@ public class SettingHandler {
 			}
 		}
 		if (!hasAll()) {
-			reportSyntaxError("Group Attribute checker", "Missing attribute(s) in Group (" + printMissing() + "). Removing Group", false, ite);
+			reportSyntaxError("Group Attribute Checker", "Missing attribute(s) in Group (" + printMissing() + "). Removing Group", false, ite);
 			returnNull = true;
 		}
 		boolean hadListener = false;
@@ -710,7 +711,6 @@ public class SettingHandler {
 	}
 	
 	public static void updateMissing(String key) {
-		SettingHandler.missingTable.remove(key);
 		SettingHandler.missingTable.put(key, true);
 	}
 	
@@ -730,6 +730,7 @@ public class SettingHandler {
 	public static boolean hasAll() {
 		for (Map.Entry<String, Boolean> entry : SettingHandler.missingTable.entrySet()) {
 			if (!entry.getValue()) {
+				System.out.println(entry.getKey() + "is missing");
 				return false;
 			}
 		}
