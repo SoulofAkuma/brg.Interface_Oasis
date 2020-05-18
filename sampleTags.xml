@@ -1,11 +1,11 @@
 <InterfaceOasis>
   <Groups>
-    <Group name="SampleGroup" id="000000000">
+    <Group name="SampleGroup" id="000000010">
       <Listeners>
-        <Listener name="SampleListener" id=""
+        <Listener name="SampleListener" id="000000011" log="true" port="8080"/>
       </Listeners>
       <Responders>
-
+        <Responder name="SampleResponder" id="000000012" log="true" literalURL="true" url="localhost:8081/respond.php"/>
       </Responders>
     </Group>
   </Groups>
@@ -13,7 +13,13 @@
 
   </Triggers>
   <Parsers>
-
+    <Parser name="SampleParser" id="000000013">
+      <Rule type="Cut" find="sample" n="1" keep="false" regex="false" reEval="false"/>
+      <Rule type="Discard" find="discardMe" inverted="false" regex="false" flags="s,a"/>
+      <Rule type="Isolate" find="[0-9]+"/>
+      <Rule type="Replace" find="hello" replace="olleh" regex="false"/>
+      <Rule type="Split" find ="," n="1" regex="alse"
+    </Parser>
   </Parsers>
   <Constants>
 

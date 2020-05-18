@@ -445,7 +445,7 @@ public class SettingHandler {
 										next = true;
 									}
 								break;
-								case "literlURL":
+								case "literalURL":
 									updateMissing("literalURL");
 									if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
 										reportSyntaxError("Group Responder Attribute checker", "Invalid literalURL Value", false, id, responderIte);

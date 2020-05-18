@@ -35,7 +35,7 @@ public class ParserHandler {
 			String name = parser.getAttribute("name").getValue();
 			ArrayList<Rule> rules = new ArrayList<Rule>();
 			for (Setting rule : parser.getSettings("Rule")) {
-				if (rule.getName().equals("Rule")) {
+				if (rule.getName().equals("Rule") && parser.getID() - rule.getLevel() == 2) {
 					ArrayList<Pair<String, String>> attributes = rule.getAttributes();
 					HashMap<String, String> constructorArgs = new HashMap<String, String>();
 					for (Pair<String, String> attribute : attributes) {
