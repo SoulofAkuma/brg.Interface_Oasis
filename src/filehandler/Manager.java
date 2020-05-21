@@ -137,6 +137,6 @@ public class Manager {
 		String message = source + " in the File Handler reported " + causes + " caused by " + errorMessage;
 		String[] elements = {"ID", "Origin", "Source", "Causes", "ErrorMessage"};
 		String[] values = {SettingHandler.FILEHANDLERID, MessageOrigin.FileHandler.name(), source, causes, errorMessage};
-		Logger.addMessage(MessageType.Error, MessageOrigin.Setup, message, SettingHandler.FILEHANDLERID, elements, values, isFatal);
+		Logger.addMessage(MessageType.Error, MessageOrigin.FileHandler, message, SettingHandler.FILEHANDLERID, elements, values, isFatal);
 	}
 }

@@ -2,6 +2,7 @@ package xmlhandler;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.*;
 import javax.xml.transform.OutputKeys;
@@ -112,13 +113,12 @@ public class SettingFunctions {
 		return output;
 	}
 	
-	public ArrayList<Pair<String, String>> getAttributes(Element input) {
-		ArrayList<Pair<String, String>> output = new ArrayList<Pair<String, String>>();
+	public HashMap<String, String> getAttributes(Element input) {
+		HashMap<String, String> output = new HashMap<String, String>();
 		NamedNodeMap attributes = input.getAttributes();
 		for (int i = 0; i < attributes.getLength(); i++) {
 			Node attribute = attributes.item(i);
-			Pair<String, String> kvp = new Pair<String, String>(attribute.getNodeName(), attribute.getNodeValue());
-			output.add(kvp);
+			output.put(attribute.getNodeName(), attribute.getNodeValue());
 		}
 		return output;
 	}

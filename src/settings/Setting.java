@@ -3,6 +3,8 @@ package settings;
 import cc.Pair;
 import xmlhandler.SettingFunctions;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.w3c.dom.*;
 
@@ -16,7 +18,7 @@ public class Setting {
 	 */
 
 	private String name; // Name of the Setting
-	private ArrayList<Pair<String, String>> attributes = new ArrayList<Pair<String, String>>();
+	private HashMap<String, String> attributes = new HashMap<String, String>();
 	private String namespaceURI = null;
 	private String value = null; // Value of the Setting
 	private int level = -1;
@@ -42,7 +44,7 @@ public class Setting {
 		return this.sID;
 	}
 	
-	public ArrayList<Pair<String, String>> getAttributes() {
+	public HashMap<String, String> getAttributes() {
 		return this.attributes;
 	}
 
@@ -77,7 +79,7 @@ public class Setting {
 		String value = null;
 		ArrayList<Setting> subsettings = new ArrayList<Setting>();
 		ArrayList<Node> subs = new ArrayList<Node>();
-		ArrayList<Pair<String, String>> attributes = new ArrayList<Pair<String, String>>();
+		HashMap<String, String> attributes = new HashMap<String, String>();
 		Node node = null;
 		String namespaceURI = null;
 		functions.parseRootElement(input);
@@ -132,56 +134,50 @@ public class Setting {
 		this.level = 1;
 		this.name = name;
 		this.node = node;
-		this.sID = Setting.sIDState;
-		Setting.sIDState++;
+		this.sID = Setting.sIDState++;
 	}
 
 	private Setting(String name, ArrayList<Setting> subsettings, Node node, String value,
-			ArrayList<Pair<String, String>> attributes, String namespaceURI, int level) {
+			HashMap<String, String> attributes, String namespaceURI, int level) {
 		this.level = level;
 		this.name = name;
 		this.subsettings = subsettings;
 		this.node = node;
-		this.value = (value == null || value.isEmpty()) ? null : value; //Main Setting should not have an empty value
+		this.value = (value == null) ? "" : value; //Main Setting should not have an empty value
 		this.attributes = attributes;
 		this.namespaceURI = namespaceURI;
-		this.sID = Setting.sIDState;
-		Setting.sIDState++;
+		this.sID = Setting.sIDState++;
 	}
 
 	private Setting(NodeList input) {
 		this.level = 1;
 		this.name = "";
-		this.attributes = null;
-		this.value = null;
+		this.value = "";
 		for (int i = 0; i < input.getLength(); i++) {
 			Setting subSetting = Setting.parseSetting(this.functions.nodeToString(input.item(i)), 2);
 			this.subsettings.add(subSetting);
 		}
-		this.sID = Setting.sIDState;
-		Setting.sIDState++;
+		this.sID = Setting.sIDState++;
 	}
 
 	private Setting(Element element, int level) {
 		this.level = level;
 		this.name = element.getNodeName();
-		this.value = (element.getTextContent().isEmpty()) ? null : element.getTextContent();
+		this.value = (element.getTextContent() == null) ? "" : element.getTextContent();
 		this.attributes = (this.functions.getAttributes(element) == null) ? this.attributes : this.functions.getAttributes(element);
-		this.sID = Setting.sIDState;
-		Setting.sIDState++;
+		this.sID = Setting.sIDState++;
 	}
 	
-	private Setting(String name, String value, ArrayList<Pair<String, String>> attributes, int level) {
+	private Setting(String name, String value, HashMap<String, String> attributes, int level) {
 		this.name = name;
-		this.value = value;
-		this.attributes = attributes;
+		this.value = (value == null) ? "" : value;
+		this.attributes = (attributes == null) ? this.attributes : attributes;
 		this.level = level;
 		this.sID = Setting.sIDState++;
-		Setting.sIDState++;
 	}
 	
 	private Setting(Setting obj) {
-		this.attributes = (ArrayList<Pair<String, String>>) obj.attributes.clone();
+		this.attributes = (HashMap<String, String>) obj.attributes.clone();
 		this.corrupt = obj.corrupt;;
 		this.isEmpty = obj.isEmpty;
 		this.level = obj.level;
@@ -233,7 +229,7 @@ public class Setting {
 			setXML += getSubXML();
 		} else {
 			setXML += (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">\r\n") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\">\r\n");
-			if (this.value != null) {
+			if (!this.isEmptyValue(this.value)) {
 				if (this.value.contains("\n")) {
 					String[] lines = this.value.split("\\n");
 					for (String line : lines) {
@@ -248,7 +244,7 @@ public class Setting {
 					setXML += "</" + this.name + ">";
 					return setXML;
 				}
-			} else if (this.value == null && !hasSubsettings() && level != 1) {
+			} else if (isEmptyValue(this.value) && !hasSubsettings() && level != 1) {
 				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + "/>") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\"/>");
 				return setXML;
 			}
@@ -256,6 +252,11 @@ public class Setting {
 			setXML += getTabLevel() + "</" + this.name + ">";					
 		}
 		return setXML;
+	}
+	
+	private boolean isEmptyValue(String value) {
+		String test = String.valueOf(value);
+		return (test.replaceAll("\r\n", "").replaceAll("\t", "").isEmpty());
 	}
 
 	//Returns all subsettings of the setting in xml format
@@ -271,7 +272,7 @@ public class Setting {
 	//Returns all attributes of the setting in xml format
 	public String getAttrXML() {
 		String attrXML = " ";
-		for (Pair<String, String> attribute : this.attributes) {
+		for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
 			attrXML += attribute.getKey() + "=\"" + attribute.getValue() + "\" ";
 		}
 		attrXML = attrXML.substring(0, attrXML.length() - 1);
@@ -318,7 +319,7 @@ public class Setting {
 	//Returns all attributes of the settin in json format
 	public String printAttributes() { 
 		String attributeString = "[\n"; 
-		for (Pair<String,String> attribute : this.attributes) {
+		for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
 			attributeString += "\t{\"name\"=\"" + attribute.getKey() + "\",\"value\"=\"" + attribute.getValue() + "\"}\n"; 
 		}
 		attributeString += "]"; return attributeString;
@@ -356,12 +357,14 @@ public class Setting {
 	
 	//Returns an attribute with a defined name
 	public Pair<String, String> getAttribute(String name) {
-		for (Pair<String, String> attribute : this.attributes) {
-			if (attribute.getKey().equals(name)) {
-				return attribute;
-			}
+		if (this.attributes.containsKey(name)) {
+			return new Pair<String, String>(name, this.attributes.get(name));
 		}
 		return null;
+	}
+	
+	public void setAttribute(String name, String value) {
+		
 	}
 	
 	//Returns whether a list of settings has duplicate levels
@@ -392,22 +395,37 @@ public class Setting {
 	}
 	
 	//Adds a custom setting this setting on the level below
-	public void addSetting(String name, String value, ArrayList<Pair<String, String>> attributes) {
+	public void addSetting(String name, String value, HashMap<String, String> attributes) {
 		if (attributes == null) {
-			attributes = new ArrayList<Pair<String, String>>();
+			attributes = new HashMap<String, String>();
 		}
 		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
 	}
 	
-	public void removeSetting(int index) {
-		this.subsettings.remove(index);
+	public void removeSetting(int sID) {
+		if (sID < Setting.sIDState && this.sID != sID) {
+			int rIndex = -1;
+			for (int i = 0; i < this.subsettings.size(); i++) {
+				if (this.subsettings.get(i).sID == sID) {
+					rIndex = i;
+					break;
+				}
+			}
+			if (rIndex == -1) {
+				for (Setting sub : this.subsettings) {
+					sub.removeSetting(sID);
+				}
+			} else {
+				this.subsettings.remove(rIndex);
+			}
+		}
 	}
 	
 	//Reset this setting to an empty setting with only a name defined
 	public void resetSetting(String name) {
 		if (this.level == 1 && this.isEmpty) {
 			this.name = name;
-			this.attributes = new ArrayList<Pair<String, String>>();
+			this.attributes = new HashMap<String, String>();
 			this.namespaceURI = null;
 			this.value = null;
 			this.node = null;

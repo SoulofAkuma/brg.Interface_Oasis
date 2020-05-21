@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
@@ -36,9 +37,9 @@ public class ParserHandler {
 			ArrayList<Rule> rules = new ArrayList<Rule>();
 			for (Setting rule : parser.getSettings("Rule")) {
 				if (rule.getName().equals("Rule") && parser.getID() - rule.getLevel() == 2) {
-					ArrayList<Pair<String, String>> attributes = rule.getAttributes();
+					HashMap<String, String> attributes = rule.getAttributes();
 					HashMap<String, String> constructorArgs = new HashMap<String, String>();
-					for (Pair<String, String> attribute : attributes) {
+					for (Map.Entry<String, String> attribute : attributes.entrySet()) {
 						constructorArgs.put(attribute.getKey(), attribute.getValue());
 					}
 					if (!constructorArgs.containsKey("type")) {

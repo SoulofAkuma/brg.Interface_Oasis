@@ -1,27 +1,38 @@
 <InterfaceOasis>
-  <Groups>
-    <Group name="SampleGroup" id="000000010">
-      <Listeners>
-        <Listener name="SampleListener" id="000000011" log="true" port="8080"/>
-      </Listeners>
-      <Responders>
-        <Responder name="SampleResponder" id="000000012" log="true" literalURL="true" url="localhost:8081/respond.php"/>
-      </Responders>
-    </Group>
-  </Groups>
-  <Triggers>
+	<Groups>
+		<Group name="SampleGroup" id="000000010">
+			<Listeners>
+				<Listener name="SampleListener" id="000000011" log="true" port="8080"/>
+			</Listeners>
+			<Responders>
+				<Responder name="SampleResponder" id="000000012" log="true" literalURL="true" url="localhost:8081/respond.php" constants="000000021,000000022,000000023"/>
+			</Responders>
+		</Group>
+	</Groups>
+	<Triggers>
 
-  </Triggers>
-  <Parsers>
-    <Parser name="SampleParser" id="000000013">
-      <Rule type="Cut" find="sample" n="1" keep="false" regex="false" reEval="false"/>
-      <Rule type="Discard" find="discardMe" inverted="false" regex="false" flags="s,a"/>
-      <Rule type="Isolate" find="[0-9]+"/>
-      <Rule type="Replace" find="hello" replace="olleh" regex="false"/>
-      <Rule type="Split" find ="," n="1" regex="false"/>
-    </Parser>
-  </Parsers>
-  <Constants>
+	</Triggers>
+	<Parsers>
+		<Parser name="SampleParser" id="000000030" order="000000035,000000034,000000033,000000032,000000031">
 
-  </Constants>
+			<Rules>
+				<Rule type="Cut" find="sample" n="1" keep="false" regex="false" reEval="false" id="000000031"/>
+				<Rule type="Discard" find="discardMe" inverted="false" regex="false" flags="s,a" id="000000032"/>
+				<Rule type="Isolate" find="[0-9]+" id="000000033"/>
+				<Rule type="Replace" find="hello" replace="olleh" regex="false" id="000000034"/>
+				<Rule type="Split" find ="," n="1" regex="false" id="000000035"/>
+			</Rules>
+		</Parser>
+	</Parsers>
+	<Constants name="sampleConstant" id="000000040" order="000000041,000000042,000000043,000000044,000000045,000000046,000000047">
+		<Values>
+			<Value id="000000041" isDynamic="false" useHeader="false">Your name is</Value>
+			<Value id="000000042" isDynamic="true" useHeader="false">name</Value>
+			<Value id="000000043" isDynamic="false" useHeader="false">, you live in</Value>
+			<Value id="000000044" isDynamic="true" useHeader="false">origin</Value>
+			<Value id="000000045" isDynamic="false" useHeader="false"> and you are </Value>
+			<Value id="000000046" isDynamic="true" useHeader="false">age</Value>
+			<Value id="000000047" isDynamic="false" useHeader="false"> years old.</Value>
+		</Values>
+	</Constants>
 </InterfaceOasis>
