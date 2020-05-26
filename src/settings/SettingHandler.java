@@ -11,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cc.Pair;
-import constant.ConstantHandler;
 import filehandler.Manager;
 import group.GroupHandler;
 import gui.Logger;
@@ -74,7 +73,7 @@ public class SettingHandler {
 			wasEmpty = true;
 		}
 		
-		
+		System.out.println(masterSetting.getSettingsSub("Groups", false).size());
 		if (!masterSetting.hasSetting("Groups") || masterSetting.getSettings("Groups").get(0).getLevel() != 2) {
 			resetInformation("No Groups found - Resetting to default");
 			masterSetting.addSetting("Groups", null, null);

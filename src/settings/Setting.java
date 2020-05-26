@@ -316,7 +316,7 @@ public class Setting {
 		return subsettingsString;
 	}
 	
-	//Returns all attributes of the settin in json format
+	//Returns all attributes of the setting in json format
 	public String printAttributes() { 
 		String attributeString = "[\n"; 
 		for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
@@ -327,32 +327,39 @@ public class Setting {
 	
 	//Returns all Settings with a specified name (which are on the same level)
 	public ArrayList<Setting> getSettings(String name) {
+		ArrayList<Setting> dummy = getSettingsSub(name, false);
+		return dummy;
+	}
+	
+	public ArrayList<Setting> getSettingsSub(String name, boolean matchMe) {
 		ArrayList<Setting> results = new ArrayList<Setting>();
-		if (this.name.equals(name)) {
+		if (matchMe && this.name.equals(name)) {
 			results.add(this);
 			return results;
 		}
 		int lockLevel = -1;
 		for (int i = 0; i < this.subsettings.size(); i++) {
-				results.addAll(this.subsettings.get(i).getSettings(name));				
+			results.addAll(this.subsettings.get(i).getSettingsSub(name, true));				
 		}
+		ArrayList<Setting> toRemove = new ArrayList<Setting>();
 		while (!levelEquality(results)) {
 			for (int i = 0; i < results.size(); i++) {
 				if (lockLevel == -1) {
 					lockLevel = results.get(i).level;
 				} else {
 					if (results.get(i).level != lockLevel) {
-						results.remove(i);
+						toRemove.add(results.get(i));
 					}
 				}
 			}
 		}
+		results.removeAll(toRemove);
 		return results;
 	}
 	
 	//Returns whether the setting has a setting of a specified name
 	public boolean hasSetting(String name) {
-		return (this.getSettings(name).size() > 0);
+		return (this.getSettingsSub(name, false).size() > 0);
 	}
 	
 	//Returns an attribute with a defined name
