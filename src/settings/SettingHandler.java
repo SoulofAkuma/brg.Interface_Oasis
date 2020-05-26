@@ -47,7 +47,7 @@ public class SettingHandler {
 	public static final String REGEXID = "[0-9]{9}"; //Regex for ids defined in attributes
 	public static final String REGEXPORT = "[0-9]+"; //Regex for ports defined in attributes (the port size is unrestricted, so this program can be used on machine with custom defined port numbers)
 	public static final String REGEXBOOL = "(true|false)"; //Regex for boolean values
-	public static final String REGEXIDLIST = "([0-9]{9})*(,[0-9]{9})*"; //Regex for a list of IDs which can be empty
+	public static final String REGEXIDLIST = "([0-9]{9}){0,1}(,[0-9]{9})*"; //Regex for a list of IDs which can be empty
 	
 	private static HashMap<String, Boolean> missingTable; //Reusable for attribute checking
 	
@@ -73,7 +73,6 @@ public class SettingHandler {
 			wasEmpty = true;
 		}
 		
-		System.out.println(masterSetting.getSettingsSub("Groups", false).size());
 		if (!masterSetting.hasSetting("Groups") || masterSetting.getSettings("Groups").get(0).getLevel() != 2) {
 			resetInformation("No Groups found - Resetting to default");
 			masterSetting.addSetting("Groups", null, null);
@@ -137,17 +136,19 @@ public class SettingHandler {
 			if ((finalSetting = checkGroupSetting(tempGroupMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempGroupMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				removeGroupIndexes.add(i);
+				System.out.println("Remove " + settingID);
+				removeGroupIndexes.add(settingID);
 			}
 		}
 		
 		for (int i = 0; i < tempTriggerMasterSetting.getSubsettings().size(); i++) {
-			int settingID = tempGroupMasterSetting.getSubsettings().get(i).getID();
+			int settingID = tempTriggerMasterSetting.getSubsettings().get(i).getID();
 			Setting finalSetting;
 			if ((finalSetting = checkTriggerSetting(tempTriggerMasterSetting.getSubsettings().get(i), i + 1)) != null) {
-				tempGroupMasterSetting.replaceID(settingID, finalSetting);
+				tempTriggerMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				removeGroupIndexes.add(i);
+				System.out.println("Remove " + settingID);
+				removeTriggerIndexes.add(settingID);
 			}
 		}
 		
@@ -157,7 +158,9 @@ public class SettingHandler {
 			if ((finalSetting = checkParserSetting(tempParserMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempParserMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				removeParserIndexes.add(i);
+				System.out.println("Remove " + settingID);
+				removeParserIndexes.add(settingID);
+				System.out.println(removeParserIndexes.size());
 			}
 		}
 		
@@ -167,30 +170,36 @@ public class SettingHandler {
 			if ((finalSetting = checkConstantSetting(tempConstantMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempConstantMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				removeConstantIndexes.add(i);
+				System.out.println("Remove " + settingID);
+				removeConstantIndexes.add(settingID);
 			}
 		}
 		
-		if (altered || removeGroupIndexes.size() > 0 || removeTriggerIndexes.size() > 0 || removeParserIndexes.size() > 0) {
+		if (altered || removeGroupIndexes.size() > 0 || removeTriggerIndexes.size() > 0 || removeParserIndexes.size() > 0 || removeConstantIndexes.size() > 0) {
 			if (Main.askMessage("Due to errors in the current setting definitions, your settings have been altered. All error information can be found in the logging messages - Do you want to create a backup of your old Setting file?", "Setting File Error") == 0) {
 				Manager.copyFile(SettingHandler.fileID);
 			}
 		}
 		
-		for (Integer index : removeGroupIndexes) {
+		System.out.println("Hello " + removeParserIndexes.size());
+		for (int index : removeGroupIndexes) {
+			System.out.println("Removing sid " + index);
 			tempGroupMasterSetting.removeSetting(index);
 		}
 		
-		for (Integer index : removeTriggerIndexes) {
+		for (int index : removeTriggerIndexes) {
 			tempTriggerMasterSetting.removeSetting(index);
+			System.out.println("Removing sid " + index);
 		}
 		
-		for (Integer index : removeParserIndexes) {
+		for (int index : removeParserIndexes) {
 			tempParserMasterSetting.removeSetting(index);
+			System.out.println("Removing sid " + index);
 		}
 		
-		for (Integer index : removeConstantIndexes) {
+		for (int index : removeConstantIndexes) {
 			tempConstantMasterSetting.removeSetting(index);
+			System.out.println("Removing sid " + index);
 		}
 		
 		SettingHandler.groupMasterSetting = tempGroupMasterSetting;
@@ -365,28 +374,28 @@ public class SettingHandler {
 								case "name":
 									updateMissing("name");
 									if (!matchesRegex(SettingHandler.REGEXNAME, attribute.getValue())) {
-										reportSyntaxError("Group Listener Attribute Checker", "Invalid name value \"" + String.valueOf(subject.getValue()) + "\"", false, id, groupIte, listenerIte);
+										reportSyntaxError("Group Listener Attribute Checker", "Invalid name value \"" + subject.getValue() + "\"", false, id, groupIte, listenerIte);
 										next = true;
 									}
 								break;
 								case "port":
 									updateMissing("port");
 									if (!matchesRegex(SettingHandler.REGEXPORT, attribute.getValue())) {
-										reportSyntaxError("Group Listener Attribute Checker", "Invalid port value \"" + String.valueOf(subject.getValue()) + "\"", false, id, groupIte, listenerIte);
+										reportSyntaxError("Group Listener Attribute Checker", "Invalid port value \"" + subject.getValue() + "\"", false, id, groupIte, listenerIte);
 										next = true;
 									}
 								break;
 								case "log":
 									updateMissing("log");
 									if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
-										reportSyntaxError("Group Responder Attribute Checker", "Invalid log Value", false, id, groupIte, listenerIte);
+										reportSyntaxError("Group Responder Attribute Checker", "Invalid log Value \"" + attribute.getValue() + "\"", false, id, groupIte, listenerIte);
 										next = true;
 									}
 								break;
 								case "id":
 									updateMissing("id");
 									if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
-										reportSyntaxError("Group Listener Attribute Checker", "Invalid id value \""  + String.valueOf(subject.getValue()) + "\"", false, id, groupIte, listenerIte);
+										reportSyntaxError("Group Listener Attribute Checker", "Invalid id value \""  + subject.getValue() + "\"", false, id, groupIte, listenerIte);
 										next = true;
 									} else {
 										if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
@@ -398,7 +407,7 @@ public class SettingHandler {
 									}
 								break;
 								default:
-									reportSyntaxError("Group Listener Attribute Checker", "Unknown Listener Attribute \"" + subject.getName() + "\"", true, id, groupIte, listenerIte);
+									reportSyntaxError("Group Listener Attribute Checker", "Unknown Listener Attribute \"" + subject.getName() + "\" = \"" + attribute.getValue() + "\"", true, id, groupIte, listenerIte);
 							}
 						}
 						if (!hasAll()) {
@@ -437,21 +446,21 @@ public class SettingHandler {
 								case "name":
 									updateMissing("name");
 									if (!matchesRegex(SettingHandler.REGEXNAME, attribute.getValue())) {
-										reportSyntaxError("Group Responder Attribute Checker", "Invalid name value", false, id, groupIte, responderIte);
+										reportSyntaxError("Group Responder Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
 									}
 								break;
 								case "log":
 									updateMissing("log");
 									if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
-										reportSyntaxError("Group Responder Attribute Checker", "Invalid log Value", false, id, groupIte, responderIte);
+										reportSyntaxError("Group Responder Attribute Checker", "Invalid log Value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
 									}
 								break;
 								case "literalURL":
 									updateMissing("literalURL");
 									if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
-										reportSyntaxError("Group Responder Attribute checker", "Invalid literalURL Value", false, id, groupIte, responderIte);
+										reportSyntaxError("Group Responder Attribute checker", "Invalid literalURL Value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
 									} else {
 										literalURL = Boolean.parseBoolean(attribute.getValue());
@@ -464,18 +473,18 @@ public class SettingHandler {
 								case "constants":
 									updateMissing("constants");
 									if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
-										reportSyntaxError("Group Responder Attribute Checker", "Invalid constants value", false, id, groupIte, responderIte);
+										reportSyntaxError("Group Responder Attribute Checker", "Invalid constants value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
 									}
 								break;	
 								case "id":
 									updateMissing("id");
 									if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
-										reportSyntaxError("Group Responder Attribute Checker", "Invalid id value", false, id, groupIte, responderIte);
+										reportSyntaxError("Group Responder Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
 									} else {
 										if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
-											reportSyntaxError("Group Responder Attribute Checker", "Duplicate ID found", false, id, groupIte, responderIte);
+											reportSyntaxError("Group Responder Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 											next = true;
 										} else {
 											responderID = attribute.getValue();
@@ -483,7 +492,7 @@ public class SettingHandler {
 									}
 								break;
 							default:
-								reportSyntaxError("Group Responder Value Checker", "Unknown Responder Element \"" + subject.getName() + "\"", true, id, responderIte);
+								reportSyntaxError("Group Responder Value Checker", "Unknown Responder Element \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id, responderIte);
 							}
 						}
 						if (!hasAll()) {
@@ -492,7 +501,7 @@ public class SettingHandler {
 						}
 						if (!literalURL) { //If the value is literal the user can give whatever he wants as a value. The socket will try to respond to the value and throw an error if it fails. This makes things easier for checking and provides user individuality. Otherwise a constant id is expected
 							if (!matchesRegex(SettingHandler.REGEXID, urlVal)) {
-								reportSyntaxError("Group Responder Attribute Checker", "Invalid url value (Non-literal url values must contain a constantID)", false, id, groupIte, responderIte);
+								reportSyntaxError("Group Responder Attribute Checker", "Invalid url value \"" + urlVal + "\" (Non-literal url values must contain a constantID)", false, id, groupIte, responderIte);
 								next = true;
 							}
 						}
@@ -529,9 +538,9 @@ public class SettingHandler {
 		}
 		createMissingTable("name", "id", "order");
 		Set<String> localIDs = new HashSet<String>();
-		boolean returnNull = false;
 		String[] order = null;
 		boolean next = false;
+		boolean returnNull = false;
 		String id = null;
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {
@@ -539,48 +548,91 @@ public class SettingHandler {
 					updateMissing("name");
 					if (!matchesRegex(SettingHandler.REGEXNAME, attribute.getValue())) {
 						reportSyntaxError("Parser Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false, ite);
-						next = true;
+						returnNull = true;
 					}
 				break;
 				case "id":
 					updateMissing("id");
 					if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
 						reportSyntaxError("Parser Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false, ite);
-						next = true;
+						returnNull = true;
 					} else {
 						if (SettingHandler.IDS.contains(attribute.getValue())) {
-							reportSyntaxError("Parser Attribute Checker", "Duplicate ID found", false, ite);
+							reportSyntaxError("Parser Attribute Checker", "Duplicate ID found \" " + attribute.getValue() + "\"", false, ite);
 						} else {
+							localIDs.add(attribute.getValue());
 							id = attribute.getValue();
 						}
 					}
 				break;
 				case "order":
 					updateMissing("order");
-					if (matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
-						reportSyntaxError("Constant Attribute Checker", "Invalid order Value", false, ite);
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
+						reportSyntaxError("Parser Attribute Checker", "Invalid order Value \"" + attribute.getValue() + "\"", false, ite);
 						returnNull = true;
 					} else {
 						order = attribute.getValue().split(",");
 					}
 				break;
 				default:
-					reportSyntaxError("Parser Attribute Checker", "Unknown Attribute\"" + attribute.getValue() + "\"", true, ite);
+					reportSyntaxError("Parser Attribute Checker", "Unknown Attribute\"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, ite);
 			}
 		}
 		if (!hasAll()) {
 			reportSyntaxError("Parser Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", false, ite);
-			next = true;
+			returnNull = true;
 		}
-		if (next) {
+		if (!checkMe.hasSetting("Rules")) {
+			reportSyntaxError("Parser Element Checker", "Missing Rules Element. Removing Parser " + checkMe.getName(), false, id);
+			return null;
+		}
+		int ruleIte = 0;
+		ArrayList<String> ruleIDs = new ArrayList<String>();
+		for (Setting rule : checkMe.getSettings("Rules").get(0).getSubsettings()) {
+			ruleIte++;
+			boolean hadID = false;
+			for (Map.Entry<String, String> attribute : rule.getAttributes().entrySet()) {
+				if (attribute.getKey().equals("id")) {
+					hadID = true;
+					if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+						reportSyntaxError("Parser Rule Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\"", false, id, ruleIte);
+						next = true;
+						break;
+					} else {
+						if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
+							reportSyntaxError("Parser Rule Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, id, ruleIte);
+							next = true;
+							break;
+						} else {
+							localIDs.add(attribute.getValue());
+							ruleIDs.add(attribute.getValue());
+							break;
+						}
+					}
+				}
+			}
+			if (!hadID) {
+				reportSyntaxError("Parser Rule Attribute Checker", "Missing Rule ID", false, id, ruleIte);
+				next = true;
+			}
+		}
+		if (returnNull) {
 			reportSyntaxError("Parser Checker", "Removing last mentioned Parser", false, ite);
 			return null;
 		}
-		if (!checkMe.hasSetting("Rules") || checkMe.getSettings("Rules").get(0).getLevel() != 2) {
-			reportSyntaxError("Parser Element Checker", "Missing Rules Element. Removing Parser", false, id);
+		if (next) {
+			reportSyntaxError("Parser Checker", "Removing last mentioned Parser", false, id);
 			return null;
 		}
-		for (Setting rule : checkMe.getSettings("Rules").get(0).getSubsettings()) {
+		ArrayList<String> missing = new ArrayList<String>();
+		for (String ruleID : order) {
+			if (!ruleIDs.contains(ruleID)) {
+				missing.add(ruleID);
+			}
+		}
+		if (missing.size() != 0) {
+			reportSyntaxError("Parser Attribute Checker", "The order contains invalid rule IDs (" + String.join(",", missing.toArray(new String[missing.size()])) + "). Removing Parser", false, id);
+			return null;
 			
 		}
 		SettingHandler.IDS.addAll(localIDs);
@@ -610,19 +662,19 @@ public class SettingHandler {
 				case "name":
 					updateMissing("name");
 					if (!matchesRegex(SettingHandler.REGEXNAME, attribute.getValue())) {
-						reportSyntaxError("Constant Attribute Checker", "Invalid name value", false, ite);
+						reportSyntaxError("Constant Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false, ite);
 						returnNull = true;
 					}
 				break;
 				case "id":
 					updateMissing("id");
-					if (matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
-						reportSyntaxError("Constant Attribute Checker", "Invalid id value", false, ite);
+					if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+						reportSyntaxError("Constant Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\"", false, ite);
 						id = "unset";
 						returnNull = true;
 					} else {
 						if (SettingHandler.IDS.contains(attribute.getValue())) {
-							reportSyntaxError("Constant Attribute Checker", "Duplicate ID found " + attribute.getValue(), false, ite);
+							reportSyntaxError("Constant Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, ite);
 							returnNull = true;
 						} else {
 							id = attribute.getValue();
@@ -632,22 +684,22 @@ public class SettingHandler {
 				break;
 				case "order":
 					updateMissing("order");
-					if (matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
-						reportSyntaxError("Constant Attribute Checker", "Invalid order Value", false, ite);
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
+						reportSyntaxError("Constant Attribute Checker", "Invalid order Value \"" + attribute.getValue() + "\"", false, ite);
 						returnNull = true;
 					} else {
 						order = attribute.getValue().split(",");
 					}
 				break;
 				default:
-					reportSyntaxError("Constant Attribute Checker", "Unknown Attribute\"" + attribute.getValue() + "\"", true, ite);
+					reportSyntaxError("Constant Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, ite);
 			}
 		}
 		if (!hasAll()) {
 			reportSyntaxError("Constant Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", true, ite);
 			returnNull = true;
 		}
-		if (!checkMe.hasSetting("Values") || checkMe.getSettings("Values").get(0).getLevel() != 2) {
+		if (!checkMe.hasSetting("Values")) {
 			reportSyntaxError("Constant Element Checker", "Missing Values Element. Removing Constant", false, id);
 			return null;
 		}
@@ -663,11 +715,11 @@ public class SettingHandler {
 					case "id":
 						updateMissing("id");
 						if (matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
-							reportSyntaxError("Constant Value Attribute Checker", "Invalid id Value", false, id, valueIte);
+							reportSyntaxError("Constant Value Attribute Checker", "Invalid id Value \"" + attribute.getValue() + "\"", false, id, valueIte);
 							next = true;
 						} else {
 							if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
-								reportSyntaxError("Constant Value Attribute Checker", "Duplicate ID found " + attribute.getValue(), false, id, valueIte);
+								reportSyntaxError("Constant Value Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, id, valueIte);
 								next = true;
 							} else {
 								valueID = attribute.getValue();
@@ -677,7 +729,7 @@ public class SettingHandler {
 					case "isDynamic":
 						updateMissing("isDynamic");
 						if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
-							reportSyntaxError("Constant Value Attribute Checker", "Invalid isDynamic Value", false, id, valueIte);
+							reportSyntaxError("Constant Value Attribute Checker", "Invalid isDynamic Value \"" + attribute.getValue() + "\"", false, id, valueIte);
 							next = true;
 						} else {
 							isDynamic = Boolean.parseBoolean(attribute.getValue());
@@ -686,7 +738,7 @@ public class SettingHandler {
 					case "useHeader":
 						updateMissing("useHeader");
 						if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
-							reportSyntaxError("Constant Attribute Checker", "Invalid useHeader value", false, id, valueIte);
+							reportSyntaxError("Constant Attribute Checker", "Invalid useHeader value \"" + attribute.getValue() + "\"", false, id, valueIte);
 							next = true;
 						}
 					break;
@@ -700,7 +752,7 @@ public class SettingHandler {
 			}
 			if (isDynamic) {
 				if (value.getValue() == null || value.getValue().isEmpty()) {
-					reportSyntaxError("Constant Value Attribute Checker", "An empty key is not allowed on a dynamic value", false, id, valueIte);
+					reportSyntaxError("Constant Value Attribute Checker", "An empty key is not allowed on a dynamic value \"" + valueID + "\"", false, id, valueIte);
 					next = true;
 				}
 			}
@@ -719,7 +771,7 @@ public class SettingHandler {
 			}
 		}
 		if (missing.size() != 0) {
-			reportSyntaxError("Constant Attribute Checker", "The order contains invalid value IDs (" + String.join(",", (String[]) missing.toArray()) + "). Removing Constant", false, id);
+			reportSyntaxError("Constant Attribute Checker", "The order contains invalid value IDs (" + String.join(",", missing.toArray(new String[missing.size()])) + "). Removing Constant", false, id);
 			return null;
 			
 		}
@@ -729,7 +781,7 @@ public class SettingHandler {
 		SettingHandler.IDS.addAll(localIDs);
 		for (String valueID : order) {
 			if (!values.contains(valueID)) {
-				reportSyntaxError("Constant Attribute Checker", "Undefined ValueID " + valueID + " in the order attribute", false, id);
+				reportSyntaxError("Constant Attribute Checker", "Undefined ValueID " + valueID + " in the order attribute of \"" + checkMe.getName() + " " + id, false, id);
 				return null;
 			}
 		}

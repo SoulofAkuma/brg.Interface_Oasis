@@ -418,7 +418,7 @@ public class Setting {
 					break;
 				}
 			}
-			if (rIndex == -1) {
+			if (rIndex != -1) {
 				for (Setting sub : this.subsettings) {
 					sub.removeSetting(sID);
 				}
@@ -426,6 +426,7 @@ public class Setting {
 				this.subsettings.remove(rIndex);
 			}
 		}
+		
 	}
 	
 	//Reset this setting to an empty setting with only a name defined
