@@ -88,14 +88,23 @@ public class Manager {
 		int i = 1;
 		for (boolean unique = false; !unique; ) {
 			String addon = " (" + i + ")";
-			if (!Files.exists(Path.of(newPath + addon))) {
-				newPath += addon;
-				unique = true;
-			} else {
-				i++;
+			try {
+				System.out.println(new File(newPath + addon).exists());
+				if (!(new File(newPath + addon).exists())) {
+					newPath += addon;
+					System.out.println("final addon " + addon);
+					unique = true;
+				} else {
+					i++;
+				}
+			} catch (Exception e) {
+				reportError("File Copyer", "Unable to copy file with path " + files.get(fileID).getPath(), e.getMessage(), true);
+				return null;
 			}
+			
 		}
 		newPath += ".xml";
+		System.out.println(newPath);
 		int copyTo = newFile(newPath);
 		Manager.writeFile(copyTo, oldContent, false);
 		return newPath;

@@ -4,6 +4,7 @@ import cc.Pair;
 import xmlhandler.SettingFunctions;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.w3c.dom.*;
@@ -327,8 +328,7 @@ public class Setting {
 	
 	//Returns all Settings with a specified name (which are on the same level)
 	public ArrayList<Setting> getSettings(String name) {
-		ArrayList<Setting> dummy = getSettingsSub(name, false);
-		return dummy;
+		return getSettingsSub(name, false);
 	}
 	
 	public ArrayList<Setting> getSettingsSub(String name, boolean matchMe) {
@@ -337,23 +337,19 @@ public class Setting {
 			results.add(this);
 			return results;
 		}
-		int lockLevel = -1;
 		for (int i = 0; i < this.subsettings.size(); i++) {
 			results.addAll(this.subsettings.get(i).getSettingsSub(name, true));				
 		}
-		ArrayList<Setting> toRemove = new ArrayList<Setting>();
-		while (!levelEquality(results)) {
-			for (int i = 0; i < results.size(); i++) {
-				if (lockLevel == -1) {
-					lockLevel = results.get(i).level;
-				} else {
-					if (results.get(i).level != lockLevel) {
-						toRemove.add(results.get(i));
-					}
+		int lockLevel = -1;
+		if (results.size() > 0 && !levelEquality(results)) {
+			lockLevel = results.get(0).getLevel();
+			for (Iterator<Setting> ite = results.iterator(); ite.hasNext();) {
+				Setting subject = ite.next();
+				if (subject.getLevel() != lockLevel) {
+					ite.remove();
 				}
 			}
 		}
-		results.removeAll(toRemove);
 		return results;
 	}
 	

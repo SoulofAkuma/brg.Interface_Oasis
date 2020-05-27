@@ -136,7 +136,6 @@ public class SettingHandler {
 			if ((finalSetting = checkGroupSetting(tempGroupMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempGroupMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				System.out.println("Remove " + settingID);
 				removeGroupIndexes.add(settingID);
 			}
 		}
@@ -147,7 +146,6 @@ public class SettingHandler {
 			if ((finalSetting = checkTriggerSetting(tempTriggerMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempTriggerMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				System.out.println("Remove " + settingID);
 				removeTriggerIndexes.add(settingID);
 			}
 		}
@@ -158,7 +156,6 @@ public class SettingHandler {
 			if ((finalSetting = checkParserSetting(tempParserMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempParserMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				System.out.println("Remove " + settingID);
 				removeParserIndexes.add(settingID);
 				System.out.println(removeParserIndexes.size());
 			}
@@ -170,7 +167,6 @@ public class SettingHandler {
 			if ((finalSetting = checkConstantSetting(tempConstantMasterSetting.getSubsettings().get(i), i + 1)) != null) {
 				tempConstantMasterSetting.replaceID(settingID, finalSetting);
 			} else {
-				System.out.println("Remove " + settingID);
 				removeConstantIndexes.add(settingID);
 			}
 		}
@@ -181,7 +177,6 @@ public class SettingHandler {
 			}
 		}
 		
-		System.out.println("Hello " + removeParserIndexes.size());
 		for (int index : removeGroupIndexes) {
 			System.out.println("Removing sid " + index);
 			tempGroupMasterSetting.removeSetting(index);
@@ -588,7 +583,7 @@ public class SettingHandler {
 		}
 		int ruleIte = 0;
 		ArrayList<String> ruleIDs = new ArrayList<String>();
-		for (Setting rule : checkMe.getSettings("Rules").get(0).getSubsettings()) {
+		for (Setting rule : checkMe.getSettings("Rules").get(0).getSettings("Rule")) {
 			ruleIte++;
 			boolean hadID = false;
 			for (Map.Entry<String, String> attribute : rule.getAttributes().entrySet()) {
@@ -631,7 +626,7 @@ public class SettingHandler {
 			}
 		}
 		if (missing.size() != 0) {
-			reportSyntaxError("Parser Attribute Checker", "The order contains invalid rule IDs (" + String.join(",", missing.toArray(new String[missing.size()])) + "). Removing Parser", false, id);
+			reportSyntaxError("Parser Attribute Checker", "The order contains unkown rule IDs (" + String.join(",", missing.toArray(new String[missing.size()])) + "). Removing Parser", false, id);
 			return null;
 			
 		}
@@ -714,7 +709,7 @@ public class SettingHandler {
 				switch (attribute.getKey()) {
 					case "id":
 						updateMissing("id");
-						if (matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+						if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
 							reportSyntaxError("Constant Value Attribute Checker", "Invalid id Value \"" + attribute.getValue() + "\"", false, id, valueIte);
 							next = true;
 						} else {
@@ -771,7 +766,7 @@ public class SettingHandler {
 			}
 		}
 		if (missing.size() != 0) {
-			reportSyntaxError("Constant Attribute Checker", "The order contains invalid value IDs (" + String.join(",", missing.toArray(new String[missing.size()])) + "). Removing Constant", false, id);
+			reportSyntaxError("Constant Attribute Checker", "The order contains unknown value IDs (" + String.join(",", missing.toArray(new String[missing.size()])) + "). Removing Constant", false, id);
 			return null;
 			
 		}
