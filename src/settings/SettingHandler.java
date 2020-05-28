@@ -25,7 +25,6 @@ public class SettingHandler {
 	
 	private static int fileID; //ID of the setting file for the file handler
 	private static final String FILENAME = "settings.xml"; //Name of the setting file
-	private static final String PATH = System.getProperty("user.home") + Manager.SEPERATOR + "Interface Oasis"; //Base program folder path
 	private static final String BASESETTING = "InterfaceOasis"; //Name of the root Element in the xml setting
 	private static Setting masterSetting; //The content of the setting file parsed into a setting
 	private static Setting groupMasterSetting; //The master group setting element derived from the master setting
@@ -55,7 +54,7 @@ public class SettingHandler {
 		
 		initReserved();
 		
-		fileID = Manager.newFile(Manager.checkPath(PATH) + Manager.SEPERATOR + FILENAME);
+		fileID = Manager.newFile(Manager.checkPath(Manager.PATH) + Manager.SEPERATOR + FILENAME);
 		
 		if (fileID == -1) {
 			reportError("Missing Setting File", "All actions will not be saved");
@@ -178,23 +177,19 @@ public class SettingHandler {
 		}
 		
 		for (int index : removeGroupIndexes) {
-			System.out.println("Removing sid " + index);
 			tempGroupMasterSetting.removeSetting(index);
 		}
 		
 		for (int index : removeTriggerIndexes) {
 			tempTriggerMasterSetting.removeSetting(index);
-			System.out.println("Removing sid " + index);
 		}
 		
 		for (int index : removeParserIndexes) {
 			tempParserMasterSetting.removeSetting(index);
-			System.out.println("Removing sid " + index);
 		}
 		
 		for (int index : removeConstantIndexes) {
 			tempConstantMasterSetting.removeSetting(index);
-			System.out.println("Removing sid " + index);
 		}
 		
 		SettingHandler.groupMasterSetting = tempGroupMasterSetting;
@@ -650,7 +645,7 @@ public class SettingHandler {
 		}
 		boolean returnNull = false;
 		String id = null;
-		String[] order = null;
+		String[] order = new String[] {};
 		createMissingTable("name", "id", "order");
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {

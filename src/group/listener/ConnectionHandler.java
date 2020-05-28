@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import gui.Logger;
+import gui.MessageOrigin;
+import gui.MessageType;
+
 public class ConnectionHandler implements Runnable {
 	
 	private final int responseID;
@@ -51,11 +55,13 @@ public class ConnectionHandler implements Runnable {
 							this.requestType = RequestType.HEAD;
 							hasBody = false;
 						} else {
+							reportInformation(getResponse(500, "Not Implemented"), true);
 							out.write(getResponse(500, "Not Implemented"));
 							out.flush();
 							break;
 						}
-					} else {							
+					} else {	
+						reportInformation(getResponse(400, "Bad Request"), true);
 						out.write(getResponse(400, "Bad Request"));
 						out.flush();
 						break;
@@ -75,19 +81,23 @@ public class ConnectionHandler implements Runnable {
 							char[] bodyBuffer = new char[contentLength];
 							in.read(bodyBuffer);
 							body = String.valueOf(bodyBuffer);
+							reportInformation(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"), false);
 							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"));
 							out.flush();
 							success = true;
 							break;
 						} else {
+							reportInformation(getResponse(400, "Bad Request"), false);
 							out.write(getResponse(400, "Bad Request"));
 							out.flush();
 							break;
 						}
 					} else {
 						if (this.requestType == RequestType.HEAD) {
+							reportInformation(getResponse(200, "OK"), false);
 							out.write(getResponse(200, "OK"));
 						} else {
+							reportInformation(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"), false);
 							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"));							
 						}
 						out.flush();
@@ -129,5 +139,10 @@ public class ConnectionHandler implements Runnable {
 		return response;
 	}
 	
-	
+	private void reportInformation(String response, boolean isError) {
+		MessageType type = (isError) ? MessageType.Error : MessageType.Information;
+		Logger.addMessage(type, MessageOrigin.Listener, "Response " + this.responseID + " to " + this.requestType.name() + " request responded with \"" + response + "\"", this.parentID, new String[] {"ResponseID", "RequestType", "Response"}, new String[] {String.valueOf(this.responseID), this.requestType.name(), response}, false);
+	}
+		
+
 }

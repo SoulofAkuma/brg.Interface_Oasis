@@ -304,7 +304,7 @@ public class Setting {
 
 	//Returns the whole setting in json format
 	public String printSetting() { 
-		return "{\n\t\"level\"=\"" + this.level +"\"\n\t\"name\"=\"" + this.name + "\",\n\t\"value\"=\"" + String.valueOf(this.value) + "\",\n\t\"attributes\"=" + printAttributes() + ",\n\t\"subsettings\"= " + printSubsettings() + "}"; 
+		return "{\n\t\"level\"=\"" + this.level + "\n\t\"settingID\"=\"" + this.sID + "\",\n\t\"name\"=\"" + this.name + "\",\n\t\"value\"=\"" + String.valueOf(this.value) + "\",\n\t\"attributes\"=" + printAttributes() + ",\n\t\"subsettings\"= " + printSubsettings() + "}"; 
 	}
 	
 	//Returns all subsettings of the setting in json format
@@ -338,13 +338,19 @@ public class Setting {
 			return results;
 		}
 		for (int i = 0; i < this.subsettings.size(); i++) {
-			results.addAll(this.subsettings.get(i).getSettingsSub(name, true));				
+			if (this.subsettings.get(i).name.equals(name)) {
+				results.add(this.subsettings.get(i));
+			}
+		}
+		for (int i = 0; i < this.subsettings.size(); i++) {
+			results.addAll(this.subsettings.get(i).getSettingsSub(name, false));				
 		}
 		int lockLevel = -1;
 		if (results.size() > 0 && !levelEquality(results)) {
 			lockLevel = results.get(0).getLevel();
 			for (Iterator<Setting> ite = results.iterator(); ite.hasNext();) {
 				Setting subject = ite.next();
+				
 				if (subject.getLevel() != lockLevel) {
 					ite.remove();
 				}
@@ -405,24 +411,22 @@ public class Setting {
 		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
 	}
 	
-	public void removeSetting(int sID) {
+	//Removes the specified setting id and returns the successfulness of the oepration
+	public boolean removeSetting(int sID) {
 		if (sID < Setting.sIDState && this.sID != sID) {
-			int rIndex = -1;
 			for (int i = 0; i < this.subsettings.size(); i++) {
 				if (this.subsettings.get(i).sID == sID) {
-					rIndex = i;
-					break;
+					this.subsettings.remove(i);
+					return true;
 				}
 			}
-			if (rIndex != -1) {
-				for (Setting sub : this.subsettings) {
-					sub.removeSetting(sID);
+			for (Setting sub : this.subsettings) {
+				if (sub.removeSetting(sID)) {
+					return true;
 				}
-			} else {
-				this.subsettings.remove(rIndex);
 			}
 		}
-		
+		return false;
 	}
 	
 	//Reset this setting to an empty setting with only a name defined

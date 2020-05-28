@@ -19,6 +19,7 @@ import settings.SettingHandler;
 public class Manager {
 	
 	public static final String SEPERATOR = File.separator;
+	public static final String PATH = System.getProperty("user.home") + Manager.SEPERATOR + "Interface Oasis"; //Base program folder path
 	private static int fID = 0;
 	private static ArrayList<File> files = new ArrayList<File>();
 	
@@ -87,12 +88,10 @@ public class Manager {
 		String newPath = oldPath + Manager.SEPERATOR + "Setting Backup";
 		int i = 1;
 		for (boolean unique = false; !unique; ) {
-			String addon = " (" + i + ")";
+			String addon = " (" + i + ").xml";
 			try {
-				System.out.println(new File(newPath + addon).exists());
-				if (!(new File(newPath + addon).exists())) {
+				if (!Files.exists(Path.of(newPath + addon))) {
 					newPath += addon;
-					System.out.println("final addon " + addon);
 					unique = true;
 				} else {
 					i++;
@@ -103,8 +102,6 @@ public class Manager {
 			}
 			
 		}
-		newPath += ".xml";
-		System.out.println(newPath);
 		int copyTo = newFile(newPath);
 		Manager.writeFile(copyTo, oldContent, false);
 		return newPath;

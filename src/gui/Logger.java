@@ -1,21 +1,27 @@
 package gui;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import filehandler.Manager;
 
 public class Logger implements Runnable {
 	
 	private static ArrayList<MessageObject> messages = new ArrayList<MessageObject>(); //Messages to be viewable in log
 	private static ArrayList<String> errorElements = new ArrayList<String>();
 	private static Thread myThread;
-
-	public static boolean logXML = false;
+	private static final String FILENAME = "ErrorLog_Session" + DateTimeFormatter.ofPattern("HH_mm_ss").format(LocalDateTime.now()) + ".xml";
+	private static final String BASEFOLDER = "Error Logs";
+	private static int fileID;
+	
 	public static boolean runMe = false;
 	
 	public static void addMessage(MessageType type, MessageOrigin origin, String message, String id, String[] elements, String[] values, boolean isFatal) {
 		MessageObject messageObject = new MessageObject(type, origin, message, id);
 		Logger.messages.add(messageObject);
-		if (Logger.logXML && type == MessageType.Error && elements != null && values != null && values.length == elements.length) { //TODO: Store property in setting handler
+		if (type == MessageType.Error && elements != null && values != null && values.length == elements.length) { //TODO: Store property in setting handler
 			ArrayList<String> elementList = new ArrayList<String>();
 			ArrayList<String> valueList = new ArrayList<String>();
 			elementList.add("Origin");
@@ -60,11 +66,13 @@ public class Logger implements Runnable {
 		for (int i = 0; i < elements.length; i++) {
 			errorString += "\r\n\t<" + elements[i] + ">" + values[i] + "</" + elements[i] + ">";
 		}
-		errorString += "\r\n</Error>";
+		errorString += "\r\n</Error>\r\n";
+		Manager.writeFile(Logger.fileID, errorString, true);
 		errorElements.add(errorString);
 	}
 	
 	public static void init() {
+		Logger.fileID = Manager.newFile(Manager.checkPath(Manager.PATH + Manager.SEPERATOR + Logger.BASEFOLDER) + Manager.SEPERATOR + Logger.FILENAME);
 		Logger.myThread = new Thread(new Logger());
 		Logger.runMe = true;
 		Logger.myThread.start();

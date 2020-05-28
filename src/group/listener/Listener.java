@@ -3,6 +3,7 @@ package group.listener;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.Instant;
 import java.util.ArrayList;
 
 import group.GroupHandler;
@@ -91,6 +92,7 @@ public class Listener implements Runnable {
 				ListenerHandler.inputs.get(this.listenerID).add(null);
 				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket);
 				this.connections.add(new Thread(connectionHandler));
+				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port + ". Forwarding to handler with responseID " + myID, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
 				this.connections.get(this.connections.size() - 1).start();
 				ListenerHandler.timerController.get(this.groupID).getKey().addSocket(clientSocket, 10);
 			} catch (IOException e) {
