@@ -212,11 +212,7 @@ public class SettingHandler {
 	}
 	
 	public static void close() {
-		try {
-			Manager.writeFile(fileID, masterSetting.getXML(), false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Manager.writeFile(fileID, masterSetting.getXML(), false);
 	}
 	
 	public static void createSetting(String name, String value, HashMap<String, String> attributes) {

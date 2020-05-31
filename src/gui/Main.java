@@ -32,10 +32,13 @@ public class Main extends JFrame {
 	 */
 	public static void main(String[] args) {
 		
+		Logger.init();
+		SettingHandler.init();
+
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
-			System.out.println("Error");			
+			Logger.reportException(Main.class.getName(), "main", e);			
 		}
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -51,13 +54,11 @@ public class Main extends JFrame {
 					Main frame = new Main();
 					frame.setVisible(true);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.reportException("Main", "main", e);
 				}
 			}
 		});
 		
-		Logger.init();
-		SettingHandler.init();
 	}
 	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!
 	/**
@@ -119,8 +120,8 @@ public class Main extends JFrame {
 					returnVal.setValue(test);
 				}
 			});
-		} catch (InvocationTargetException | InterruptedException e1) {
-			e1.printStackTrace();
+		} catch (Exception e) {
+			Logger.reportException("Main", "askMessage", e1);
 		}
 		return returnVal.getValue();
 	}

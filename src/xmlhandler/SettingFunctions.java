@@ -13,6 +13,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 import cc.Pair;
+import gui.Logger;
 
 public class SettingFunctions {
 	
@@ -282,6 +283,7 @@ public class SettingFunctions {
 			document = builder.parse(in);
 			return true;
 		} catch (Exception e) {
+			Logger.reportException("SettingFunctions", "initIn", e);
 			return false;
 		}
 		

@@ -102,8 +102,10 @@ public class Responder {
 			}
 		} catch (IOException e) {
 			reportError("Couldn't connect socket", e.getMessage());
+			Logger.reportException("Responder", "sendResponse", e);
 		} catch (InterruptedException e) {
 			reportError("Interrupted responder response", e.getMessage());
+			Logger.reportException("Responder", "sendResponse", e);
 		}
 	}
 	

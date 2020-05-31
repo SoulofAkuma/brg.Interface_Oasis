@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import gui.Logger;
+import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
 import settings.SettingHandler;
@@ -33,6 +34,7 @@ public class Manager {
 				file.setReadable(true);
 			} catch (Exception e) {
 				reportError("File Creator", "Unable to create file with path " + path, e.getMessage(), true);
+				Logger.reportException("Manager", "newFile", e);
 				return -1;
 			}
 		}
@@ -54,6 +56,8 @@ public class Manager {
 			writer.close();			
 		} catch (Exception e) {
 			reportError("File Writer", "Unable to write to file with path " + files.get(fileID).getPath(), e.getMessage(), true);
+			Logger.reportException("Manager", "writeFile", e);
+
 			return false;
 		}
 		return true;
@@ -78,6 +82,7 @@ public class Manager {
 			return result;
 		} catch (Exception e) {
 			reportError("File Reader", "Unable to read from file with path " + files.get(fileID).getPath(), e.getMessage(), true);
+			Logger.reportException("Manager", "readFile", e);
 			return null;
 		}
 	}
@@ -98,6 +103,7 @@ public class Manager {
 				}
 			} catch (Exception e) {
 				reportError("File Copyer", "Unable to copy file with path " + files.get(fileID).getPath(), e.getMessage(), true);
+				Logger.reportException("Manager", "copyFile", e);
 				return null;
 			}
 			
@@ -121,6 +127,7 @@ public class Manager {
 				Files.createDirectories(Path.of(path));
 			} catch (IOException e) {
 				reportError("Path Checker", "Unable to create path for setting file", e.getMessage(), true);
+				Logger.reportException("Manager", "checkPath", e);
 			}		
 		}
 

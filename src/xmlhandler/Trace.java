@@ -1,6 +1,7 @@
 package xmlhandler;
 
 import cc.Pair;
+import gui.Logger;
 import parser.ParserHandler;
 import parser.Rule;
 
@@ -144,6 +145,7 @@ public class Trace implements Rule {
 			inputStream = new ByteArrayInputStream(input.getBytes(this.encoding));
 		} catch (Exception e) {
 			errorLog("Unknown encoding", e.getMessage());
+			Logger.reportException("Trace", "trace", e);
 			return null;
 		}
 		try {
@@ -157,6 +159,7 @@ public class Trace implements Rule {
 				inputStream = new ByteArrayInputStream(input.getBytes(this.encoding));
 			} catch (Exception e2) {
 				errorLog("Unknown encoding", e.getMessage());
+				Logger.reportException("Trace", "trace", e2);
 				return null;
 			}
 			try {
@@ -164,6 +167,7 @@ public class Trace implements Rule {
 				document = documentBuilder.parse(inputStream);
 			} catch (Exception e2) {
 				errorLog("Unknown error while parsing document", e.getMessage());
+				Logger.reportException("Trace", "trace", e2);
 				return null;				
 			}
 		}

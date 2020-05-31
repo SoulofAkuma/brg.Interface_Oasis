@@ -65,6 +65,7 @@ public class Listener implements Runnable {
 				this.serverSocket.close();
 			} catch (IOException e) {
 				reportError("Could not close the ServerSocket on port" + this.port, e.getMessage());
+				Logger.reportException("Listener", "setActive", e);
 			}
 		}
 	}
@@ -84,6 +85,7 @@ public class Listener implements Runnable {
 				reportError("Port " + this.port + " is already occupied by listener " + listeningID + " \"" + ListenerHandler.getListenerName(listeningID) + "\"", e.getMessage());
 			}
 			reportError("Could not bind ServerSocket to port" + this.port, e.getMessage());
+			Logger.reportException("Listener", "run", e);
 		}
 		while (this.isActive) {
 			try {
@@ -97,6 +99,7 @@ public class Listener implements Runnable {
 				ListenerHandler.timerController.get(this.groupID).getKey().addSocket(clientSocket, 10);
 			} catch (IOException e) {
 				reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
+				Logger.reportException("Listener", "run", e);
 			}
 		}
 		GroupHandler.getListenerHandler(this.groupID).changeStatus(this.listenerID, false);

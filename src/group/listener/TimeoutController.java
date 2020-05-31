@@ -39,9 +39,6 @@ public class TimeoutController implements Runnable {
 					this.timeoutSockets.set(i, new Pair<Socket, Pair<Integer, Integer>>(this.timeoutSockets.get(i).getKey(), new Pair<Integer, Integer>(this.timeoutSockets.get(i).getValue().getKey() + 1, this.timeoutSockets.get(i).getValue().getValue()))); //Increment left integer of pair
 				}
 			}
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (InterruptedException e) {}
 	}
 }

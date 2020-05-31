@@ -111,7 +111,7 @@ public class ConnectionHandler implements Runnable {
 			out.close();
 			this.socket.close();
 		} catch(IOException e) {
-
+			Logger.reportException("ConnectionHandler", "run", e);
 		}
 		if (success) {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
