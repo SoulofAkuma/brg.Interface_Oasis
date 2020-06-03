@@ -42,15 +42,17 @@ public class Responder {
 
 	public void repond(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
 		String bodyString = this.body.getBody(parsedHeader, parsedBody);
-		String headerString = this.header.getHeader(parsedHeader, parsedBody, bodyString.length());
-		String response = headerString + "\r\n\r\n" + bodyString;
-		sendResponse(header., response);
+		String headerString = this.header.getHeader(parsedHeader, parsedBody, bodyString.getBytes().length);
+		if (headerString != null) {
+			String response = headerString + "\r\n" + bodyString;
+			sendResponse(header.getHost(), header.getPort(), response);
+		}
 	}
 	
-	//TODO: Add header Class to allow custom header values. 
-	public void sendResponse(String url, String response) {
+	//The response here is an http request. However, everything is considered a response here because it happens in response to a trigger
+	public void sendResponse(String host, int port, String response) {
 		try {
-			Socket responder = new Socket();
+			Socket responder = new Socket(host, port);
 			PrintWriter out = new PrintWriter(responder.getOutputStream());
 			BufferedReader in = new BufferedReader(new InputStreamReader(responder.getInputStream()));
 			

@@ -13,7 +13,6 @@ import gui.MessageOrigin;
 import gui.MessageType;
 import settings.Setting;
 import settings.SettingHandler;
-import xmlhandler.Trace;
 
 public class ParserHandler {
 	
@@ -86,7 +85,8 @@ public class ParserHandler {
 		ParserHandler.stdRules.put("Isolate", Isolate.class);
 		ParserHandler.stdRules.put("Replace", Replace.class);
 		ParserHandler.stdRules.put("Split", Split.class);
-		ParserHandler.stdRules.put("Trace", Trace.class);
+		ParserHandler.stdRules.put("XMLTrace", xmlhandler.Trace.class);
+		ParserHandler.stdRules.put("JSONTrace", jsonhandler.Trace.class);
 	}
 	
 	private static void reportError(String cause, boolean onInit) {

@@ -88,8 +88,10 @@ public class Trace implements Rule {
 		this.log.add("Applying parser on \"" + input.get(0) + "\"");
 		String traceResult = trace(input.get(0));
 		if (traceResult == null) {
+			this.log.add("Trace failed");
 			return input;
 		} else {
+			this.log.add("Trace successful - found \"" + traceResult + "\"");
 			input.add(traceResult);
 		}
 		return input;

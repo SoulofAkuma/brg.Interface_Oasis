@@ -40,6 +40,8 @@ public class Logger implements Runnable {
 			valueList.add(messageObject.time);
 			elementList.add("PrintedMessage");
 			valueList.add(message);
+			elementList.add("ID");
+			valueList.add(id);
 			addXMLError(elementList.toArray(new String[elementList.size()]), valueList.toArray(new String[valueList.size()]));
 			if (isFatal) {
 				Main.fatalError(getXMLError(elementList.toArray(new String[elementList.size()]), valueList.toArray(new String[valueList.size()])));
