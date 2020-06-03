@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import constant.Constant;
-import group.listener.RequestType;
+import group.RequestType;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
@@ -17,41 +17,22 @@ import parser.ParserHandler;
 
 public class Responder {
 	
-	private String parserID;
-	private ArrayList<Constant> constants = new ArrayList<Constant>();
-	private int port;
-	private String portString;
-	private String name;
-	private Constant url;
-	private boolean canRespond;
-	private String groupName;
-	private String groupID;
 	private String responderID;
-	private RequestType requestType;
+	private String name;
+	private boolean log;
+	private String groupID;
+	private String groupName;
+	private Header header;
+	private Body body;
 	
-	public Responder(String responderID, String parserID, ArrayList<Constant> constants, String portString, Constant url, String groupName, String groupID, RequestType requestType) {
+	public Responder(String responderID, String name, boolean log, String groupID, String groupName, Header header, Body body) {
 		this.responderID = responderID;
+		this.name = name;
+		this.log = log;
 		this.groupID = groupID;
-		this.parserID = parserID;
-		this.constants = constants;
-		this.portString = portString;
-		int tempPort = -1;
-		boolean canRespond;
-		try {
-			tempPort = Integer.parseInt(portString);
-			canRespond = true;
-		} catch (NullPointerException en) {
-			reportError("Unset port value", en.getMessage());
-			canRespond = false;
-		} catch (NumberFormatException ef) {
-			reportError("Invalid port value \"" + this.portString + "\"", ef.getMessage());
-			canRespond = false;
-		}
-		this.canRespond = canRespond;
-		this.port = tempPort;
-		this.url = url;
 		this.groupName = groupName;
-		this.requestType = requestType;
+		this.header = header;
+		this.body = body;
 	}
 
 	public void repond() {
@@ -59,34 +40,17 @@ public class Responder {
 		
 	}
 
-	public void repond(String[] responseParams) {
-		HashMap<String, String> parsedHeader = transformHeader(responseParams[1]);
-		HashMap<String, String> parsedBody = ParserHandler.getParser(this.parserID).parse(responseParams[0]);
-		String response = "";
-		
-		for (Constant constant : this.constants) {
-			if (constant.usesHeader()) {
-				response += constant.getConstant(parsedHeader);
-			} else {
-				response += constant.getConstant(parsedBody);
-			}
-		}
-		
-		String url = "";
-		if (this.url.usesHeader()) {
-			url = this.url.getConstant(parsedHeader);
-		} else {
-			url = this.url.getConstant(parsedBody);
-		}
-		sendResponse(url, response);
+	public void repond(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
+		String bodyString = this.body.getBody(parsedHeader, parsedBody);
+		String headerString = this.header.getHeader(parsedHeader, parsedBody, bodyString.length());
+		String response = headerString + "\r\n\r\n" + bodyString;
+		sendResponse(header., response);
 	}
 	
+	//TODO: Add header Class to allow custom header values. 
 	public void sendResponse(String url, String response) {
-		if (!this.canRespond) {
-			return;
-		}
 		try {
-			Socket responder = new Socket(url, this.port);
+			Socket responder = new Socket();
 			PrintWriter out = new PrintWriter(responder.getOutputStream());
 			BufferedReader in = new BufferedReader(new InputStreamReader(responder.getInputStream()));
 			

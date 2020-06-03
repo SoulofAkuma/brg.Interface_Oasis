@@ -32,8 +32,8 @@ public class ParserHandler {
 		initStdList();
 		for (Setting parser : parserMasterSetting.getSubsettings()) {
 			boolean success = false;
-			String id = parser.getAttribute("id").getValue();
-			String name = parser.getAttribute("name").getValue();
+			String id = parser.getAttribute("id");
+			String name = parser.getAttribute("name");
 			ArrayList<Rule> rules = new ArrayList<Rule>();
 			for (Setting rule : parser.getSettings("Rule")) {
 				if (rule.getName().equals("Rule") && parser.getID() - rule.getLevel() == 2) {

@@ -15,8 +15,8 @@ public class GroupHandler {
 	
 	public static void init(Setting handlerMasterSetting) {
 		for (Setting handlerGroup : handlerMasterSetting.getSubsettings()) {
-			String id = handlerGroup.getAttribute("id").getValue();
-			String name = handlerGroup.getAttribute("name").getValue();
+			String id = handlerGroup.getAttribute("id");
+			String name = handlerGroup.getAttribute("name");
 			ListenerHandler listenerHandler = new ListenerHandler(handlerGroup.getSettings("Listener").get(0), id, name);
 			ResponderHandler responderHandler = new ResponderHandler(handlerGroup.getSettings("Responder").get(0), id, name);
 			listenerHandler.init();

@@ -2,83 +2,42 @@ package constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import cc.Pair;
 
 public class Constant {
 	
-	private ArrayList<String> values;
-	private ArrayList<String> dynamicValues;
-	private boolean isDynamic;
-	private boolean useHeader;
+	private String id;
+	private String name;
+	private ArrayList<String> order;
+	private ConcurrentHashMap<String, Value> values;
 	
-	public Constant(ArrayList<String> values, ArrayList<String> dynamicValues, boolean useHeader) {
+	public Constant(String id, String name, ArrayList<String> order, ConcurrentHashMap<String, Value> values) {
+		this.id = id;
+		this.name = name;
+		this.order = order;
 		this.values = values;
-		this.dynamicValues = dynamicValues;
-		this.isDynamic = (dynamicValues.size() > 0) ? true : false;
-		this.useHeader = useHeader;
 	}
-	
-	public boolean usesHeader() {
-		return this.useHeader;
-	}
-	
-	public void insertValue(int index, String value) {
-		this.values.add(index, value);
-	}
-	
-	public void insertDynamic(int index, String value) {
-		if (this.dynamicValues.size() == 0) {
-			this.isDynamic = true;
+
+	public void insertValue(int index, Value value) {
+		if (index < order.size()) {
+			order.add(index, value.id);
+		} else {
+			order.add(value.id);
 		}
-		int dynToIndex = 0;
-		for (int i = 0; i < index; i++) {
-			if (this.values.get(i) == null) {
-				dynToIndex++;
-			}
-		}
-		this.dynamicValues.add(dynToIndex, value);
-		this.values.add(index, null);
+		values.put(value.id, value);
 	}
 	
 	public void removeValue(int index) {
-		if (this.values.get(index) == null) {
-			int dynToIndex = 0;
-			for (int i = 0; i < index; i++) {
-				if (this.values.get(i) == null) {
-					dynToIndex++;
-				}
-			}
-			this.dynamicValues.remove(dynToIndex);
-			this.values.remove(index);
-			if (this.dynamicValues.size() == 0) {
-				this.isDynamic = false;
-			}
-		}
+		this.values.remove(order.get(index));
+		this.order.remove(index);
 	}
 	
-	public String getConstant() {
+	public String getConstant(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
 		String reVal = "";
-		for (String value : this.values) {
-			reVal += value;
-		}
-		return reVal;
-	}
-	
-	public String getConstant(HashMap<String, String> dynValues) {
-		String reVal = "";
-		int dynIndex = 0;
-		if (this.isDynamic) {
-			for (String value : this.values) {
-				if (value == null) {
-					reVal += dynValues.get(this.dynamicValues.get(dynIndex));
-					dynIndex++;
-				} else {
-					reVal += value;
-				}
-			}			
-		} else {
-			for (String value : this.values) {
-				reVal += value;
-			}
+		for (String valueID : this.order) {
+			reVal += this.values.get(valueID).getString(parsedHeader, parsedBody);
 		}
 		return reVal;
 	}

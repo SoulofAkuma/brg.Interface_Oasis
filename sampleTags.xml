@@ -5,7 +5,10 @@
 				<Listener log="true" port="8080" name="SampleListener" id="000000011"/>
 			</Listeners>
 			<Responders>
-				<Responder log="true" name="SampleResponder" constants="000000021,000000022,000000023" id="000000012" literalURL="true" url="localhost:8081/respond.php"/>
+				<Responder log="true" name="SampleResponder" id="000000012">
+					<Header url="000000040" host="000000042" userAgent="000000044" contentType="000000046"/>
+					<Body constants="000000060,000000063,000000064" seperator="&amp;"/>
+				</Responder>
 			</Responders>
 		</Group>
 	</Groups>
@@ -24,15 +27,46 @@
 		</Parser>
 	</Parsers>
 	<Constants>
-		<Constant name="sampleConstant" id="000000040" order="000000041,000000042,000000043,000000044,000000045,000000046,000000047">
+		<Constant name="sampleHost" id="000000040" order="000000041">
 			<Values>
-				<Value isDynamic="false" useHeader="false" id="000000041">Your name is</Value>
-				<Value isDynamic="true" useHeader="false" id="000000042">name</Value>
-				<Value isDynamic="false" useHeader="false" id="000000043">, you live in</Value>
-				<Value isDynamic="true" useHeader="false" id="000000044">origin</Value>
-				<Value isDynamic="false" useHeader="false" id="000000045"> and you are </Value>
-				<Value isDynamic="true" useHeader="false" id="000000046">age</Value>
-				<Value isDynamic="false" useHeader="false" id="000000047"> years old.</Value>
+				<Value isKey="true" backRefernce="false" useHeader="false" id="000000041">host</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleUserAgent" id="000000042" order="000000043">
+			<Values>
+				<Value isKey="true" backRefernce="false" useHeader="false" id="000000043">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleContentType" id="000000045" order="000000046">
+			<Values>
+				<Value isKey="true" backRefernce="false" useHeader="false" id="000000046">text/plain</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleURL" id="000000050" order="000000051,000000052,000000053,000000054,000000055">
+			<Values>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000051">http://</Value>
+				<Value isKey="false" backReference="true" useHeader="false" id="000000052">000000040</Value>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000053">:</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000054">port</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000055">path</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleBody1" id="000000060" order="000000061,000000062">
+			<Values>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000061">arg1=</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000062">arg1</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleBody2" id="000000063" order="000000064,000000065">
+			<Values>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000064">arg2=</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000065">arg2</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleBody3" id="000000066" order="000000067,000000068">
+			<Values>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000067">arg3=</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000068">arg3</Value>
 			</Values>
 		</Constant>
 	</Constants>

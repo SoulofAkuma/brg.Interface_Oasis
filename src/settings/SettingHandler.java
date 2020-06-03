@@ -24,7 +24,10 @@ import trigger.TriggerHandler;
 public class SettingHandler {
 	
 	private static int fileID; //ID of the setting file for the file handler
-	private static final String FILENAME = "settings.xml"; //Name of the setting file
+	private static final String SETTINGFOLDER = Manager.PATH + Manager.SEPERATOR + "Settings";
+	private static final String SETTINGBACKUPFOLDER = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "Backups";
+	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "settings.xml"; //Name of the setting file
+	private static final String SETTINGBACKUPPATH = SettingHandler.SETTINGBACKUPFOLDER + Manager.SEPERATOR + "Setting Backup Session " + Main.SESSIONTIME + ".xml";
 	private static final String BASESETTING = "InterfaceOasis"; //Name of the root Element in the xml setting
 	private static Setting masterSetting; //The content of the setting file parsed into a setting
 	private static Setting groupMasterSetting; //The master group setting element derived from the master setting
@@ -40,7 +43,8 @@ public class SettingHandler {
 	public static final String SETTINGPARSINGID = "000000003"; //Reserved ID for the Setting parsing process (for error reports)
 	public static final String PARSERHANDLERID = "000000004"; //Reserved ID for the ParserHandler (for error reports)
 	
-	public static final Set<String> IDS = Collections.synchronizedSet(new HashSet<String>()); //A multithread set with all existing IDs which takes O(1) to iterate over
+	public static final ConcurrentHashMap<String, IDType> IDS = new ConcurrentHashMap<String, IDType>(); //A multithread set with all existing IDs which takes O(1) to iterate over
+	public static final Set<String> CONSTANTIDS = Collections.synchronizedSet((new HashSet<String>()));
 	
 	public static final String REGEXNAME = "[0-9A-Za-z_.()\\[\\]\\-{};,:%/!?& ]{0,50}"; //Regex for names defined in attributes which can be empty
 	public static final String REGEXID = "[0-9]{9}"; //Regex for ids defined in attributes
@@ -54,7 +58,9 @@ public class SettingHandler {
 		
 		initReserved();
 		
-		fileID = Manager.newFile(Manager.checkPath(Manager.PATH) + Manager.SEPERATOR + FILENAME);
+		Manager.checkPath(SettingHandler.SETTINGFOLDER);
+		Manager.checkPath(SettingHandler.SETTINGBACKUPFOLDER);
+		fileID = Manager.newFile(SettingHandler.SETTINGFILEPATH);
 		
 		if (fileID == -1) {
 			reportError("Missing Setting File", "All actions will not be saved");
@@ -62,12 +68,13 @@ public class SettingHandler {
 		}
 		
 		SettingHandler.masterSetting = Setting.parseSetting(Manager.readFile(fileID), 1);
+		Manager.writeFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.json"), masterSetting.printSetting(), false);
 		boolean alteredInformation = false;
 		boolean wasEmpty = false;
 		
 		if (masterSetting.reset()) {
 			resetInformation("No setting found - resetting to default");
-			masterSetting.resetSetting(BASESETTING);
+			masterSetting.resetSetting(SettingHandler.BASESETTING);
 			alteredInformation = true;
 			wasEmpty = true;
 		}
@@ -99,7 +106,7 @@ public class SettingHandler {
 		
 		if (alteredInformation && !wasEmpty) {
 			if (Main.askMessage("Due to missing base settings your settings have been altered - Do you want to create a backup of your old setting file?", "Backup Setting File") == 0) {
-				Manager.copyFile(fileID);				
+				Manager.copyFile(fileID, SettingHandler.SETTINGBACKUPPATH);				
 			}
 		}
 		SettingHandler.backupSetting = SettingHandler.masterSetting.getBackup();
@@ -128,6 +135,16 @@ public class SettingHandler {
 		ArrayList<Integer> removeTriggerIndexes = new ArrayList<Integer>();
 		ArrayList<Integer> removeParserIndexes = new ArrayList<Integer>();
 		ArrayList<Integer> removeConstantIndexes = new ArrayList<Integer>();
+		
+		for (int i = 0; i < tempConstantMasterSetting.getSubsettings().size(); i++) {
+			int settingID = tempConstantMasterSetting.getSubsettings().get(i).getID();
+			Setting finalSetting;
+			if ((finalSetting = checkConstantSetting(tempConstantMasterSetting.getSubsettings().get(i), i + 1)) != null) {
+				tempConstantMasterSetting.replaceID(settingID, finalSetting);
+			} else {
+				removeConstantIndexes.add(settingID);
+			}
+		}
 		
 		for (int i = 0; i < tempGroupMasterSetting.getSubsettings().size(); i++) {
 			int settingID = tempGroupMasterSetting.getSubsettings().get(i).getID();
@@ -160,19 +177,9 @@ public class SettingHandler {
 			}
 		}
 		
-		for (int i = 0; i < tempConstantMasterSetting.getSubsettings().size(); i++) {
-			int settingID = tempConstantMasterSetting.getSubsettings().get(i).getID();
-			Setting finalSetting;
-			if ((finalSetting = checkConstantSetting(tempConstantMasterSetting.getSubsettings().get(i), i + 1)) != null) {
-				tempConstantMasterSetting.replaceID(settingID, finalSetting);
-			} else {
-				removeConstantIndexes.add(settingID);
-			}
-		}
-		
 		if (altered || removeGroupIndexes.size() > 0 || removeTriggerIndexes.size() > 0 || removeParserIndexes.size() > 0 || removeConstantIndexes.size() > 0) {
 			if (Main.askMessage("Due to errors in the current setting definitions, your settings have been altered. All error information can be found in the logging messages - Do you want to create a backup of your old Setting file?", "Setting File Error") == 0) {
-				Manager.copyFile(SettingHandler.fileID);
+				Manager.copyFile(SettingHandler.fileID, SettingHandler.SETTINGBACKUPPATH);
 			}
 		}
 		
@@ -204,11 +211,11 @@ public class SettingHandler {
 	}
 	
 	public static void initReserved() {
-		SettingHandler.IDS.add(SettingHandler.FILEHANDLERID); //FileHandler
-		SettingHandler.IDS.add(SettingHandler.GROUPHANDLERID); //GroupHandler
-		SettingHandler.IDS.add(SettingHandler.PARSERHANDLERID); //SettingHandler
-		SettingHandler.IDS.add(SettingHandler.SETTINGHANDLERID); //SettingFunctions
-		SettingHandler.IDS.add(SettingHandler.SETTINGPARSINGID); //ParserHandler
+		SettingHandler.IDS.put(SettingHandler.FILEHANDLERID, IDType.FileHandler); //FileHandler
+		SettingHandler.IDS.put(SettingHandler.GROUPHANDLERID, IDType.GroupHandler); //GroupHandler
+		SettingHandler.IDS.put(SettingHandler.PARSERHANDLERID, IDType.ParserHandler); //SettingHandler
+		SettingHandler.IDS.put(SettingHandler.SETTINGHANDLERID, IDType.SettingHandler); //SettingFunctions
+		SettingHandler.IDS.put(SettingHandler.SETTINGPARSINGID, IDType.SettingParser); //ParserHandler
 	}
 	
 	public static void close() {
@@ -292,7 +299,7 @@ public class SettingHandler {
 	//Syntax Checkers
 	private static Setting checkGroupSetting(Setting checkMe, int ite) {
 		ArrayList<Integer> removeIDs = new ArrayList<Integer>();
-		Set<String> localIDs = new HashSet<String>();
+		HashMap<String, IDType> localIDs = new HashMap<String, IDType>();
 		if (!checkMe.getName().equals("Group")) {
 			reportSyntaxError("Group Name Checker", "Unknown Groups Element \"" + checkMe.getName() + "\"", true, ite);
 			return null;
@@ -315,12 +322,12 @@ public class SettingHandler {
 						reportSyntaxError("Group Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\". Removing Group", false, ite);
 						returnNull = true;
 					} else {
-						if (SettingHandler.IDS.contains(attribute.getValue())) {
+						if (SettingHandler.IDS.containsKey(attribute.getValue())) {
 							reportSyntaxError("Group Attribute Checker", "Duplicate ID found " + attribute.getValue() + ". Removing Group", false, ite);
 							returnNull = true;
 							id = "unset";
 						} else {
-							localIDs.add(attribute.getValue());
+							localIDs.put(attribute.getValue(), IDType.Group);
 							id = attribute.getValue();
 						}
 					}
@@ -384,7 +391,7 @@ public class SettingHandler {
 										reportSyntaxError("Group Listener Attribute Checker", "Invalid id value \""  + subject.getValue() + "\"", false, id, groupIte, listenerIte);
 										next = true;
 									} else {
-										if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
+										if (localIDs.containsKey(attribute.getValue()) || SettingHandler.IDS.containsKey(attribute.getValue())) {
 											reportSyntaxError("Group Listener Attribute Checker", "Duplicate ID found " + attribute.getValue(),								 false, id, groupIte, listenerIte);
 											next = true;
 										} else {
@@ -405,7 +412,7 @@ public class SettingHandler {
 						reportSyntaxError("Group Listener Checker", "Removing last mentioned Listener", false, id, groupIte, listenerIte);
 						removeIDs.add(subject.getID());
 					} else {
-						localIDs.add(listenerID);
+						localIDs.put(listenerID, IDType.Listener);
 					}
 				}
 			} else if (groupElement.getName().equals("Responders")) {
@@ -461,6 +468,14 @@ public class SettingHandler {
 									if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
 										reportSyntaxError("Group Responder Attribute Checker", "Invalid constants value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
+									} else {
+										String[] constants = attribute.getValue().split(",");
+										for (String constant : constants) {
+											if (!SettingHandler.CONSTANTIDS.contains(constant)) {
+												reportSyntaxError("Group Responder Attribute Checker", "Invalid constants value \"" + attribute.getValue() + "\". The constant \"" + constant + "\" does not exist", false, id, groupIte, responderIte);
+												next = true;
+											}
+										}
 									}
 								break;	
 								case "id":
@@ -469,7 +484,7 @@ public class SettingHandler {
 										reportSyntaxError("Group Responder Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 										next = true;
 									} else {
-										if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
+										if (localIDs.containsKey(attribute.getValue()) || SettingHandler.IDS.containsKey(attribute.getValue())) {
 											reportSyntaxError("Group Responder Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, id, groupIte, responderIte);
 											next = true;
 										} else {
@@ -489,6 +504,9 @@ public class SettingHandler {
 							if (!matchesRegex(SettingHandler.REGEXID, urlVal)) {
 								reportSyntaxError("Group Responder Attribute Checker", "Invalid url value \"" + urlVal + "\" (Non-literal url values must contain a constantID)", false, id, groupIte, responderIte);
 								next = true;
+							} else if (!SettingHandler.CONSTANTIDS.contains(urlVal)) {
+								reportSyntaxError("Group Responder Attribute Checker", "Invalid url value \"" + urlVal + "\" (This constant does not exist)", false, id, groupIte, responderIte);
+								next = true;
 							}
 						}
 					}
@@ -496,7 +514,7 @@ public class SettingHandler {
 						reportSyntaxError("Group Responder Checker", "Removing last mentioned responder", false, id, groupIte, responderIte);
 						removeIDs.add(subject.getID());
 					} else {
-						localIDs.add(responderID);
+						localIDs.put(responderID, IDType.Responder);
 					}
 				} //End responder iteration
 			} else {
@@ -506,7 +524,7 @@ public class SettingHandler {
 		if (returnNull) {
 			return null;
 		}
-		SettingHandler.IDS.addAll(localIDs);
+		SettingHandler.IDS.putAll(localIDs);
 		for (int removeID : removeIDs) {
 			SettingHandler.altered = true;
 			SettingHandler.masterSetting.removeSetting(removeID);
@@ -523,7 +541,7 @@ public class SettingHandler {
 			return null;
 		}
 		createMissingTable("name", "id", "order");
-		Set<String> localIDs = new HashSet<String>();
+		HashMap<String, IDType> localIDs = new HashMap<String, IDType>();
 		String[] order = null;
 		boolean next = false;
 		boolean returnNull = false;
@@ -543,10 +561,10 @@ public class SettingHandler {
 						reportSyntaxError("Parser Attribute Checker", "Invalid name value \"" + attribute.getValue() + "\"", false, ite);
 						returnNull = true;
 					} else {
-						if (SettingHandler.IDS.contains(attribute.getValue())) {
+						if (SettingHandler.IDS.containsKey(attribute.getValue())) {
 							reportSyntaxError("Parser Attribute Checker", "Duplicate ID found \" " + attribute.getValue() + "\"", false, ite);
 						} else {
-							localIDs.add(attribute.getValue());
+							localIDs.put(attribute.getValue(), IDType.Parser);
 							id = attribute.getValue();
 						}
 					}
@@ -585,12 +603,12 @@ public class SettingHandler {
 						next = true;
 						break;
 					} else {
-						if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
+						if (localIDs.containsKey(attribute.getValue()) || SettingHandler.IDS.containsKey(attribute.getValue())) {
 							reportSyntaxError("Parser Rule Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, id, ruleIte);
 							next = true;
 							break;
 						} else {
-							localIDs.add(attribute.getValue());
+							localIDs.put(attribute.getValue(), IDType.Rule);
 							ruleIDs.add(attribute.getValue());
 							break;
 						}
@@ -621,7 +639,7 @@ public class SettingHandler {
 			return null;
 			
 		}
-		SettingHandler.IDS.addAll(localIDs);
+		SettingHandler.IDS.putAll(localIDs);
 		//Further syntax checking is not necessary. The parser consists of many rules which are independently checked by the corresponding rule
 		return checkMe;
 	}
@@ -634,7 +652,8 @@ public class SettingHandler {
 	public static Setting checkConstantSetting(Setting checkMe, int ite) {
 		ArrayList<Integer> removeIDs = new ArrayList<Integer>();
 		Set<String> values = new HashSet<String>();
-		Set<String> localIDs = new HashSet<String>();
+		HashMap<String, IDType> localIDs = new HashMap<String, IDType>();
+		Set<String> constantIDs = new HashSet<String>();
 		if (!checkMe.getName().equals("Constant")) {
 			reportSyntaxError("Constant Element Checker", "Unknown Element \"" + checkMe.getName() + "\". Removing Element", true, ite);
 			return null;
@@ -659,12 +678,13 @@ public class SettingHandler {
 						id = "unset";
 						returnNull = true;
 					} else {
-						if (SettingHandler.IDS.contains(attribute.getValue())) {
+						if (SettingHandler.IDS.containsKey(attribute.getValue())) {
 							reportSyntaxError("Constant Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, ite);
 							returnNull = true;
 						} else {
 							id = attribute.getValue();
-							localIDs.add(attribute.getValue());
+							localIDs.put(attribute.getValue(), IDType.Constant);
+							constantIDs.add(attribute.getValue());
 						}
 					}
 				break;
@@ -704,7 +724,7 @@ public class SettingHandler {
 							reportSyntaxError("Constant Value Attribute Checker", "Invalid id Value \"" + attribute.getValue() + "\"", false, id, valueIte);
 							next = true;
 						} else {
-							if (localIDs.contains(attribute.getValue()) || SettingHandler.IDS.contains(attribute.getValue())) {
+							if (localIDs.containsKey(attribute.getValue()) || SettingHandler.IDS.containsKey(attribute.getValue())) {
 								reportSyntaxError("Constant Value Attribute Checker", "Duplicate ID found \"" + attribute.getValue() + "\"", false, id, valueIte);
 								next = true;
 							} else {
@@ -747,7 +767,7 @@ public class SettingHandler {
 				removeIDs.add(value.getID());
 			} else {
 				values.add(valueID);
-				localIDs.add(valueID);
+				localIDs.put(valueID, IDType.Value);
 			}
 		}
 		ArrayList<String> missing = new ArrayList<String>();
@@ -764,7 +784,7 @@ public class SettingHandler {
 		if (returnNull) {
 			return null;
 		}
-		SettingHandler.IDS.addAll(localIDs);
+		SettingHandler.IDS.putAll(localIDs);
 		for (String valueID : order) {
 			if (!values.contains(valueID)) {
 				reportSyntaxError("Constant Attribute Checker", "Undefined ValueID " + valueID + " in the order attribute of \"" + checkMe.getName() + " " + id, false, id);
@@ -809,7 +829,6 @@ public class SettingHandler {
 		}
 		return true;
 	}
-	
 	
 	public static boolean matchesRegex(String regex, String subject) {
 		if (subject == null || regex == null) {

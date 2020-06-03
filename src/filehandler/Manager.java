@@ -87,30 +87,16 @@ public class Manager {
 		}
 	}
 	
-	public static String copyFile(int fileID) {
+	public static boolean copyFile(int fileID, String newPath) {
 		String oldContent = readFile(fileID);
 		String oldPath = getDirPath(fileID);
-		String newPath = oldPath + Manager.SEPERATOR + "Setting Backup";
-		int i = 1;
-		for (boolean unique = false; !unique; ) {
-			String addon = " (" + i + ").xml";
-			try {
-				if (!Files.exists(Path.of(newPath + addon))) {
-					newPath += addon;
-					unique = true;
-				} else {
-					i++;
-				}
-			} catch (Exception e) {
-				reportError("File Copyer", "Unable to copy file with path " + files.get(fileID).getPath(), e.getMessage(), true);
-				Logger.reportException("Manager", "copyFile", e);
-				return null;
-			}
-			
-		}
 		int copyTo = newFile(newPath);
-		Manager.writeFile(copyTo, oldContent, false);
-		return newPath;
+		if (oldContent == null || Manager.writeFile(copyTo, oldContent, false)) {
+			return true;
+		} else {
+			reportError("File Copyer", "Unable to copy file with path \"" + oldPath + "\" to path \"" + newPath + "\"", true);
+			return false;
+		}
 	}
 	
 	public static boolean delFile(int fileID) {
@@ -150,6 +136,13 @@ public class Manager {
 		String message = source + " in the File Handler reported " + causes + " caused by " + errorMessage;
 		String[] elements = {"ID", "Origin", "Source", "Causes", "ErrorMessage"};
 		String[] values = {SettingHandler.FILEHANDLERID, MessageOrigin.FileHandler.name(), source, causes, errorMessage};
+		Logger.addMessage(MessageType.Error, MessageOrigin.FileHandler, message, SettingHandler.FILEHANDLERID, elements, values, isFatal);
+	}
+	
+	private static void reportError(String source, String causes, boolean isFatal) {
+		String message = source + " in the File Handler reported " + causes;
+		String[] elements = {"ID", "Origin", "Source", "Causes"};
+		String[] values = {SettingHandler.FILEHANDLERID, MessageOrigin.FileHandler.name(), source, causes};
 		Logger.addMessage(MessageType.Error, MessageOrigin.FileHandler, message, SettingHandler.FILEHANDLERID, elements, values, isFatal);
 	}
 }

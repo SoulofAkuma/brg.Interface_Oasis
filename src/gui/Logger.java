@@ -16,10 +16,10 @@ public class Logger implements Runnable {
 	private static ArrayList<MessageObject> messages = new ArrayList<MessageObject>(); //Messages to be viewable in log
 	private static ArrayList<String> errorElements = new ArrayList<String>();
 	private static Thread myThread;
-	private static final String SESSIONTIME = DateTimeFormatter.ofPattern("HH_mm_ss").format(LocalDateTime.now());
-	private static final String FILENAME = "ErrorLog_Session" + SESSIONTIME + ".xml";
-	private static final String EXCEPTIONFILENAME = "ExceptionLog_Session" + SESSIONTIME + ".xml";
-	private static final String BASEFOLDER = "Error Logs";
+	private static final String BASEFOLDER = Manager.PATH + Manager.SEPERATOR + "Log";
+	private static final String SESSIONFOLDER = Logger.BASEFOLDER + Manager.SEPERATOR + "Log " + Main.SESSIONTIME;
+	private static final String ERRORLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPERATOR + "ErrorLog_Session" + Main.SESSIONTIME + ".xml";
+	private static final String EXCEPTIONLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPERATOR + "ExceptionLog_Session" + Main.SESSIONTIME + ".xml";
 	private static int fileID;
 	private static int exceptionFileID;
 	
@@ -29,9 +29,9 @@ public class Logger implements Runnable {
 	public static void addMessage(MessageType type, MessageOrigin origin, String message, String id, String[] elements, String[] values, boolean isFatal) {
 		MessageObject messageObject = new MessageObject(type, origin, message, id);
 		Logger.messages.add(messageObject);
-		if (type == MessageType.Error && elements != null && values != null && values.length == elements.length) { //TODO: Store property in setting handler
-			ArrayList<String> elementList = new ArrayList<String>();
-			ArrayList<String> valueList = new ArrayList<String>();
+		ArrayList<String> elementList = new ArrayList<String>();
+		ArrayList<String> valueList = new ArrayList<String>();
+		if (type == MessageType.Error && elements != null && values != null && values.length == elements.length) {
 			elementList.add("Origin");
 			valueList.add(type.name());
 			elementList.addAll(Arrays.asList(elements));
@@ -41,22 +41,9 @@ public class Logger implements Runnable {
 			elementList.add("PrintedMessage");
 			valueList.add(message);
 			addXMLError(elementList.toArray(new String[elementList.size()]), valueList.toArray(new String[valueList.size()]));
-		}
-		if (isFatal) {
-			if (elements != null && values != null && elements.length == values.length) {
-				ArrayList<String> elementList = new ArrayList<String>();
-				ArrayList<String> valueList = new ArrayList<String>();
-				elementList.add("Origin");
-				valueList.add(type.name());
-				elementList.addAll(Arrays.asList(elements));
-				valueList.addAll(Arrays.asList(values));
-				elementList.add("Time");
-				elementList.add("PrintedMessage");
-				valueList.add(message);
-				valueList.add(messageObject.time);
+			if (isFatal) {
 				Main.fatalError(getXMLError(elementList.toArray(new String[elementList.size()]), valueList.toArray(new String[valueList.size()])));
 			}
-			
 		}
 	}
 	
@@ -97,8 +84,10 @@ public class Logger implements Runnable {
 	}
 	
 	public static void init() {
-		Logger.fileID = Manager.newFile(Manager.checkPath(Manager.PATH + Manager.SEPERATOR + Logger.BASEFOLDER) + Manager.SEPERATOR + Logger.FILENAME);
-		Logger.exceptionFileID = Manager.newFile(Manager.checkPath(Manager.PATH + Manager.SEPERATOR + Logger.BASEFOLDER) + Manager.SEPERATOR + Logger.EXCEPTIONFILENAME);
+		Manager.checkPath(Logger.BASEFOLDER);
+		Manager.checkPath(Logger.SESSIONFOLDER);
+		Logger.fileID = Manager.newFile(Logger.ERRORLOGFILEPATH);
+		Logger.exceptionFileID = Manager.newFile(Logger.EXCEPTIONLOGFILEPATH);
 		Logger.myThread = new Thread(new Logger());
 		Logger.runMe = true;
 		Logger.myThread.start();

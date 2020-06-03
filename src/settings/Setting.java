@@ -21,7 +21,7 @@ public class Setting {
 	private String name; // Name of the Setting
 	private HashMap<String, String> attributes = new HashMap<String, String>();
 	private String namespaceURI = null;
-	private String value = null; // Value of the Setting
+	private String value = ""; // Value of the Setting
 	private int level = -1;
 	private int sID;
 	private boolean isEmpty = false;
@@ -304,7 +304,7 @@ public class Setting {
 
 	//Returns the whole setting in json format
 	public String printSetting() { 
-		return "{\n\t\"level\"=\"" + this.level + "\n\t\"settingID\"=\"" + this.sID + "\",\n\t\"name\"=\"" + this.name + "\",\n\t\"value\"=\"" + String.valueOf(this.value) + "\",\n\t\"attributes\"=" + printAttributes() + ",\n\t\"subsettings\"= " + printSubsettings() + "}"; 
+		return "{\n\t\"level\"=\"" + this.level + "\",\n\t\"settingID\"=\"" + this.sID + "\",\n\t\"name\"=\"" + this.name + "\",\n\t\"value\"=\"" + String.valueOf(this.value) + "\",\n\t\"attributes\"=" + printAttributes() + ",\n\t\"subsettings\"= " + printSubsettings() + "}"; 
 	}
 	
 	//Returns all subsettings of the setting in json format
@@ -321,7 +321,10 @@ public class Setting {
 	public String printAttributes() { 
 		String attributeString = "[\n"; 
 		for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
-			attributeString += "\t{\"name\"=\"" + attribute.getKey() + "\",\"value\"=\"" + attribute.getValue() + "\"}\n"; 
+			attributeString += "\t{\"name\"=\"" + attribute.getKey() + "\",\"value\"=\"" + attribute.getValue() + "\"},\n"; 
+		}
+		if (attributeString.length() > 1) {
+			attributeString = attributeString.substring(0, attributeString.length() - 2) + "\n";
 		}
 		attributeString += "]"; return attributeString;
 	}
@@ -364,16 +367,16 @@ public class Setting {
 		return (this.getSettingsSub(name, false).size() > 0);
 	}
 	
-	//Returns an attribute with a defined name
-	public Pair<String, String> getAttribute(String name) {
+	//Returns the value of the defined attribute name
+	public String getAttribute(String name) {
 		if (this.attributes.containsKey(name)) {
-			return new Pair<String, String>(name, this.attributes.get(name));
+			return this.attributes.get(name);
 		}
 		return null;
 	}
 	
 	public void setAttribute(String name, String value) {
-		
+		this.attributes.put(name, value);
 	}
 	
 	//Returns whether a list of settings has duplicate levels
@@ -435,7 +438,7 @@ public class Setting {
 			this.name = name;
 			this.attributes = new HashMap<String, String>();
 			this.namespaceURI = null;
-			this.value = null;
+			this.value = "";
 			this.node = null;
 			this.subsettings = new ArrayList<Setting>();
 			this.functions = new SettingFunctions();

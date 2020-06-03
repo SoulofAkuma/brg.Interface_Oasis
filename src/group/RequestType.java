@@ -1,4 +1,4 @@
-package group.listener;
+package group;
 
 public enum RequestType {
 	GET,

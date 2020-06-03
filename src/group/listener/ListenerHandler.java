@@ -30,16 +30,16 @@ public class ListenerHandler {
 		this.listenerMasterSetting = listenerMasterSetting;
 		this.groupID = groupID;
 		this.groupName = groupName;
-		this.handlerID = listenerMasterSetting.getAttribute("id").getValue();
+		this.handlerID = listenerMasterSetting.getAttribute("id");
 		TimeoutController controller = new TimeoutController();
 		ListenerHandler.timerController.put(this.handlerID, new Pair<TimeoutController, Thread>(controller, new Thread(controller)));
 	}
 	
 	public void init() {
 		for (Setting listenerSetting : this.listenerMasterSetting.getSubsettings()) {
-			String name = listenerSetting.getAttribute("name").getValue();
-			String port = listenerSetting.getAttribute("port").getValue();
-			String listenerID = listenerSetting.getAttribute("id").getValue();
+			String name = listenerSetting.getAttribute("name");
+			String port = listenerSetting.getAttribute("port");
+			String listenerID = listenerSetting.getAttribute("id");
 			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);

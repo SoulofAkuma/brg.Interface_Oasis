@@ -23,10 +23,10 @@ public class ResponderHandler {
 	
 	public void init() {
 		for (Setting responder : this.responderMasterSetting.getSubsettings()) {
-			String responderName = responder.getAttribute("name").getValue();
-			String responderID = responder.getAttribute("id").getValue();
-			String portString = responder.getAttribute("port").getValue();
-			String parserID = responder.getAttribute("parserID").getValue();
+			String responderName = responder.getAttribute("name");
+			String responderID = responder.getAttribute("id");
+			String portString = responder.getAttribute("port");
+			String parserID = responder.getAttribute("parserID");
 			Constant url;
 			ArrayList<Constant> constants = new ArrayList<Constant>();
 			this.responders.put(responderID, new Responder(responderID, parserID, portString, url, responderName, parserID));

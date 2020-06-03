@@ -12,6 +12,8 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.border.LineBorder;
 
@@ -24,6 +26,8 @@ import settings.*;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
+	
+	public static final String SESSIONTIME = DateTimeFormatter.ofPattern("HH_mm_ss").format(LocalDateTime.now());
 
 	private JPanel contentPane;
 	
@@ -33,13 +37,15 @@ public class Main extends JFrame {
 	public static void main(String[] args) {
 		
 		Logger.init();
-		SettingHandler.init();
 
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 			Logger.reportException(Main.class.getName(), "main", e);			
 		}
+		
+		SettingHandler.init();
+
 		
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
@@ -121,7 +127,7 @@ public class Main extends JFrame {
 				}
 			});
 		} catch (Exception e) {
-			Logger.reportException("Main", "askMessage", e1);
+			Logger.reportException("Main", "askMessage", e);
 		}
 		return returnVal.getValue();
 	}
