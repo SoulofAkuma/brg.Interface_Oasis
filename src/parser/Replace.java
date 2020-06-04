@@ -65,11 +65,6 @@ public class Replace implements Rule {
 		return this.log;
 	}
 	
-	@Override
-	public ArrayList<String> endProcedure(ArrayList<String> input) {
-		return input;
-	}
-	
 	//Replace all appearances of a plain String with a plain string
 	private String replace(String input) {
 		int matchCount = 0;
@@ -100,6 +95,15 @@ public class Replace implements Rule {
 			input = matcher.replaceFirst(this.replace);
 		}
 		return input;
+	}
+
+	@Override
+	public HashMap<String, String> storeRule() {
+		HashMap<String, String> rule = new HashMap<String, String>();
+		rule.put("find", this.find);
+		rule.put("replace", this.replace);
+		rule.put("regex", String.valueOf(this.regex));
+		return rule;
 	}
 	
 }

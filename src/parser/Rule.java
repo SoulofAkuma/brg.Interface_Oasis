@@ -16,7 +16,6 @@ public interface Rule {
 	//Prints the log of the rule application
 	public ArrayList<String> printLog();
 	
-	//Is called when all parsing is done and allows final modifications of the list
-	public ArrayList<String> endProcedure(ArrayList<String> input);
-
+	//Returns all stored attributes to store them in an xml attribute (use xml attribute valid signs only)
+	public HashMap<String, String> storeRule();
 }

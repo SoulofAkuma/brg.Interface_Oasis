@@ -88,11 +88,6 @@ public class Cut implements Rule {
 		return this.log;
 	}
 	
-	@Override
-	public ArrayList<String> endProcedure(ArrayList<String> input) {
-		return input;
-	}
-	
 	//Cut the String at the nth appearance of a plain String
 	private String[] cut(String input) {
 		int appearanceCount = 0;
@@ -157,5 +152,16 @@ public class Cut implements Rule {
 			}
 		}
 		return new String[] {input, extra};
+	}
+
+	@Override
+	public HashMap<String, String> storeRule() {
+		HashMap<String, String> rule = new HashMap<String, String>();
+		rule.put("find", this.find);
+		rule.put("n", String.valueOf(this.n));
+		rule.put("keep", String.valueOf(this.keep));
+		rule.put("regex", String.valueOf(this.regex));
+		rule.put("reEval", String.valueOf(this.reEval));
+		return rule;
 	}
 }

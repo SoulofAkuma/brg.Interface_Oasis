@@ -117,11 +117,6 @@ public class Discard implements Rule {
 		return this.log;
 	}
 	
-	@Override
-	public ArrayList<String> endProcedure(ArrayList<String> input) {
-		return input;
-	}
-	
 	public boolean hasRegexMatch(String input) {
 		Pattern pattern = Pattern.compile(this.find);
 		Matcher matcher = pattern.matcher(input);
@@ -130,5 +125,15 @@ public class Discard implements Rule {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public HashMap<String, String> storeRule() {
+		HashMap<String, String> rule = new HashMap<String, String>();
+		rule.put("find", this.find);
+		rule.put("inverted", String.valueOf(this.inverted));
+		rule.put("regex", String.valueOf(this.regex));
+		rule.put("flags", String.join(",", this.flags));
+		return rule;
 	}
 }

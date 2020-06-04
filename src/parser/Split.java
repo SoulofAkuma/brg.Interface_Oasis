@@ -65,11 +65,6 @@ public class Split implements Rule {
 		return this.log;
 	}
 	
-	@Override
-	public ArrayList<String> endProcedure(ArrayList<String> input) {
-		return input;
-	}
-	
 	private ArrayList<String> split(String input) {
 		ArrayList<String> output = new ArrayList<String>();
 		int previousEnd = 0;
@@ -134,6 +129,15 @@ public class Split implements Rule {
 			this.log.add("Adding leftover \"" + input.substring(previousEnd, input.length()) + "\"");
 		}
 		return output;
+	}
+
+	@Override
+	public HashMap<String, String> storeRule() {
+		HashMap<String, String> rule = new HashMap<String, String>();
+		rule.put("find", this.find);
+		rule.put("n", String.valueOf(this.n));
+		rule.put("regex", String.valueOf(this.regex));
+		return rule;
 	}
 
 }

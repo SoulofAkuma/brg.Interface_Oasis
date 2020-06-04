@@ -48,11 +48,6 @@ public class Isolate implements Rule {
 		return output;
 	}
 	
-	@Override
-	public ArrayList<String> endProcedure(ArrayList<String> input) {
-		return input;
-	}
-	
 	private ArrayList<String> isolations(String input) {
 		Pattern pattern = Pattern.compile(this.find);
 		Matcher matcher = pattern.matcher(input);
@@ -63,5 +58,12 @@ public class Isolate implements Rule {
 			output.add(matcher.group());
 		}
 		return output;
+	}
+
+	@Override
+	public HashMap<String, String> storeRule() {
+		HashMap<String, String> rule = new HashMap<String, String>();
+		rule.put("find", this.find);
+		return rule;
 	}
 }

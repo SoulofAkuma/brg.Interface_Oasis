@@ -13,31 +13,16 @@ import org.w3c.dom.*;
 
 public class Trace implements Rule {
 	
-	//Default values
-	public static final String ENCODING = "UTF-8";
-	public static final ArrayList<Integer> N = null;
-	public static final boolean GETNAME = false;
-	
 	private ArrayList<Pair<Short, String>> nodes; //List of Trace pairs which contain a node type constant and a node name
-	private ArrayList<Integer> n;
-	private boolean getName; //If true gets the name of the node instead of its value
-	private String encoding; //Encoding of the input string
+	private String defVal;
 	private ArrayList<String> log = new ArrayList<String>();
 	
-	public Trace(ArrayList<Pair<Short, String>> nodes, boolean getName, ArrayList<Integer> n, String encoding) {
+	public Trace(ArrayList<Pair<Short, String>> nodes, String defVal) {
 		this.nodes = nodes;
-		this.getName = getName;
-		this.encoding = encoding;
-		if (n == null) {
-			this.n = new ArrayList<Integer>();
-			for (int i = 0; i < this.nodes.size(); i++) {
-				this.n.add(1);
-			}
-		} else {
-			this.n = n;
-		}
+		this.defVal = defVal;
 	}
 	
+	//Required parameters: nodes, getName, 
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
 		String nodeStrings[] = ParserHandler.returnStringArrayIfExists(constructorArgs, "nodes");
@@ -50,36 +35,18 @@ public class Trace implements Rule {
 			if (!ParserHandler.isShort(nodeStrings[i])) {
 				ParserHandler.reportGenRuleError("nodes", this.getClass().getName());
 				return null;
+			} else if (Short.parseShort(nodeStrings[i]) != Node.ATTRIBUTE_NODE && Short.parseShort(nodeStrings[i]) != Node.ELEMENT_NODE) {
+				ParserHandler.reportGenRuleError("nodes", this.getClass().getName());
+				return null;
 			} else {
 				nodes.add(new Pair<Short, String>(Short.parseShort(nodeStrings[i]), nodeStrings[i + 1]));
 			}
 		}
-		Boolean getName = ParserHandler.returnBooleanIfExists(constructorArgs, "getName");
-		if (getName == null) {
-			ParserHandler.reportGenRuleError("getName", this.getClass().getName());
-			return null;
-			
+		String defVal = ParserHandler.returnStringIfExists(constructorArgs, "defVal");
+		if (defVal == null) {
+			ParserHandler.reportGenRuleError("defVal", this.getClass().getName());
 		}
-		String nStrings[] = ParserHandler.returnStringArrayIfExists(constructorArgs, "n");
-		if (nStrings == null) {
-			ParserHandler.reportGenRuleError("n", this.getClass().getName());
-			return null;
-		}
-		ArrayList<Integer> n = new ArrayList<Integer>();
-		for (String nString : nStrings) {
-			if (!ParserHandler.isInt(nString)) {
-				ParserHandler.reportGenRuleError("n", this.getClass().getName());
-				return null;
-			} else {
-				n.add(Integer.parseInt(nString));
-			}
-		}
-		String encoding = ParserHandler.returnStringIfExists(constructorArgs, "encoding");
-		if (encoding == null) {
-			ParserHandler.reportGenRuleError("encoding", this.getClass().getName());
-			return null;
-		}
-		return new Trace(nodes, getName, n, encoding);
+		return new Trace(nodes, defVal);
 	}
 	
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable
@@ -113,7 +80,7 @@ public class Trace implements Rule {
 				ns += ",";
 			}
 		}
-		return "XML Trace - nodes = [" + nodesAsJSON + "] | n = [" + ns + "] | getName = " + String.valueOf(this.getName) + " | encoding = " + this.encoding;
+		return "XML Trace - nodes = [" + nodesAsJSON + "] | n = [" + ns + "] | getName = " + String.valueOf(this.getName);
 	}
 
 	@Override
@@ -121,18 +88,7 @@ public class Trace implements Rule {
 		return this.log;
 	}
 	
-	//Removes first unmodified element
-	@Override
-	public ArrayList<String> endProcedure(ArrayList<String> input) {
-		ArrayList<String> output = new ArrayList<String>();
-		for (int i = 1; i < input.size(); i++) {
-			output.add(input.get(i));
-		}
-		return output;
-	}
-	
 	private String trace(String input) {
-		
 		if (this.nodes.size() == 0) {
 			this.log.add("No trace path - skipping everyting");
 			return null;
@@ -143,13 +99,7 @@ public class Trace implements Rule {
 		DocumentBuilder documentBuilder;
 		Document document;
 		
-		try {
-			inputStream = new ByteArrayInputStream(input.getBytes(this.encoding));
-		} catch (Exception e) {
-			errorLog("Unknown encoding", e.getMessage());
-			Logger.reportException("Trace", "trace", e);
-			return null;
-		}
+		inputStream = new ByteArrayInputStream(input.getBytes());
 		try {
 			documentBuilder = factory.newDocumentBuilder();			
 			document = documentBuilder.parse(inputStream);
@@ -157,13 +107,7 @@ public class Trace implements Rule {
 			this.log.add("The String does not seem to contain a root element - Adding artificial root element");
 			input = "<rootDummy>" + input;
 			input += "</rootDummy>";
-			try {
-				inputStream = new ByteArrayInputStream(input.getBytes(this.encoding));
-			} catch (Exception e2) {
-				errorLog("Unknown encoding", e.getMessage());
-				Logger.reportException("Trace", "trace", e2);
-				return null;
-			}
+			inputStream = new ByteArrayInputStream(input.getBytes());
 			try {
 				documentBuilder = factory.newDocumentBuilder();			
 				document = documentBuilder.parse(inputStream);
@@ -268,9 +212,6 @@ public class Trace implements Rule {
 						}
 					}
 				break;
-				default:
-					errorLog("Unknown Node Type, Element and Attribute Support only");
-					return null;
 			}
 			if (breakOut) {
 				break;

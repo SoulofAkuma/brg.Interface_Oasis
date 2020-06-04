@@ -10,15 +10,17 @@ import java.util.HashMap;
 
 public class Parser {
 
-	private ArrayList<Rule> elements = new ArrayList<Rule>();
+	//TODO: Debugging without index assigner
+	
+	private ArrayList<String> order;
+	private HashMap<String, Rule> elements;
 	private ArrayList<String> log = new ArrayList<String>();
 	private IndexAssigner indexAssigner;
 	
-	public Parser(ArrayList<Rule> elements, IndexAssigner indexAssigner) {
+	public Parser(HashMap<String, Rule> elements, IndexAssigner indexAssigner, ArrayList<String> order) {
 		this.indexAssigner = indexAssigner;
-		for (Rule element: elements) {
-			this.elements.add(element);
-		}
+		this.elements = elements;
+		this.order = order;
 	}
 	
 	//Apply all rules to the string
@@ -28,15 +30,13 @@ public class Parser {
 		ArrayList<String> strList = new ArrayList<String>();
 		strList.add(input);
 		
-		for (Rule element: this.elements) {
+		for (String rule : this.order) {
+			Rule element = elements.get(rule);
 			this.log.add("Applying " + ((Rule) element).printElement());
 			strList = (((Rule) element).apply(strList));
 			this.log.add("--- Start log ---");			
 			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
-		}
-		if (this.elements.size() > 0) {
-			strList = ((Rule) this.elements.get(this.elements.size() - 1)).endProcedure(strList);
 		}
 		return this.indexAssigner.assign(strList);
 	}
