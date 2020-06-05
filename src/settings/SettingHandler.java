@@ -26,7 +26,7 @@ public class SettingHandler {
 	private static int fileID; //ID of the setting file for the file handler
 	private static final String SETTINGFOLDER = Manager.PATH + Manager.SEPERATOR + "Settings";
 	private static final String SETTINGBACKUPFOLDER = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "Backups";
-	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "settings.xml"; //Name of the setting file
+	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "settingsdebug.xml"; //Name of the setting file
 	private static final String SETTINGBACKUPPATH = SettingHandler.SETTINGBACKUPFOLDER + Manager.SEPERATOR + "Setting Backup Session " + Main.SESSIONTIME + ".xml";
 	private static final String BASESETTING = "InterfaceOasis"; //Name of the root Element in the xml setting
 	private static Setting masterSetting; //The content of the setting file parsed into a setting
@@ -66,6 +66,13 @@ public class SettingHandler {
 			reportError("Missing Setting File", "All actions will not be saved");
 			return;
 		}
+		
+		Setting temp = Setting.parseSetting(Manager.readFile(fileID), 1);
+		
+		if (true) {
+			return;
+		}
+		
 		
 		SettingHandler.masterSetting = Setting.parseSetting(Manager.readFile(fileID), 1);
 		Manager.writeFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.json"), masterSetting.printSetting(), false);

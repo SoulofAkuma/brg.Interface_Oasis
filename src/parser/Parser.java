@@ -23,8 +23,13 @@ public class Parser {
 		this.order = order;
 	}
 	
+	public Parser (HashMap<String, Rule> elements, ArrayList<String> order) {
+		this.elements = elements;
+		this.order = order;
+	}
+	
 	//Apply all rules to the string
-	public HashMap<String, String> parse(String input) {
+	public void parse(String input) {
 		this.log.add("Starting parsing");
 		
 		ArrayList<String> strList = new ArrayList<String>();
@@ -38,7 +43,9 @@ public class Parser {
 			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
 		}
-		return this.indexAssigner.assign(strList);
+		for (String result : strList) {
+			System.out.println(result);
+		}
 	}
 	
 	public ArrayList<String> printLog() {

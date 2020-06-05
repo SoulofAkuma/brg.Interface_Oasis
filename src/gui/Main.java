@@ -37,6 +37,7 @@ public class Main extends JFrame {
 	public static void main(String[] args) {
 		
 		Logger.init();
+		
 
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");

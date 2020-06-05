@@ -3,6 +3,7 @@ package parser;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +34,8 @@ public class ParserHandler {
 			boolean success = false;
 			String id = parser.getAttribute("id");
 			String name = parser.getAttribute("name");
-			ArrayList<Rule> rules = new ArrayList<Rule>();
+			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute("order").split(",")));
+			HashMap<String, Rule> rules = new HashMap<String, Rule>();
 			for (Setting rule : parser.getSettings("Rule")) {
 				if (rule.getName().equals("Rule") && parser.getID() - rule.getLevel() == 2) {
 					HashMap<String, String> attributes = rule.getAttributes();
@@ -45,6 +47,11 @@ public class ParserHandler {
 						reportError("rule type not set in rules of parser " + id + " "+ name, true);
 						break;
 					}
+					
+					if (!constructorArgs.containsKey("id")) {
+						reportError("rule type not set in rules of parser " + id + " " + name, true);
+						break;
+					}
 					if (!ParserHandler.stdRules.containsKey(constructorArgs.get("type"))) {
 						reportError("unkown rule type in rules of parser " + id + " " + name, true);
 						break;
@@ -54,7 +61,7 @@ public class ParserHandler {
 						Method createRule = ParserHandler.stdRules.get(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
 						Rule newRule = (Rule) createRule.invoke(null, constructorArgs);
 						if (newRule != null) {
-							rules.add(newRule);						
+							rules.put(constructorArgs.get("id"), newRule);						
 						} else {
 							break;
 						}
@@ -74,7 +81,7 @@ public class ParserHandler {
 				}
 			}
 			if (success) {
-				ParserHandler.parsers.put(id, new Parser(rules));
+				ParserHandler.parsers.put(id, new Parser(rules, order));
 			}
 		}
 	}
