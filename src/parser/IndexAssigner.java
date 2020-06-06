@@ -73,4 +73,9 @@ public class IndexAssigner {
 		}
 		return assigned;
 	}
+
+	public HashMap<String, String> storeIndexAssigner() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

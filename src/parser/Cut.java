@@ -79,11 +79,6 @@ public class Cut implements Rule {
 	}
 	
 	@Override
-	public String printElement() {
-		return "Cut - find = \"" + this.find + "\" | n = " + this.n + " | keep = " + String.valueOf(this.keep) + " | regex = " + String.valueOf(this.regex); 
-	}
-	
-	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}

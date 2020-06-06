@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import cc.Pair;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
@@ -18,10 +16,7 @@ import settings.SettingHandler;
 public class ParserHandler {
 	
 	private static HashMap<String, Parser> parsers = new HashMap<String, Parser>();
-	private static HashMap<String, String> indexAssigners = new HashMap<String, String>();
-	@SuppressWarnings("rawtypes")
-	private static ConcurrentHashMap<String, Class> stdRules = new ConcurrentHashMap<String, Class>();
-	
+	private static Setting parserMasterSetting;
 	private static final String stdGetParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
 	
 	public static Parser getParser(String parserID) {
@@ -29,7 +24,7 @@ public class ParserHandler {
 	}
 	
 	public static void init(Setting parserMasterSetting) {
-		initStdList();
+		ParserHandler.parserMasterSetting = parserMasterSetting;
 		for (Setting parser : parserMasterSetting.getSubsettings()) {
 			boolean success = false;
 			String id = parser.getAttribute("id");
@@ -37,6 +32,7 @@ public class ParserHandler {
 			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute("order").split(",")));
 			HashMap<String, Rule> rules = new HashMap<String, Rule>();
 			for (Setting rule : parser.getSettings("Rule")) {
+				success = false;
 				if (rule.getName().equals("Rule") && parser.getID() - rule.getLevel() == 2) {
 					HashMap<String, String> attributes = rule.getAttributes();
 					HashMap<String, String> constructorArgs = new HashMap<String, String>();
@@ -49,22 +45,20 @@ public class ParserHandler {
 					}
 					
 					if (!constructorArgs.containsKey("id")) {
-						reportError("rule type not set in rules of parser " + id + " " + name, true);
-						break;
-					}
-					if (!ParserHandler.stdRules.containsKey(constructorArgs.get("type"))) {
-						reportError("unkown rule type in rules of parser " + id + " " + name, true);
+						reportError("rule id not set in rules of parser " + id + " " + name, true);
 						break;
 					}
 					try {
-						@SuppressWarnings("unchecked")
-						Method createRule = ParserHandler.stdRules.get(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
+						Method createRule = Class.forName(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
 						Rule newRule = (Rule) createRule.invoke(null, constructorArgs);
 						if (newRule != null) {
-							rules.put(constructorArgs.get("id"), newRule);						
+							rules.put(constructorArgs.get("id"), newRule);
 						} else {
 							break;
 						}
+					} catch (ClassNotFoundException | LinkageError e) {
+						reportError("rule type could not be resolved in parser " + id + " " + name, true);
+						break;
 					} catch (NoSuchMethodException | SecurityException e) {
 						reportError("rule type found, but method \"genRule\" couldn't be found",e.getMessage(), true);
 						break;
@@ -79,21 +73,12 @@ public class ParserHandler {
 						break;
 					}
 				}
+				success = true;
 			}
 			if (success) {
 				ParserHandler.parsers.put(id, new Parser(rules, order));
 			}
 		}
-	}
-	
-	public static void initStdList() {
-		ParserHandler.stdRules.put("Cut", Cut.class);
-		ParserHandler.stdRules.put("Discard", Discard.class);
-		ParserHandler.stdRules.put("Isolate", Isolate.class);
-		ParserHandler.stdRules.put("Replace", Replace.class);
-		ParserHandler.stdRules.put("Split", Split.class);
-		ParserHandler.stdRules.put("XMLTrace", xmlhandler.Trace.class);
-		ParserHandler.stdRules.put("JSONTrace", jsonhandler.Trace.class);
 	}
 	
 	private static void reportError(String cause, boolean onInit) {
@@ -173,6 +158,10 @@ public class ParserHandler {
 		} else {
 			return null;
 		}
+	}
+	
+	public Setting storeSetting() {
+		
 	}
 
 }

@@ -26,11 +26,6 @@ public class Isolate implements Rule {
 	}
 
 	@Override
-	public String printElement() {
-		return "Isolate - find = " + this.find;
-	}
-
-	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}

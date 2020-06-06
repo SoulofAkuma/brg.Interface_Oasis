@@ -263,12 +263,6 @@ public class Trace implements Rule {
 	}
 
 	@Override
-	public String printElement() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}
@@ -288,6 +282,7 @@ public class Trace implements Rule {
 			pathString = pathString.substring(0, pathString.length() - 1);
 		}
 		rule.put("path", pathString);
+		rule.put("defVal", this.defVal);
 		return rule;
 	}
 

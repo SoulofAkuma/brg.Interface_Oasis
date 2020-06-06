@@ -108,11 +108,6 @@ public class Discard implements Rule {
 	}
 	
 	@Override
-	public String printElement() {
-		return "Discard - find = \"" + this.find + "\" | inverted = " + String.valueOf(this.inverted) + " | regex = " + String.valueOf(this.regex) + " | flags = " + String.join(",", this.flags);
-	}
-	
-	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}

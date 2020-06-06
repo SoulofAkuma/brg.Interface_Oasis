@@ -27,28 +27,24 @@ public class Header {
 	private String responderID;
 	private String responderName;
 	
-	
-	public Header(RequestType requestType, Constant url, String[] reserved, String connection, Constant contentType,
-			Constant userAgent, ArrayList<Constant> customArgs, int portVal, String hostVal, String responderID,
-			String responderName) {
+	public Header(RequestType requestType, Constant url, Constant contentType, Constant userAgent,
+			ArrayList<Constant> customArgs, String responderID, String responderName) {
 		this.requestType = requestType;
 		this.url = url;
-		this.reserved = reserved;
-		this.connection = connection;
 		this.contentType = contentType;
 		this.userAgent = userAgent;
 		this.customArgs = customArgs;
-		this.portVal = portVal;
-		this.hostVal = hostVal;
 		this.responderID = responderID;
 		this.responderName = responderName;
 	}
 
-
 	public String getHeader(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody, int contentLength) {
 		String urlString = this.url.getConstant(parsedHeader, parsedBody);
-		String contentType = this.contentType.getConstant(parsedHeader, parsedBody);
-		String userAgent = this.userAgent.getConstant(parsedHeader, parsedBody);
+		String contentType = (this.contentType == null) ? "Content-Type: text/plain" : "Content-Type: " + this.contentType.getConstant(parsedHeader, parsedBody) + "\r\n";
+		if (this.requestType != RequestType.POST) {
+			contentType = "";
+		}
+		String userAgent = (this.userAgent == null) ? "" : "User-Agent: " + this.userAgent.getConstant(parsedHeader, parsedBody) + "\r\n";
 		if (isIPSyntax(urlString)) {
 			if (!isValidIP(urlString)) {
 				String[] elements = {"URL", "ContentType", "UserAgent", "ResponderName"};
@@ -81,8 +77,8 @@ public class Header {
 		String header = this.requestType.name() + " " + urlString + " HTTP/1.1\r\n"
 				+ "Host: " + this.hostVal + "\r\n"
 				+ "Connection: " + this.connection + "\r\n"
-				+ "Content-Type: " + contentType + "\r\n"
-				+ "User-Agent: " + userAgent + "\r\n"
+				+ contentType
+				+ userAgent
 				+ "Content-Length: " + contentLength + "\r\n";
 		for (Constant customArg : this.customArgs) {
 			header += customArg.getConstant(parsedHeader, parsedBody) + "\r\n";

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.w3c.dom.*;
 
@@ -25,6 +26,7 @@ public class Setting {
 	private int level = -1;
 	private int sID;
 	private boolean isEmpty = false;
+	private boolean enabled = true;
 
 	private Node node = null;
 
@@ -33,6 +35,10 @@ public class Setting {
 
 	private boolean corrupt = false;
 
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+	
 	public String getName() {
 		return this.name;
 	}
@@ -63,6 +69,14 @@ public class Setting {
 	
 	public Setting getBackup() {
 		return new Setting(this);
+	}
+	
+	public void enable() {
+		this.enabled = true;
+	}
+	
+	public void disable() {
+		this.enabled = false;
 	}
 	
 	//Parses an xml String into a setting
@@ -188,6 +202,7 @@ public class Setting {
 		this.sID = obj.sID;
 		this.subsettings = (ArrayList<Setting>) obj.subsettings.clone();
 		this.value = String.valueOf(obj.value);
+		this.enabled = obj.enabled;
 	}
 	
 	private void replaceAll(Setting setting) {
@@ -202,6 +217,7 @@ public class Setting {
 		this.functions = setting.functions;
 		this.corrupt = setting.corrupt;
 		this.isEmpty = setting.isEmpty;
+		this.enabled = setting.enabled;
 	}
 
 	//Returns whether this setting is corrupt
@@ -432,6 +448,28 @@ public class Setting {
 		return false;
 	}
 	
+	//Disables the specified setting id and returns the successfulness of the operation
+	public boolean disableSetting(int sID) {
+		if (this.sID == sID) {
+			this.disable();
+			return true;
+		}
+		if (sID < Setting.sIDState) {
+			for (int i = 0; i < this.subsettings.size(); i++) {
+				if (this.subsettings.get(i).sID == sID) {
+					this.subsettings.get(i).disable();;
+					return true;
+				}
+			}
+			for (Setting sub : this.subsettings) {
+				if (sub.disableSetting(sID)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	//Reset this setting to an empty setting with only a name defined
 	public void resetSetting(String name) {
 		if (this.level == 1 && this.isEmpty) {
@@ -444,6 +482,7 @@ public class Setting {
 			this.functions = new SettingFunctions();
 			this.corrupt = false;
 			this.isEmpty = false;
+			this.enabled = true;
 		}
 	}
 }

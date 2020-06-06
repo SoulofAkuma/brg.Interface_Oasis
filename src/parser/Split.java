@@ -56,11 +56,6 @@ public class Split implements Rule {
 	}
 
 	@Override
-	public String printElement() {
-		return "Split - find = \"" + this.find + "\" | n = " + this.n + " | regex = " + String.valueOf(this.regex); 
-	}
-
-	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}

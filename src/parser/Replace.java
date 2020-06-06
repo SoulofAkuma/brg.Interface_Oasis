@@ -56,11 +56,6 @@ public class Replace implements Rule {
 	}
 	
 	@Override
-	public String printElement() {
-		return "Replace - find = \"" + this.find + "\" | replace = \"" + this.replace + "\" | regex = " + String.valueOf(this.regex);
-	}
-	
-	@Override
 	public ArrayList<String> printLog() {
 		return this.log;
 	}

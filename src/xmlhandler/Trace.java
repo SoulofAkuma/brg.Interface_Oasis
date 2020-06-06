@@ -13,6 +13,11 @@ import org.w3c.dom.*;
 
 public class Trace implements Rule {
 	
+	private static final int ELEMENT = 0; //The string is the name of an element
+	private static final int ATTRIBUTE = 1; //The string is the name of an attribute
+	private static final int ELEMENTINDEX = 2; //The string is an integer which indicates the index of a child element
+	private static final int COMBINE = 3; //The string is a key key-value pair in format key1:key2=value. key1 is an element name, key2 an attribute name and value the corresponding attribute value. Combine will search through all elements with the matching element name and match the first element which has the search attribute. 
+	
 	private ArrayList<Pair<Short, String>> nodes; //List of Trace pairs which contain a node type constant and a node name
 	private String defVal;
 	private ArrayList<String> log = new ArrayList<String>();
@@ -62,25 +67,6 @@ public class Trace implements Rule {
 			input.add(traceResult);
 		}
 		return input;
-	}
-
-	@Override
-	public String printElement() {
-		String nodesAsJSON = "";
-		for (Pair<Short, String> kvp : this.nodes) {
-			nodesAsJSON += (kvp.getKey() == Node.ATTRIBUTE_NODE) ? "{Attribute," + kvp.getValue() + "}," : "{Element," + kvp.getValue() + "},";
-		}
-		if (!nodesAsJSON.isBlank()) {
-			nodesAsJSON = nodesAsJSON.substring(0, nodesAsJSON.length() - 2);
-		}
-		String ns = "";
-		for (int i = 0; i < this.n.size(); i++) {
-			ns += this.n.get(i).toString();
-			if (i != this.n.size() - 1) {
-				ns += ",";
-			}
-		}
-		return "XML Trace - nodes = [" + nodesAsJSON + "] | n = [" + ns + "] | getName = " + String.valueOf(this.getName);
 	}
 
 	@Override
@@ -222,15 +208,6 @@ public class Trace implements Rule {
 			}
 			iteration++;
 		}
-		if (this.getName) {
-			return currentNode.getNodeName();
-		} else {
-			if (type == Node.ELEMENT_NODE) {
-				return currentNode.getTextContent();
-			} else {
-				return currentNode.getNodeValue();				
-			}
-		}
 		
 	}
 	
@@ -239,5 +216,19 @@ public class Trace implements Rule {
 	}
 	private void errorLog(String message) {
 		this.log.add(message + " - Quitting xmlparser");
+	}
+
+	@Override
+	public HashMap<String, String> storeRule() {
+		HashMap<String, String> rule = new HashMap<String, String>();
+		String nodes = "";
+		for (int i = 0; i < this.nodes.size(); i += 2) {
+			nodes += this.nodes.get(i).getKey() + "," + this.nodes.get(i + 1).getValue() + ",";
+		}
+		if (nodes.length() > 1) {
+			nodes = nodes.substring(0, nodes.length() - 1);
+		}
+		rule.put("nodes", nodes);
+		return rule;
 	}
 }
