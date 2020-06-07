@@ -19,6 +19,8 @@ public class Discard implements Rule {
 	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
 	private ArrayList<String> log = new ArrayList<String>(); //Log for the rule
 	
+	public Discard() {}
+	
 	public Discard(String find, boolean inverted, boolean regex, String flags[]) {
 		this.find = find;
 		this.inverted = inverted;
@@ -28,21 +30,22 @@ public class Discard implements Rule {
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String id = constructorArgs.get("id");
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		Boolean inverted = ParserHandler.returnBooleanIfExists(constructorArgs, "inverted");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
 		String[] flags = ParserHandler.returnStringArrayIfExists(constructorArgs, "flags");
 		if (find == null) {
-			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
 		} else if (inverted == null) {
-			ParserHandler.reportGenRuleError("inverted", this.getClass().getName());
+			ParserHandler.reportGenRuleError("inverted", this.getClass().getName(), id);
 			return null;
 		} else if (regex == null) {
-			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName(), id);
 			return null;
 		} else if (flags == null) {
-			ParserHandler.reportGenRuleError("flags", this.getClass().getName());
+			ParserHandler.reportGenRuleError("flags", this.getClass().getName(), id);
 			return null;
 		} else {
 			return new Discard(find, inverted, regex, flags);
@@ -56,7 +59,7 @@ public class Discard implements Rule {
 		ArrayList<String> discarded = new ArrayList<String>();
 		boolean s = false;
 		for (String element : input) {
-			this.log.add("Applying Rule on \"" + element + "\"");
+			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
 			if (s) {
 				this.log.add("Discarding element due to discard subsequent flag");
 				discarded.add(element);

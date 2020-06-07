@@ -23,33 +23,38 @@ public class Trace implements Rule {
 	
 	private ArrayList<Pair<Integer, String>> path; //The list of the JSON parameter names to trace stored by name - trace
 	private String defVal; //Default value to add when this rule has failed
+	private String id;
 	private ArrayList<String> log = new ArrayList<String>(); 
+	
+	public Trace() {}
 
-	public Trace(ArrayList<Pair<Integer, String>> path, String defVal) {
+	public Trace(ArrayList<Pair<Integer, String>> path, String defVal, String id) {
 		this.path = path;
 		this.defVal = defVal;
+		this.id = id;
 	}
 
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String id = constructorArgs.get("id");
 		String pathStrings[] = ParserHandler.returnStringArrayIfExists(constructorArgs, "path");
 		if (pathStrings == null || pathStrings.length / 2 != Math.round(pathStrings.length / 2)) {
-			ParserHandler.reportGenRuleError("path", this.getClass().getName());
+			ParserHandler.reportGenRuleError("path", this.getClass().getName(), id);
 			return null;
 		}
 		ArrayList<Pair<Integer, String>> path = new ArrayList<Pair<Integer, String>>();
 		for (int i = 0; i < pathStrings.length; i += 2) {
 			if (!ParserHandler.isInt(pathStrings[i])) {
-				ParserHandler.reportGenRuleError("path", this.getClass().getName());
+				ParserHandler.reportGenRuleError("path", this.getClass().getName(), id);
 				return null;
 			} else if (Integer.parseInt(pathStrings[i]) != Trace.OBJECTKEY && Integer.parseInt(pathStrings[i]) != Trace.ARRAYINDEX && Integer.parseInt(pathStrings[i]) != Trace.ARRAYQUERY && Integer.parseInt(pathStrings[i]) != Trace.ARRAYQUERYREGEX) {
-				ParserHandler.reportGenRuleError("path", this.getClass().getName());
+				ParserHandler.reportGenRuleError("path", this.getClass().getName(), id);
 				return null;
 			} else if (Integer.parseInt(pathStrings[i]) == Trace.ARRAYINDEX && !ParserHandler.isInt(pathStrings[i + 1])) {
-				ParserHandler.reportGenRuleError("path", this.getClass().getName());
+				ParserHandler.reportGenRuleError("path", this.getClass().getName(), id);
 				return null;
 			} else if (Integer.parseInt(pathStrings[i]) == Trace.ARRAYQUERY && !pathStrings[i + 1].contains("=")) {
-				ParserHandler.reportGenRuleError("path", this.getClass().getName());
+				ParserHandler.reportGenRuleError("path", this.getClass().getName(), id);
 				return null;
 			} else {
 				path.add(new Pair<Integer, String>(Integer.parseInt(pathStrings[i]), pathStrings[i + 1]));
@@ -57,9 +62,9 @@ public class Trace implements Rule {
 		}
 		String defVal = ParserHandler.returnStringIfExists(constructorArgs, "defVal");
 		if (defVal == null) {
-			ParserHandler.reportGenRuleError("defVal", this.getClass().getName());
+			ParserHandler.reportGenRuleError("defVal", this.getClass().getName(), id);
 		}
-		return new Trace(path, defVal);
+		return new Trace(path, defVal, id);
 	}
 
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable

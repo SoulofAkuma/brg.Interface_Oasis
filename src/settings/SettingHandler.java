@@ -1,5 +1,6 @@
 package settings;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +36,6 @@ public class SettingHandler {
 	private static Setting parserMasterSetting; //The master parser setting element derived from the master setting
 	private static Setting constantMasterSetting; //The master constant setting element derived from the master setting
 	private static Setting backupSetting; //A backup of the original master setting after the basic setup (initialization of the other master settings)
-	private static boolean altered = false; //Indicates whether the individual master settings have ever been altered (Removed corrupt elements)
 	
 	public static final String FILEHANDLERID = "000000000"; //Reserved ID for the FileHandler (for error reports)
 	public static final String GROUPHANDLERID = "000000001"; //Reserved ID for the GroupHandler(for error reports)
@@ -67,18 +67,28 @@ public class SettingHandler {
 			reportError("Missing Setting File", "All actions will not be saved");
 			return;
 		}
-		
-		Setting temp = Setting.parseSetting(Manager.readFile(fileID), 1);
+		String fc = Manager.readFile(fileID);
+		Setting temp = Setting.parseSetting(fc, 1);
+		checkParserSetting(temp.getSubsettings().get(0), 1);
+		ParserHandler.init(temp); 
+		String json = Manager.readFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.json"));
+		ParserHandler.useParser("000000010", json);
+		String xml = Manager.readFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.xml"));
+		ParserHandler.useParser("000000020", xml);
+		ArrayList<String> xmlLog = ParserHandler.getLog("000000020");
+		for (String str : xmlLog) {
+			System.out.println(str);
+		}
 		
 		if (true) {
 			return;
 		}
 		
-		
 		SettingHandler.masterSetting = Setting.parseSetting(Manager.readFile(fileID), 1);
 		Manager.writeFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.json"), masterSetting.printSetting(), false);
 		boolean alteredInformation = false;
 		boolean wasEmpty = false;
+		boolean dpCorrupt = false;
 		
 		if (masterSetting.reset()) {
 			resetInformation("No setting found - resetting to default");
@@ -88,24 +98,52 @@ public class SettingHandler {
 		}
 		
 		if (!masterSetting.hasSetting("Groups") || masterSetting.getSettings("Groups").get(0).getLevel() != 2) {
+			if (!wasEmpty && !dpCorrupt) {
+				resetInformation("The setting file syntax is corrutp - Resetting to default");
+				masterSetting = Setting.parseSetting("", 1);
+				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				alteredInformation = true;
+				dpCorrupt = true;
+			}
 			resetInformation("No Groups found - Resetting to default");
 			masterSetting.addSetting("Groups", null, null);
 			alteredInformation = true;
 		}
 		
 		if (!masterSetting.hasSetting("Triggers") || masterSetting.getSettings("Triggers").get(0).getLevel() != 2) {
+			if (!wasEmpty && !dpCorrupt) {
+				resetInformation("The setting file syntax is corrutp - Resetting to default");
+				masterSetting = Setting.parseSetting("", 1);
+				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				alteredInformation = true;
+				dpCorrupt = true;
+			}
 			resetInformation("No Triggers found - Resetting to default");
 			masterSetting.addSetting("Triggers", null, null);
 			alteredInformation = true;
 		}
 		
 		if (!masterSetting.hasSetting("Parsers") || masterSetting.getSettings("Parsers").get(0).getLevel() != 2) {
+			if (!wasEmpty && !dpCorrupt) {
+				resetInformation("The setting file syntax is corrutp - Resetting to default");
+				masterSetting = Setting.parseSetting("", 1);
+				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				alteredInformation = true;
+				dpCorrupt = true;
+			}
 			resetInformation("No Parsers found - resetting to default");
 			masterSetting.addSetting("Parsers", null, null);
 			alteredInformation = true;
 		}
 		
 		if (!masterSetting.hasSetting("Constants") || masterSetting.getSettings("Constants").get(0).getLevel() != 2) {
+			if (!wasEmpty && !dpCorrupt) {
+				resetInformation("The setting file syntax is corrutp - Resetting to default");
+				masterSetting = Setting.parseSetting("", 1);
+				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				alteredInformation = true;
+				dpCorrupt = true;
+			}
 			resetInformation("No Constants found - resetting to default");
 			masterSetting.addSetting("Constants", null, null);
 			alteredInformation = true;
@@ -113,7 +151,10 @@ public class SettingHandler {
 		
 		
 		if (alteredInformation && !wasEmpty) {
-			if (Main.askMessage("Due to missing base settings your settings have been altered - Do you want to create a backup of your old setting file?", "Backup Setting File") == 0) {
+			String message = "Due to "; 
+			message += (dpCorrupt) ? "a corrupt setting file" : "missing base settings";
+			message += " your settings have been altered - Do you want to create a backup of your old setting file?";
+			if (Main.askMessage(message, "Backup Setting File") == 0) {
 				Manager.copyFile(fileID, SettingHandler.SETTINGBACKUPPATH);				
 			}
 		}
@@ -139,9 +180,21 @@ public class SettingHandler {
 		SettingHandler.parserMasterSetting = masterSetting.getSettings("Parsers").get(0);
 		SettingHandler.constantMasterSetting = masterSetting.getSettings("Constants").get(0);
 		
+		ArrayList<Pair<String, String>> toCheckReference = new ArrayList<Pair<String, String>>();
 		for (int i = 0; i < SettingHandler.constantMasterSetting.getSubsettings().size(); i++) {
-			checkConstantSetting(SettingHandler.constantMasterSetting.getSubsettings().get(i), i);
+			checkConstantSetting(SettingHandler.constantMasterSetting.getSubsettings().get(i), i, toCheckReference);
 		}
+		
+		
+		ArrayList<String> disable = new ArrayList<String>();
+		for (Pair<String, String> kvp : toCheckReference) {
+			if (!SettingHandler.CONSTANTIDS.contains(kvp.getKey())) {
+				reportSyntaxError("Constant Checker", "The back referenced constant \"" + kvp.getKey() + "\" does not exist. Disabling Constant \"" + kvp.getValue() + "\"", false);
+				disable.add(kvp.getValue());
+			}
+		}
+		
+		disableSubByIdAttribute(constantMasterSetting, disable);
 		
 		for (int i = 0; i < SettingHandler.groupMasterSetting.getSubsettings().size(); i++) {
 			checkGroupSetting(SettingHandler.groupMasterSetting.getSubsettings().get(i), i);
@@ -161,6 +214,22 @@ public class SettingHandler {
 //		ConstantHandler.init(SettingHandler.constantMasterSetting);
 	}
 	
+	public static void disableSubByIdAttribute(Setting master, ArrayList<String> disable) {
+		HashMap<String, Setting> idSettings = new HashMap<String, Setting>();
+		for (Setting sub : master.getSubsettings()) {
+			String id = (sub.getAttributes().containsKey("id")) ? sub.getAttribute("id") : null;
+			if (id != null) {
+				idSettings.put(id, sub);
+			}
+		}
+		
+		for (String disableID : disable) {
+			if (idSettings.containsKey(disableID)) {
+				idSettings.get(disableID).disable();
+			}
+		}
+	}
+
 	public static void initReserved() {
 		SettingHandler.IDS.put(SettingHandler.FILEHANDLERID, IDType.FileHandler); //FileHandler
 		SettingHandler.IDS.put(SettingHandler.GROUPHANDLERID, IDType.GroupHandler); //GroupHandler
@@ -201,7 +270,7 @@ public class SettingHandler {
 		MessageOrigin origin = MessageOrigin.SettingHandler;
 		String[] elements = {"ID", "Origin", "Source", "Message"};
 		String[] values = {SettingHandler.SETTINGHANDLERID, MessageOrigin.SettingHandler.name(), source, message};
-		String objectMessage = source + " in the setting syntax checker reported " + message;
+		String objectMessage = source + " in the setting syntax checker reported: " + message;
 		Logger.addMessage(type, origin, objectMessage, SettingHandler.SETTINGHANDLERID, elements, values, false);
 	}
 	
@@ -210,7 +279,7 @@ public class SettingHandler {
 		MessageOrigin origin = MessageOrigin.SettingHandler;
 		String[] elements = {"ID", "Origin", "Source", "Message"};
 		String[] values = {SettingHandler.SETTINGHANDLERID, MessageOrigin.SettingHandler.name(), source, message};
-		String objectMessage = source + " in the setting syntax checker reported " + message + " (ID: " + id +")";
+		String objectMessage = source + " in the setting syntax checker reported: " + message + " (ID: " + id +")";
 		Logger.addMessage(type, origin, objectMessage, SettingHandler.SETTINGHANDLERID, elements, values, false);
 	}
 	
@@ -219,7 +288,7 @@ public class SettingHandler {
 		MessageOrigin origin = MessageOrigin.SettingHandler;
 		String[] elements = {"ID", "Origin", "Source", "Message"};
 		String[] values = {SettingHandler.SETTINGHANDLERID, MessageOrigin.SettingHandler.name(), source, message};
-		String objectMessage = source + " in the setting syntax checker reported " + message + " (Element Iteration: " + String.valueOf(iteration)+")";
+		String objectMessage = source + " in the setting syntax checker reported: " + message + " (Element Iteration: " + String.valueOf(iteration)+")";
 		Logger.addMessage(type, origin, objectMessage, SettingHandler.SETTINGHANDLERID, elements, values, false);
 	}
 	
@@ -228,7 +297,7 @@ public class SettingHandler {
 		MessageOrigin origin = MessageOrigin.SettingHandler;
 		String[] elements = {"ID", "Origin", "Source", "Message"};
 		String[] values = {SettingHandler.SETTINGHANDLERID, MessageOrigin.SettingHandler.name(), source, message};
-		String objectMessage = source + " in the setting syntax checker reported " + message + " (GroupID: " + id +" Element Iteration: " + String.valueOf(iteration) + ")";
+		String objectMessage = source + " in the setting syntax checker reported: " + message + " (GroupID: " + id +" Element Iteration: " + String.valueOf(iteration) + ")";
 		Logger.addMessage(type, origin, objectMessage, SettingHandler.SETTINGHANDLERID, elements, values, false);
 	}
 	
@@ -237,7 +306,7 @@ public class SettingHandler {
 		MessageOrigin origin = MessageOrigin.SettingHandler;
 		String[] elements = {"ID", "Origin", "Source", "Message"};
 		String[] values = {SettingHandler.SETTINGHANDLERID, MessageOrigin.SettingHandler.name(), source, message};
-		String objectMessage = source + " in the setting syntax checker reported " + message + " (GroupID: " + id +" Element Iteration: " + String.valueOf(iteration) + " Inner Element Interation: " + String.valueOf(innerIteration) + ")";
+		String objectMessage = source + " in the setting syntax checker reported: " + message + " (GroupID: " + id +" Element Iteration: " + String.valueOf(iteration) + " Inner Element Interation: " + String.valueOf(innerIteration) + ")";
 		Logger.addMessage(type, origin, objectMessage, SettingHandler.SETTINGHANDLERID, elements, values, false);
 	}
 	
@@ -329,7 +398,7 @@ public class SettingHandler {
 		//TODO: Develop trigger storage model
 	}
 	
-	public static void checkConstantSetting(Setting checkMe, int ite) {
+	public static void checkConstantSetting(Setting checkMe, int ite, ArrayList<Pair<String, String>> toCheckReference) {
 		HashMap<String, IDType> localIDs = new HashMap<String, IDType>();
 		if (!checkMe.getName().equals("Constant")) {
 			reportSyntaxError("Constant Element Checker", "Unknown Element \"" + checkMe.getName() + "\". Disabling Element", true, ite);
@@ -341,7 +410,7 @@ public class SettingHandler {
 		if (!disable) {
 			int valueIte = 0;
 			for (Setting value : checkMe.getSettings("Values").get(0).getSubsettings()) {
-				if (checkIndValueSetting(value, id, valueIte, localIDs)) {
+				if (checkIndValueSetting(value, id, valueIte, localIDs, toCheckReference)) {
 					value.disable();
 				}
 			}
@@ -369,6 +438,7 @@ public class SettingHandler {
 			checkMe.disable();
 		} else {
 			SettingHandler.IDS.putAll(localIDs);
+			SettingHandler.CONSTANTIDS.add(id);
 		}
 	}
 	
@@ -588,7 +658,7 @@ public class SettingHandler {
 			next = true;
 		}
 		if (!next) {
-			createMissingTable("name", "log", "literalURL", "url", "constants", "id");
+			createMissingTable("name", "log", "id");
 			for (Map.Entry<String, String> attribute : subject.getAttributes().entrySet()) {
 				switch (attribute.getKey()) {
 					case "name":
@@ -638,7 +708,7 @@ public class SettingHandler {
 						continue;
 					}
 					createMissingTable("url");
-					for (Map.Entry<String, String> attribute : subject.getAttributes().entrySet()) {
+					for (Map.Entry<String, String> attribute : sub.getAttributes().entrySet()) {
 						switch (attribute.getKey()) {
 							case "url":
 								updateMissing("url");
@@ -687,7 +757,7 @@ public class SettingHandler {
 								}
 							break;
 							default:
-								reportSyntaxError("Group Responder Header Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id, responderIte, inner);
+								reportSyntaxError("Group Responder Header Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, responderID, inner);
 						}
 					} //End Responder Header Attribute Checking
 					if (!hasAll()) {
@@ -837,14 +907,12 @@ public class SettingHandler {
 						}
 					}
 				break;
-				default:
-					reportSyntaxError("Parser Rule Attribute Checker", "Unknown Attribute\"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id, ruleIte);
 			}
-			
-			if (!hasAll()) {
-				reportSyntaxError("Parser Rule Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", false, id, ruleIte);
-				next = true;
-			}
+		}
+		
+		if (!hasAll()) {
+			reportSyntaxError("Parser Rule Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", false, id, ruleIte);
+			next = true;
 		}
 		
 		if (next) {
@@ -856,10 +924,11 @@ public class SettingHandler {
 		return next;
 	}
 	
-	public static boolean checkIndValueSetting(Setting value, String id, int valueIte, HashMap<String, IDType> localIDs) {
+	public static boolean checkIndValueSetting(Setting value, String id, int valueIte, HashMap<String, IDType> localIDs, ArrayList<Pair<String, String>> toCheckRefernce) {
 		boolean next = false;
 		String valueID = null;
-		createMissingTable("id", "isKey", "useHeader", "backRefernce");
+		String backReference = null;
+		createMissingTable("id", "isKey", "useHeader", "backReference");
 		boolean isKey = false;
 		boolean isBackReference = false;
 		for (Map.Entry<String, String> attribute : value.getAttributes().entrySet()) {
@@ -894,17 +963,18 @@ public class SettingHandler {
 						next = true;
 					}
 				break;
-				case "backRefernce":
+				case "backReference":
 					updateMissing("backReference");
 					if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
 						reportSyntaxError("Constant Value Attribute Checker", "Invalid backRefernce Value \"" + attribute.getValue() + "\"", false, id, valueIte);
 						next = true;
 					} else {
 						isBackReference = Boolean.parseBoolean(attribute.getValue());
+						backReference = value.getValue();
 					}
 				break;
 				default:
-					reportSyntaxError("Constant Value Attribute Checker", "Unknown Attribute Value \"" + attribute.getValue() + "\"", true, id , valueIte);
+					reportSyntaxError("Constant Value Attribute Checker", "Unknown Attribute Value \"" + attribute.getKey() + "\" = \"" + attribute.getValue(), true, id , valueIte);
 			}
 		}
 		if (!hasAll()) {
@@ -917,17 +987,17 @@ public class SettingHandler {
 		}
 		if (isKey) {
 			if (value.getValue() == null || value.getValue().isEmpty()) {
-				reportSyntaxError("Constant Value Attribute Checker", "An empty key is not allowed \"" + valueID + "\"", false, id, valueIte);
+				reportSyntaxError("Constant Value Attribute Checker", "An empty value with isKey=\"true\" is not allowed", false, id, valueIte);
 				next = true;
 			}
 		}
 		if (isBackReference) {
-			if (!matchesRegex(SettingHandler.REGEXBOOL, value.getValue())) {
-				reportSyntaxError("Constant Value Attribute Checker", "A back reference Value must be an id", false);
+			if (!matchesRegex(SettingHandler.REGEXID, value.getValue())) {
+				reportSyntaxError("Constant Value Attribute Checker", "A back reference Value must be an id", false, id, valueIte);
 				next = true;
-			} else if (!SettingHandler.CONSTANTIDS.contains(value.getValue())) {
-				reportSyntaxError("Constant Value Attribute Checker", "The referenced back referenced constant is not existing", false);
-				next = true;
+			} else if (id.equals(backReference)) {
+				reportSyntaxError("Constant Value Attribute Checker", "The back reference cannot reference its own constant", false, id, valueIte);
+			next = true;
 			}
 		}
 		
@@ -935,6 +1005,9 @@ public class SettingHandler {
 			reportSyntaxError("Constant Value Checker", "Disabling last mentioned Value", false);
 		} else {
 			localIDs.put(valueID, IDType.Value);
+			if (isBackReference) {
+				toCheckRefernce.add(new Pair<String, String>(backReference, id));
+			}
 		}
 		
 		return next;

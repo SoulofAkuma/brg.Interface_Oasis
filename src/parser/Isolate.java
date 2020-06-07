@@ -9,6 +9,8 @@ public class Isolate implements Rule {
 	
 	private String find; //Regex to isolate
 	private ArrayList<String> log = new ArrayList<String>();
+	
+	public Isolate() {}
 
 	public Isolate(String find) {
 		this.find = find;
@@ -16,9 +18,10 @@ public class Isolate implements Rule {
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String id = constructorArgs.get("id");
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		if (find == null) {
-			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
 		} else {
 			return new Isolate(find);
@@ -34,7 +37,7 @@ public class Isolate implements Rule {
 	public ArrayList<String> apply(ArrayList<String> input) {
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
-			this.log.add("Applying Rule on \"" + element + "\"");
+			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
 			ArrayList<String> dummy = isolations(element);
 			for (String dummyElement : dummy) {
 				output.add(dummyElement);

@@ -21,6 +21,8 @@ public class Cut implements Rule {
 	private boolean reEval; //If true the cut of string will be added to the input list
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
 	
+	public Cut() {}
+	
 	public Cut(String find, int n, boolean keep, boolean regex, boolean reEval) {
 		this.find = find;
 		this.n = (n < 1) ? 1 : n;
@@ -31,25 +33,26 @@ public class Cut implements Rule {
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String id = constructorArgs.get("id");
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		Integer n = ParserHandler.returnIntIfExists(constructorArgs, "n");
 		Boolean keep = ParserHandler.returnBooleanIfExists(constructorArgs, "keep");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
 		Boolean reEval = ParserHandler.returnBooleanIfExists(constructorArgs, "reEval");
 		if (find == null) {
-			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
 		} else if (n == null) {
-			ParserHandler.reportGenRuleError("n", this.getClass().getName());
+			ParserHandler.reportGenRuleError("n", this.getClass().getName(), id);
 			return null;
 		} else if (keep == null ) {
-			ParserHandler.reportGenRuleError("keep", this.getClass().getName());
+			ParserHandler.reportGenRuleError("keep", this.getClass().getName(), id);
 			return null;
 		} else if (regex == null) {
-			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName(), id);
 			return null;
 		} else if (reEval == null) {
-			ParserHandler.reportGenRuleError("reEval", this.getClass().getName());
+			ParserHandler.reportGenRuleError("reEval", this.getClass().getName(), id);
 			return null;
 		} else {
 			return new Cut(find, n, keep, regex, reEval);
@@ -62,7 +65,7 @@ public class Cut implements Rule {
 		ArrayList<String> output = new ArrayList<String>();
 		for (int i = 0; i < input.size(); i++) {
 			String element = input.get(i);
-			this.log.add("Applying Rule on \"" + element + "\"");
+			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
 			String[] toAdd = (regex) ? regexCut(element) : cut(element);
 			output.add(toAdd[0]);
 			this.log.add("Application resulted in \"" + output.get(output.size() - 1) + "\"");

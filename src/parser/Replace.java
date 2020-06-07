@@ -15,6 +15,8 @@ public class Replace implements Rule {
 	private boolean regex; //Find is a regular expression
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
 	
+	public Replace() {}
+	
 	public Replace(String find, String replace, boolean regex) {
 		this.find = find;
 		this.replace = replace;
@@ -23,17 +25,18 @@ public class Replace implements Rule {
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String id = constructorArgs.get("id");
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		String replace = ParserHandler.returnStringIfExists(constructorArgs, "replace");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
 		if (find == null) {
-			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
 		} else if (replace == null) {
-			ParserHandler.reportGenRuleError("replace", this.getClass().getName());
+			ParserHandler.reportGenRuleError("replace", this.getClass().getName(), id);
 			return null;
 		} else if (regex == null) {
-			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName(), id);
 			return null;
 		} else {
 			return new Replace(find, replace, regex);
@@ -44,7 +47,7 @@ public class Replace implements Rule {
 	public ArrayList<String> apply(ArrayList<String> input) {
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
-			this.log.add("Applying Rule on \"" + element + "\"");
+			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
 			if (regex) {
 				output.add(replaceRegex(element));
 			} else {

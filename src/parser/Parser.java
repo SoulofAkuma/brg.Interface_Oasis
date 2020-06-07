@@ -3,6 +3,7 @@ package parser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 /* This class can apply one or multiple different 
  * parsing rules to an input string. The output will
@@ -43,8 +44,12 @@ public class Parser {
 			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
 		}
+		boolean dummy = false;
 		for (String result : strList) {
-			System.out.println(result);
+			if (dummy) {
+				System.out.println(result);
+			}
+			dummy = true;
 		}
 	}
 	

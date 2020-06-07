@@ -16,6 +16,8 @@ public class Split implements Rule {
 	private boolean regex;
 	private ArrayList<String> log = new ArrayList<String>();
 	
+	public Split() {}
+	
 	public Split(String find, int n, boolean regex) {
 		this.find = find;
 		this.n = n;
@@ -24,17 +26,18 @@ public class Split implements Rule {
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
+		String id = constructorArgs.get("id");
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		Integer n = ParserHandler.returnIntIfExists(constructorArgs, "n");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
 		if (find == null) {
-			ParserHandler.reportGenRuleError("find", this.getClass().getName());
+			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
 		} else if (n == null) {
-			ParserHandler.reportGenRuleError("n", this.getClass().getName());
+			ParserHandler.reportGenRuleError("n", this.getClass().getName(), id);
 			return null;
 		} else if (regex == null) {
-			ParserHandler.reportGenRuleError("regex", this.getClass().getName());
+			ParserHandler.reportGenRuleError("regex", this.getClass().getName(), id);
 			return null;
 		} else {
 			return new Split(find, n, regex);
@@ -45,7 +48,7 @@ public class Split implements Rule {
 	public ArrayList<String> apply(ArrayList<String> input) {
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
-			this.log.add("Applying Rule on \"" + element + "\"");
+			this.log.add("Applying Rule on \"" + element.substring(0,  10) + "...\"");
 			if (this.regex) {
 				output.addAll(regexSplit(element));
 			} else {

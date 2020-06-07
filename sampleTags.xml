@@ -6,8 +6,8 @@
 			</Listeners>
 			<Responders>
 				<Responder log="true" name="SampleResponder" id="000000012">
-					<Header url="000000040" host="000000042" userAgent="000000044" contentType="000000046"/>
-					<Body constants="000000060,000000063,000000064" seperator="&amp;"/>
+					<Header url="000000050" userAgent="000000042" contentType="000000045"/>
+					<Body constants="000000060,000000063,000000066" seperator="&amp;"/>
 				</Responder>
 			</Responders>
 		</Group>
@@ -27,19 +27,14 @@
 		</Parser>
 	</Parsers>
 	<Constants>
-		<Constant name="sampleHost" id="000000040" order="000000041">
-			<Values>
-				<Value isKey="true" backRefernce="false" useHeader="false" id="000000041">host</Value>
-			</Values>
-		</Constant>
 		<Constant name="sampleUserAgent" id="000000042" order="000000043">
 			<Values>
-				<Value isKey="true" backRefernce="false" useHeader="false" id="000000043">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000043">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36</Value>
 			</Values>
 		</Constant>
 		<Constant name="sampleContentType" id="000000045" order="000000046">
 			<Values>
-				<Value isKey="true" backRefernce="false" useHeader="false" id="000000046">text/plain</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000046">text/plain</Value>
 			</Values>
 		</Constant>
 		<Constant name="sampleURL" id="000000050" order="000000051,000000052,000000053,000000054,000000055">
@@ -49,6 +44,11 @@
 				<Value isKey="false" backReference="false" useHeader="false" id="000000053">:</Value>
 				<Value isKey="true" backReference="false" useHeader="false" id="000000054">port</Value>
 				<Value isKey="true" backReference="false" useHeader="false" id="000000055">path</Value>
+			</Values>
+		</Constant>
+		<Constant name="sampleHostReference" id="000000040" order="000000041">
+			<Values>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000041">localhost</Value>
 			</Values>
 		</Constant>
 		<Constant name="sampleBody1" id="000000060" order="000000061,000000062">

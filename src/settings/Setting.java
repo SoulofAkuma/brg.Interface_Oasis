@@ -245,24 +245,24 @@ public class Setting {
 		if (this.name == null) {
 			setXML += getSubXML();
 		} else {
-			setXML += (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">\r\n") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\">\r\n");
+			setXML += (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">\r\n") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + escapeSpecialChars(this.namespaceURI) + "\">\r\n");
 			if (!this.isEmptyValue(this.value)) {
 				if (this.value.contains("\n")) {
 					String[] lines = this.value.split("\\n");
 					for (String line : lines) {
-						setXML += getTabLevel(this.level + 1) + line + "\r\n";
+						setXML += getTabLevel(this.level + 1) + escapeSpecialChars(line) + "\r\n";
 					}
 				} else {
-					setXML += getTabLevel(this.level + 1) + this.value + "\r\n";
+					setXML += getTabLevel(this.level + 1) + escapeSpecialChars(this.value) + "\r\n";
 				}
 				if (this.subsettings.size() == 0) {
-					setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\">");
-					setXML += value;
+					setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + ">") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + escapeSpecialChars(this.namespaceURI) + "\">");
+					setXML += escapeSpecialChars(value);
 					setXML += "</" + this.name + ">";
 					return setXML;
 				}
 			} else if (isEmptyValue(this.value) && !hasSubsettings() && level != 1) {
-				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + "/>") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + this.namespaceURI + "\"/>");
+				setXML = (this.namespaceURI == null) ? (getTabLevel() + "<" + this.name + getAttrXML() + "/>") : (getTabLevel() + "<" + this.name + getAttrXML() + " xmlns=\"" + escapeSpecialChars(this.namespaceURI) + "\"/>");
 				return setXML;
 			}
 			setXML += (this.subsettings.size() > 0) ? (getSubXML() + "\r\n") : "";
@@ -290,7 +290,7 @@ public class Setting {
 	public String getAttrXML() {
 		String attrXML = " ";
 		for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
-			attrXML += attribute.getKey() + "=\"" + attribute.getValue() + "\" ";
+			attrXML += attribute.getKey() + "=\"" + escapeSpecialChars(attribute.getValue()) + "\" ";
 		}
 		attrXML = attrXML.substring(0, attrXML.length() - 1);
 		return attrXML;
@@ -484,5 +484,14 @@ public class Setting {
 			this.isEmpty = false;
 			this.enabled = true;
 		}
+	}
+	
+	public String escapeSpecialChars(String input) {
+		String output = input.replaceAll("\"", "&quot;");
+		output = output.replaceAll("&", "&amp;");
+		output = output.replaceAll("'", "&apos;");
+		output = output.replaceAll("<", "&lt;");
+		output = output.replaceAll(">", "&gt;");
+		return output;
 	}
 }
