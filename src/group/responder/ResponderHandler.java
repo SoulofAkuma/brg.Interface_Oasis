@@ -36,4 +36,6 @@ public class ResponderHandler {
 	
 	public void stopResponder() {
 	}
+	
+	public static void respond()
 }

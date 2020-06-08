@@ -3,6 +3,7 @@ package trigger;
 import java.util.ArrayList;
 
 import group.listener.ListenerHandler;
+import group.responder.ResponderHandler;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
@@ -13,7 +14,7 @@ public class Trigger implements Runnable {
 	private ArrayList<String> responderIDs = new ArrayList<String>(); //IDs of responders to trigger
 	private String triggerID;
 	private String triggerName;
-	private String actionID;
+	ArrayList<String[]> triggerQueue = new ArrayList<String[]>();
 	private boolean trigger = false;
 	private boolean runMe = false;
 	private int cooldown;
@@ -21,7 +22,6 @@ public class Trigger implements Runnable {
 	public Trigger(TriggerType type, ArrayList<String> responderIDs, String actionID) {
 		this.type = type;
 		this.responderIDs.addAll(responderIDs);
-		this.actionID = actionID;
 	}
 	
 	@Override
@@ -42,19 +42,7 @@ public class Trigger implements Runnable {
 			case Listener:
 				int size = ListenerHandler.getRequest(this.actionID).size();
 				while (this.runMe) {
-					if (ListenerHandler.getRequest(this.actionID).size() > size) {
-						while (ListenerHandler.getRequest(this.actionID).get(size) == null) {
-							try {
-								Thread.sleep(10); //Wait until the connection handler has finished its job
-							} catch (InterruptedException e) {}
-						}
-						reportTrigger("by Listener " + this.actionID + " \"" + ListenerHandler.getListenerName(this.actionID) + "\"");
-						triggerMe(ListenerHandler.getRequest(this.actionID).get(size));
-						size++;
-					}
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {}
+					
 				}
 			break;
 			case Timer:
@@ -80,18 +68,22 @@ public class Trigger implements Runnable {
 	
 	private void triggerMe() {
 		for (String responderID : this.responderIDs) {
-			TriggerHandler.getResponder(responderID).repond();
+			ResponderHandler.getResponder(responderID).repond();
 		}
 	}
 	
 	private void triggerMe(String[] response) {
 		for (String responderID : this.responderIDs) {
-			TriggerHandler.getResponder(responderID).repond(response);
+			ResponderHandler.getResponder(responderID).repond(response);
 		}		
 	}
 	
 	public void trigger() {
 		this.trigger = true;
+	}
+	
+	protected void triggerByListener(String[] listenerResult) {
+		this.triggerQueue.add(listenerResult);
 	}
 	
 	private void reportTrigger(String reason) {

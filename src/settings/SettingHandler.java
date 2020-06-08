@@ -1,6 +1,5 @@
 package settings;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,8 +17,6 @@ import gui.Logger;
 import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
-import parser.ParserHandler;
-import trigger.TriggerHandler;
 
 //This class sets up all setting parsing, checks the syntax and forwards the setting processing to the corresponding classes ()
 public class SettingHandler {
@@ -27,7 +24,7 @@ public class SettingHandler {
 	private static int fileID; //ID of the setting file for the file handler
 	private static final String SETTINGFOLDER = Manager.PATH + Manager.SEPERATOR + "Settings";
 	private static final String SETTINGBACKUPFOLDER = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "Backups";
-	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "settingsdebug.xml"; //Name of the setting file
+	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "settings.xml"; //Name of the setting file
 	private static final String SETTINGBACKUPPATH = SettingHandler.SETTINGBACKUPFOLDER + Manager.SEPERATOR + "Setting Backup Session " + Main.SESSIONTIME + ".xml";
 	private static final String BASESETTING = "InterfaceOasis"; //Name of the root Element in the xml setting
 	private static Setting masterSetting; //The content of the setting file parsed into a setting
@@ -67,25 +64,8 @@ public class SettingHandler {
 			reportError("Missing Setting File", "All actions will not be saved");
 			return;
 		}
-		String fc = Manager.readFile(fileID);
-		Setting temp = Setting.parseSetting(fc, 1);
-		checkParserSetting(temp.getSubsettings().get(0), 1);
-		ParserHandler.init(temp); 
-		String json = Manager.readFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.json"));
-		ParserHandler.useParser("000000010", json);
-		String xml = Manager.readFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.xml"));
-		ParserHandler.useParser("000000020", xml);
-		ArrayList<String> xmlLog = ParserHandler.getLog("000000020");
-		for (String str : xmlLog) {
-			System.out.println(str);
-		}
-		
-		if (true) {
-			return;
-		}
 		
 		SettingHandler.masterSetting = Setting.parseSetting(Manager.readFile(fileID), 1);
-		Manager.writeFile(Manager.newFile(SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "test.json"), masterSetting.printSetting(), false);
 		boolean alteredInformation = false;
 		boolean wasEmpty = false;
 		boolean dpCorrupt = false;

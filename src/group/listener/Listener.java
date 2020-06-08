@@ -24,16 +24,18 @@ public class Listener implements Runnable {
 	private String groupName; //The name of the group the listener is part of
 	private String listenerID; //the id of this listener to uniquely identify it
 	private boolean isActive = false; //indicates whether the listener thread is currently listening to the port
+	private String triggerID;
 	private ServerSocket serverSocket = null;
 	
 	private ArrayList<Thread> connections = new ArrayList<Thread>(); //The threads of ConnectionHandlers to enable multiple requests at once
 	
-	protected Listener(String portString, String name, String groupID, String listenerID, String groupName) {
+	protected Listener(String portString, String name, String groupID, String listenerID, String groupName, String triggerID) {
 		this.name = name;
 		this.portString = portString;
 		this.groupID = groupID;
 		this.groupName = groupName;
 		this.listenerID = listenerID;
+		this.triggerID = triggerID;
 		ListenerHandler.inputs.put(this.groupID, new ArrayList<String[]>());
 		int tempPort = -1;
 		boolean isValid = false;
@@ -92,7 +94,7 @@ public class Listener implements Runnable {
 				Socket clientSocket = this.serverSocket.accept();
 				int myID = ListenerHandler.inputs.get(this.listenerID).size();
 				ListenerHandler.inputs.get(this.listenerID).add(null);
-				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket);
+				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket, this.triggerID);
 				this.connections.add(new Thread(connectionHandler));
 				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port + ". Forwarding to handler with responseID " + myID, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
 				this.connections.get(this.connections.size() - 1).start();

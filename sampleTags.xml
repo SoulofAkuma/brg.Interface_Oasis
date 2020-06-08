@@ -16,13 +16,18 @@
 
 	</Triggers>
 	<Parsers>
-		<Parser name="SampleParser" id="000000030" order="000000035,000000034,000000033,000000032,000000031">
+		<Parser name="testParser" id="000000030" order="000000031,000000032,000000033">
 			<Rules>
-				<Rule regex="false" find="sample" keep="false" reEval="false" id="000000031" type="Cut" n="1"/>
-				<Rule regex="false" find="discardMe" flags="s,a" id="000000032" inverted="false" type="Discard"/>
-				<Rule find="[0-9]+" id="000000033" type="Isolate"/>
-				<Rule regex="false" find="hello" replace="olleh" id="000000034" type="Replace"/>
-				<Rule regex="false" find="," id="000000035" type="Split" n="1"/>
+				<Rule type="jsonhandler.Trace" id="000000031" defVal="fail1" path="0,glossary,0,GlossDiv,0,GlossList,0,GlossEntry,0,SortAs"/>
+				<Rule type="jsonhandler.Trace" id="000000032" defVal="fail2" path="0,glossary,0,GlossDiv,0,GlossList,0,GlossEntry,0,GlossDef"/>
+				<Rule type="jsonhandler.Trace" id="000000033" defVal="fail3" path="0,glossary,0,GlossDiv,0,GlossList,0,GlossEntry,0,GlossDef,0,GlossSeeAlso,1,1"/>
+			</Rules>
+		</Parser>
+		<Parser name="testParser1" id="000000034" order="000000035,000000036,000000037">
+			<Rules>
+				<Rule type="xmlhandler.Trace" id="000000035" defVal="fail1" nodes="0,catalog,2,1,0,author"/>
+				<Rule type="xmlhandler.Trace" id="000000036" defVal="fail2" nodes="0,catalog,3,book:id=bk103,0,title"/>
+				<Rule type="xmlhandler.Trace" id="000000037" defVal="fail3" nodes="0,catalog,2,3,1,id"/>
 			</Rules>
 		</Parser>
 	</Parsers>

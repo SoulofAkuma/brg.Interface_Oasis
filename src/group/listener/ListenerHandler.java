@@ -40,7 +40,8 @@ public class ListenerHandler {
 			String name = listenerSetting.getAttribute("name");
 			String port = listenerSetting.getAttribute("port");
 			String listenerID = listenerSetting.getAttribute("id");
-			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName));
+			String triggerID = listenerSetting.getAttribute("triggerID");
+			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName, triggerID));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);
 			ListenerHandler.idToName.put(listenerID, port);
