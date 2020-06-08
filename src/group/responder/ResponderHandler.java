@@ -23,13 +23,16 @@ public class ResponderHandler {
 	
 	public void init() {
 		for (Setting responder : this.responderMasterSetting.getSubsettings()) {
+			if (!responder.isEnabled()) {
+				continue;
+			}
 			String responderName = responder.getAttribute("name");
 			String responderID = responder.getAttribute("id");
 			String portString = responder.getAttribute("port");
 			String parserID = responder.getAttribute("parserID");
 			Constant url;
 			ArrayList<Constant> constants = new ArrayList<Constant>();
-			this.responders.put(responderID, new Responder(responderID, parserID, portString, url, responderName, parserID));
+			this.responders.put(responderID, new Responder(responderID));
 			this.idToName.put(responderID, responderName);
 		}
 	}
@@ -37,5 +40,7 @@ public class ResponderHandler {
 	public void stopResponder() {
 	}
 	
-	public static void respond()
+	public void respond(String id, HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
+		this.responders.get(id).respond(parsedHeader, parsedBody);
+	}
 }

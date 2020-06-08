@@ -20,8 +20,8 @@ public class ParserHandler {
 	private static Setting parserMasterSetting;
 	private static final String stdGetParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
 	
-	public static Parser getParser(String parserID) {
-		return ParserHandler.parsers.get(parserID);
+	public static HashMap<String, String> parse(String parserID, String input) {
+		return ParserHandler.parsers.get(parserID).parse(input);;
 	}
 	
 	public static void init(Setting parserMasterSetting) {

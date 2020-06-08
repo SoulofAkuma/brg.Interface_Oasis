@@ -30,7 +30,7 @@ public class Parser {
 	}
 	
 	//Apply all rules to the string
-	public void parse(String input) {
+	public HashMap<String, String> parse(String input) {
 		this.log.add("Starting parsing");
 		
 		ArrayList<String> strList = new ArrayList<String>();
@@ -44,13 +44,7 @@ public class Parser {
 			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
 		}
-		boolean dummy = false;
-		for (String result : strList) {
-			if (dummy) {
-				System.out.println(result);
-			}
-			dummy = true;
-		}
+		return this.indexAssigner.assign(strList);
 	}
 	
 	public HashMap<String, String> storeParser() {

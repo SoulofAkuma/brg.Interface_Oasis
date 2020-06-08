@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import cc.Pair;
 import constant.Constant;
 import group.RequestType;
 import gui.Logger;
@@ -35,12 +36,7 @@ public class Responder {
 		this.body = body;
 	}
 
-	public void repond() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void repond(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
+	public void respond(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
 		String bodyString = this.body.getBody(parsedHeader, parsedBody);
 		String headerString = this.header.getHeader(parsedHeader, parsedBody, bodyString.getBytes().length);
 		if (headerString != null) {
@@ -75,30 +71,17 @@ public class Responder {
 		}
 	}
 	
-	public static HashMap<String, String> transformHeader(String input) {
-		String[] lines = input.split("\r\n");
-		HashMap<String, String> returnVal = new HashMap<String, String>();
-		for (int i = 1; i < lines.length; i++) {
-			String line = lines[i];
-			int splitIndex = line.indexOf(":", 0);
-			String name = line.substring(0, splitIndex);
-			String value = line.substring(splitIndex + 1, line.length());
-			returnVal.put(name, value);
-		}
-		return returnVal;
-	}
-	
 	private void reportError(String causes, String errorMessage) {
 		String message = this.name + " in " + this.groupName + " reported " + causes + " caused by " + errorMessage;
-		String elements[] = {"GroupName", "GroupID", "ResponderName", "ResponderID", "ResponderPort", "Causes", "ErrorMessage"};
-		String values[] = {this.groupName, this.groupID, this.name, this.responderID, this.portString, causes, errorMessage};
+		String elements[] = {"GroupName", "GroupID", "ResponderName", "ResponderID", "Causes", "ErrorMessage"};
+		String values[] = {this.groupName, this.groupID, this.name, this.responderID, causes, errorMessage};
 		Logger.addMessage(MessageType.Error, MessageOrigin.Responder, message, this.responderID, elements, values, false);
 	}
 	
 	private void reportError(String causes, String errorMessage, String url) {
 		String message = this.name + " in " + this.groupName + " reported " + causes + " caused by " + errorMessage;
-		String elements[] = {"GroupName", "GroupID", "ResponderName", "ResponderID", "ResponderPort", "Url", "Causes", "ErrorMessage"};
-		String values[] = {this.groupName, this.groupID, this.name, this.responderID, this.portString, url, causes, errorMessage};
+		String elements[] = {"GroupName", "GroupID", "ResponderName", "ResponderID", "Url", "Causes", "ErrorMessage"};
+		String values[] = {this.groupName, this.groupID, this.name, this.responderID, url, causes, errorMessage};
 		Logger.addMessage(MessageType.Error, MessageOrigin.Responder, message, this.responderID, elements, values, false);
 	}
 

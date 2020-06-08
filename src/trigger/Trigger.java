@@ -1,20 +1,27 @@
 package trigger;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
+import cc.Pair;
+import group.GroupHandler;
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
+import parser.IndexAssigner;
+import parser.ParserHandler;
 
 public class Trigger implements Runnable {
 	
 	private TriggerType type; //Type of the trigger
-	private ArrayList<String> responderIDs = new ArrayList<String>(); //IDs of responders to trigger
+	private ArrayList<Pair<String, Pair<String, String>>> responderIDs = new ArrayList<Pair<String, Pair<String, String>>>(); //Responder details to trigger from listener (parserID, (groupID, responderID))
 	private String triggerID;
 	private String triggerName;
-	ArrayList<String[]> triggerQueue = new ArrayList<String[]>();
+	List<Pair<String, String>> triggerQueue = Collections.synchronizedList(new ArrayList<Pair<String, String>>());
 	private boolean trigger = false;
 	private boolean runMe = false;
 	private int cooldown;
@@ -40,9 +47,15 @@ public class Trigger implements Runnable {
 				}
 			break;
 			case Listener:
-				int size = ListenerHandler.getRequest(this.actionID).size();
+				int size = this.triggerQueue.size();
 				while (this.runMe) {
-					
+					if (this.triggerQueue.size() > size) {
+						triggerMe(size);
+						size++;
+					}
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {}
 				}
 			break;
 			case Timer:
@@ -67,14 +80,16 @@ public class Trigger implements Runnable {
 	}
 	
 	private void triggerMe() {
-		for (String responderID : this.responderIDs) {
-			ResponderHandler.getResponder(responderID).repond();
+		for (Pair<String, Pair<String, String>> grp : this.responderIDs) {
+			GroupHandler.getResponderHandler(grp.getKey()).respond(grp.getValue());;
 		}
 	}
 	
-	private void triggerMe(String[] response) {
-		for (String responderID : this.responderIDs) {
-			ResponderHandler.getResponder(responderID).repond(response);
+	private void triggerMe(int index) {
+		HashMap<String, String> parsedHeader = IndexAssigner.transformHeader(this.triggerQueue.get(index).getKey());
+		for (Pair<String, Pair<String, String>> grp : this.responderIDs) {
+			HashMap<String, String> parsedBody = (grp.getKey() == null) ? new HashMap<String, String>() : ParserHandler.parse(grp.getKey(), this.triggerQueue.get(index).getValue());
+			GroupHandler.getResponderHandler(grp.getValue().getKey()).respond(grp.getValue().getValue(), parsedHeader, parsedBody);
 		}		
 	}
 	
@@ -82,8 +97,8 @@ public class Trigger implements Runnable {
 		this.trigger = true;
 	}
 	
-	protected void triggerByListener(String[] listenerResult) {
-		this.triggerQueue.add(listenerResult);
+	protected void triggerByListener(String header, String body) {
+		this.triggerQueue.add(new Pair<String, String>(header, body));
 	}
 	
 	private void reportTrigger(String reason) {
