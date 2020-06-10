@@ -1,11 +1,8 @@
 package trigger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import group.listener.Listener;
-import group.responder.Responder;
 import settings.Setting;
 
 public class TriggerHandler {
@@ -19,7 +16,7 @@ public class TriggerHandler {
 		}
 	}
 	
-	public static void triggerTrigger(String triggerID, HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
+	public static void triggerTrigger(String triggerID, String parsedHeader, String parsedBody) {
 		TriggerHandler.triggers.get(triggerID).triggerByListener(parsedHeader, parsedBody);
 	}
 }

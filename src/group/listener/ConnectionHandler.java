@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import group.RequestType;
 import gui.Logger;
@@ -18,13 +19,12 @@ public class ConnectionHandler implements Runnable {
 	private final String parentID;
 	private Socket socket;
 	private RequestType requestType;
-	private String triggerID;
-	
-	public ConnectionHandler(int responseID, String parentID, Socket socket, String triggerID) {
+	private ArrayList<String> triggerIDs;
+	public ConnectionHandler(int responseID, String parentID, Socket socket, ArrayList<String> triggerID) {
 		this.responseID = responseID;
 		this.parentID = parentID;
 		this.socket = socket;
-		this.triggerID = triggerID;
+		this.triggerIDs = triggerID;
 	}
 	
 	@Override
@@ -119,8 +119,10 @@ public class ConnectionHandler implements Runnable {
 		}
 		if (success) {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
-			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Now triggering " + this.triggerID, this.parentID, null, null, false);
-			TriggerHandler.triggerTrigger(this.triggerID, new String[] {request, body});
+			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Now triggering " + this.triggerIDs, this.parentID, null, null, false);
+			for (String triggerID : this.triggerIDs) {
+				TriggerHandler.triggerTrigger(triggerID, new String[] {request, body});
+			}
 		} else {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {null, null});
 			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Aborter Triggering - invalid request", this.parentID, null, null, false);

@@ -26,9 +26,9 @@ public class Trigger implements Runnable {
 	private boolean runMe = false;
 	private int cooldown;
 	
-	public Trigger(TriggerType type, ArrayList<String> responderIDs, String actionID) {
+	public Trigger(TriggerType type, ArrayList<Pair<String, Pair<String, String>>> responderIDs, String actionID) {
 		this.type = type;
-		this.responderIDs.addAll(responderIDs);
+		this.responderIDs = responderIDs;
 	}
 	
 	@Override
@@ -81,7 +81,7 @@ public class Trigger implements Runnable {
 	
 	private void triggerMe() {
 		for (Pair<String, Pair<String, String>> grp : this.responderIDs) {
-			GroupHandler.getResponderHandler(grp.getKey()).respond(grp.getValue());;
+			GroupHandler.getResponderHandler(grp.getValue().getKey()).respond(grp.getValue().getValue(), new HashMap<String, String>(), new HashMap<String, String>());
 		}
 	}
 	
