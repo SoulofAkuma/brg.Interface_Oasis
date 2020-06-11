@@ -8,7 +8,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
+import group.TimeoutController;
 import settings.Setting;
+import trigger.TriggerHandler;
 
 public class ListenerHandler {
 
@@ -23,7 +25,6 @@ public class ListenerHandler {
 	
 	private static ConcurrentHashMap<String, String> activePorts = new ConcurrentHashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
 	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
-	protected static ConcurrentHashMap<String, Pair<TimeoutController, Thread>> timerController = new ConcurrentHashMap<String, Pair<TimeoutController, Thread>>(); //Threads canceling connectionHandlers whenever they time out (Content-Length not accurate, Wrong formatting, body too long) stored by groupID, thread 
 	protected static ConcurrentHashMap<String, ArrayList<String[]>> inputs = new ConcurrentHashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
 	
 	public ListenerHandler(Setting listenerMasterSetting, String groupID, String groupName) {
@@ -31,33 +32,29 @@ public class ListenerHandler {
 		this.groupID = groupID;
 		this.groupName = groupName;
 		this.handlerID = listenerMasterSetting.getAttribute("id");
-		TimeoutController controller = new TimeoutController();
-		ListenerHandler.timerController.put(this.handlerID, new Pair<TimeoutController, Thread>(controller, new Thread(controller)));
 	}
 	
 	public void init() {
 		for (Setting listenerSetting : this.listenerMasterSetting.getSubsettings()) {
+			if (!listenerSetting.isEnabled()) {
+				continue;
+			}
 			String name = listenerSetting.getAttribute("name");
 			String port = listenerSetting.getAttribute("port");
 			String listenerID = listenerSetting.getAttribute("id");
-			String triggerID = listenerSetting.getAttribute("triggerID");
-			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName, triggerID));
+			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);
 			ListenerHandler.idToName.put(listenerID, port);
+			TriggerHandler.registerListener(listenerID);
 		}
 	}
 	
 	public void runListener() {
-		boolean hasListener = false;
 		for (Map.Entry<String, Listener> kvp : this.listeners.entrySet()) {
-			hasListener = true;
 			if (!this.listenerThreadStatus.get(kvp.getKey())) {
 				this.listenerThreads.get(kvp.getKey()).start();				
 			}
-		}
-		if (hasListener && !this.controllerRunning) {
-			ListenerHandler.timerController.get(this.handlerID).getValue().start();;
 		}
 	}
 	

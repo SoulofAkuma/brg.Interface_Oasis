@@ -1,19 +1,28 @@
 package group;
 
 import cc.Pair;
+
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
+import gui.Logger;
 import settings.Setting;
 
 public class GroupHandler {
 	
 	private static ConcurrentHashMap<String, Pair<ListenerHandler, ResponderHandler>> groups = new ConcurrentHashMap<String, Pair<ListenerHandler, ResponderHandler>>();
 	
+	private static TimeoutController controllerObj;
+	private static Thread controllerThread;
+	
 	public static void init(Setting handlerMasterSetting) {
+		GroupHandler.controllerObj = new TimeoutController();
+		GroupHandler.controllerThread = new Thread(GroupHandler.controllerObj);
+		GroupHandler.controllerThread.start();
 		for (Setting handlerGroup : handlerMasterSetting.getSubsettings()) {
 			String id = handlerGroup.getAttribute("id");
 			String name = handlerGroup.getAttribute("name");
@@ -25,7 +34,17 @@ public class GroupHandler {
 		}
 	}
 	
+	public static void addSocketTimeout(Socket socket, int seconds) {
+		GroupHandler.addSocketTimeout(socket, seconds);
+	}
+	
 	public static void close() {
+		GroupHandler.controllerObj.stop();
+		try {
+			GroupHandler.controllerThread.join();
+		} catch (InterruptedException e) {
+			Logger.reportException(GroupHandler.class.getName(), "close", e);
+		}
 		for (Map.Entry<String, Pair<ListenerHandler, ResponderHandler>> kvp : groups.entrySet()) {
 			kvp.getValue().getKey().stopListener();
 			kvp.getValue().getValue().stopResponder();

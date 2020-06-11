@@ -1,4 +1,4 @@
-package group.listener;
+package group;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -29,9 +29,13 @@ public class TimeoutController implements Runnable {
 				for (int i = 0; i < finished.size(); i++) {
 					try {
 						this.timeoutSockets.get(finished.get(i)).getKey().shutdownInput();
+					} catch (Exception e) {}
+					try {
 						this.timeoutSockets.get(finished.get(i)).getKey().shutdownOutput();
+					} catch (Exception e) {}
+					try {
 						this.timeoutSockets.get(finished.get(i)).getKey().close();
-					} catch (IOException e) {}
+					} catch (Exception e) {}
 					this.timeoutSockets.remove((int) finished.get(i));
 				}
 				Thread.sleep(1000);
@@ -40,5 +44,20 @@ public class TimeoutController implements Runnable {
 				}
 			}
 		} catch (InterruptedException e) {}
+	}
+	
+	public void stop() {
+		for (int i = 0; i < this.timeoutSockets.size(); i++) {
+			try {
+				this.timeoutSockets.get(i).getKey().shutdownInput();
+			} catch (Exception e) {}
+			try {
+				this.timeoutSockets.get(i).getKey().shutdownOutput();
+			} catch (Exception e) {}
+			try {
+				this.timeoutSockets.get(i).getKey().close();
+			} catch (Exception e) {}
+		}
+		this.isActive = false;
 	}
 }

@@ -19,12 +19,11 @@ public class ConnectionHandler implements Runnable {
 	private final String parentID;
 	private Socket socket;
 	private RequestType requestType;
-	private ArrayList<String> triggerIDs;
-	public ConnectionHandler(int responseID, String parentID, Socket socket, ArrayList<String> triggerID) {
+
+	public ConnectionHandler(int responseID, String parentID, Socket socket) {
 		this.responseID = responseID;
 		this.parentID = parentID;
 		this.socket = socket;
-		this.triggerIDs = triggerID;
 	}
 	
 	@Override
@@ -114,18 +113,16 @@ public class ConnectionHandler implements Runnable {
 			in.close();
 			out.close();
 			this.socket.close();
-		} catch(IOException e) {
+		} catch(Exception e) {
 			Logger.reportException("ConnectionHandler", "run", e);
 		}
 		if (success) {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
-			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Now triggering " + this.triggerIDs, this.parentID, null, null, false);
-			for (String triggerID : this.triggerIDs) {
-				TriggerHandler.triggerTrigger(triggerID, new String[] {request, body});
-			}
+			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener successfully parsed request - Reporting to triggers ", this.parentID, null, null, false);
+			TriggerHandler.report(this.parentID, request, body);
 		} else {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {null, null});
-			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Aborter Triggering - invalid request", this.parentID, null, null, false);
+			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener parsing failed - Aborting trigger report", this.parentID, null, null, false);
 		}
 	}
 	

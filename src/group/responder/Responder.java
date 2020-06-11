@@ -56,12 +56,8 @@ public class Responder {
 			out.flush();
 			
 			Thread.sleep(1000);
+
 			
-			String line = "";
-			while ((line = in.readLine()) != null) {
-				//TODO: Timeout in case of reading error;
-				//TODO: Find a way to store responses of responder
-			}
 		} catch (IOException e) {
 			reportError("Couldn't connect socket", e.getMessage());
 			Logger.reportException("Responder", "sendResponse", e);
