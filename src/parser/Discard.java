@@ -13,19 +13,22 @@ public class Discard implements Rule {
 	public static final boolean REGEX = false;
 	public static final char FLAGS[] = new char[0];
 	
-	private String find; //String to find in the input
+	private String findValue; //String to find in the input
+	private String find;
 	private boolean inverted; //If inverted the rule will discard all strings which match the condition
 	private boolean regex;
 	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
+	private boolean useHeader;
 	private ArrayList<String> log = new ArrayList<String>(); //Log for the rule
 	
 	public Discard() {}
 	
-	public Discard(String find, boolean inverted, boolean regex, String flags[]) {
+	public Discard(String find, boolean inverted, boolean regex, String flags[], boolean useHeader) {
 		this.find = find;
 		this.inverted = inverted;
 		this.regex = regex;
 		this.flags = flags;
+		this.useHeader = useHeader;
 	}
 	
 	@Override
@@ -35,6 +38,7 @@ public class Discard implements Rule {
 		Boolean inverted = ParserHandler.returnBooleanIfExists(constructorArgs, "inverted");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
 		String[] flags = ParserHandler.returnStringArrayIfExists(constructorArgs, "flags");
+		Boolean useHeader = ParserHandler.returnBooleanIfExists(constructorArgs, "useHeader");
 		if (find == null) {
 			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
@@ -47,14 +51,27 @@ public class Discard implements Rule {
 		} else if (flags == null) {
 			ParserHandler.reportGenRuleError("flags", this.getClass().getName(), id);
 			return null;
+		} else if (useHeader == null) {
+			ParserHandler.reportGenRuleError("useHeader", this.getClass().getName(), id);
+			return null;
 		} else {
-			return new Discard(find, inverted, regex, flags);
+			return new Discard(find, inverted, regex, flags, useHeader);
 		}
 	}
 	
 	
 	@Override
-	public ArrayList<String> apply(ArrayList<String> input) {
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
+		if (this.useHeader) {
+			if (parsedHeader.containsKey(this.find)) {
+				this.findValue = parsedHeader.get(this.find);
+			} else {
+				this.log.add("Value \"" + this.find +"\" not found in header");
+				return input;
+			}
+		} else {
+			this.findValue = this.find;
+		}
 		ArrayList<String> output = new ArrayList<String>();
 		ArrayList<String> discarded = new ArrayList<String>();
 		boolean s = false;
@@ -65,7 +82,7 @@ public class Discard implements Rule {
 				discarded.add(element);
 				continue;
 			}
-			boolean match = (regex) ? hasRegexMatch(element) : element.contains(this.find);
+			boolean match = (regex) ? hasRegexMatch(element) : element.contains(this.findValue);
 			if (match) {
 				this.log.add("Match found");
 				for (String flag : this.flags) {
@@ -116,7 +133,7 @@ public class Discard implements Rule {
 	}
 	
 	public boolean hasRegexMatch(String input) {
-		Pattern pattern = Pattern.compile(this.find);
+		Pattern pattern = Pattern.compile(this.findValue);
 		Matcher matcher = pattern.matcher(input);
 		if (matcher.find()) {
 			return true;
@@ -128,7 +145,7 @@ public class Discard implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.find);
+		rule.put("find", this.findValue);
 		rule.put("inverted", String.valueOf(this.inverted));
 		rule.put("regex", String.valueOf(this.regex));
 		rule.put("flags", String.join(",", this.flags));

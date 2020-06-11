@@ -3,6 +3,7 @@ package group.responder;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class Header {
 	//TODO: Returns a dynamic header string. Header values may consist of constants
 	private RequestType requestType;
 	private Constant url;
-	private String[] reserved = new String[] {"Host","Connection", "Content-Type", "User-Agent","Content-Length"};
+	private ArrayList<String> reserved = new ArrayList<String>(Arrays.asList(new String[] {"Host","Connection", "Content-Type", "User-Agent","Content-Length"}));
 	private String connection = "Close";
 	private Constant contentType;
 	private Constant userAgent;
@@ -81,7 +82,15 @@ public class Header {
 				+ userAgent
 				+ "Content-Length: " + contentLength + "\r\n";
 		for (Constant customArg : this.customArgs) {
-			header += customArg.getConstant(parsedHeader, parsedBody) + "\r\n";
+			String val = customArg.getConstant(parsedHeader, parsedBody);
+			if (val.indexOf(":") == -1) {
+				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + customArg.identification() + " is in an invalid format \"" + val + "\". Skipping Constant", this.responderID, null, null, false);
+			} else if (this.reserved.contains(val.substring(0, val.indexOf(":")))) {
+				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + customArg.identification() + " contains a reserved attribute \"" + val.substring(0, val.indexOf(":")) + "\". Skipping Constant", this.responderID, null, null, false);
+				
+			} else {
+				header += val + "\r\n";
+			}
 		}
 		return header;
 	}

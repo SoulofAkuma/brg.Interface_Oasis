@@ -41,5 +41,9 @@ public class Constant {
 		}
 		return reVal;
 	}
+	
+	public String identification() {
+		return this.id + " " + this.name;
+	}
 
 }

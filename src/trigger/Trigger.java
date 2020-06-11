@@ -48,15 +48,15 @@ public class Trigger implements Runnable {
 				}
 			break;
 			case Listener:
-				ArrayList<Integer> size = new ArrayList<Integer>();
+				ArrayList<Integer> lrSize = new ArrayList<Integer>();
 				for (String id : this.triggeredBy) {
-					size.add(TriggerHandler.listenerReports.get(id).size());
+					lrSize.add(TriggerHandler.listenerReports.get(id).size());
 				}
 				while (this.runMe) {
 					for (int i = 0; i < this.triggeredBy.size(); i++) {
-						if (TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).size() > size.get(i)) {
+						if (TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).size() > lrSize.get(i)) {
 							triggerMe(TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).get(i));
-							size.set(i, size.get(i) + 1);
+							lrSize.set(i, lrSize.get(i) + 1);
 						}
 						try {
 							Thread.sleep(100);
@@ -78,8 +78,20 @@ public class Trigger implements Runnable {
 				}
 			break;
 			case Responder:
+				ArrayList<Integer> rrSize = new ArrayList<Integer>();
+				for (String id : this.triggeredBy) {
+					rrSize.add(TriggerHandler.responderReports.get(id).size());
+				}
 				while (this.runMe) {
-					
+					for (int i = 0; i < this.triggeredBy.size(); i++) {
+						if (TriggerHandler.responderReports.get(this.triggeredBy.get(i)).size() > rrSize.get(i)) {
+							triggerMe(TriggerHandler.responderReports.get(this.triggeredBy.get(i)).get(i));
+							rrSize.set(i, rrSize.get(i) + 1);
+						}
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {}
+					}
 				}
 			break;
 		}
@@ -94,7 +106,7 @@ public class Trigger implements Runnable {
 	private void triggerMe(Pair<String, String> params) {
 		HashMap<String, String> parsedHeader = IndexAssigner.transformHeader(params.getKey());
 		for (Pair<String, Pair<String, String>> grp : this.responderIDs) {
-			HashMap<String, String> parsedBody = (grp.getKey() == null) ? new HashMap<String, String>() : ParserHandler.parse(grp.getKey(), params.getValue());
+			HashMap<String, String> parsedBody = (grp.getKey() == null) ? new HashMap<String, String>() : ParserHandler.parse(grp.getKey(), params.getValue(), parsedHeader);
 			GroupHandler.getResponderHandler(grp.getValue().getKey()).respond(grp.getValue().getValue(), parsedHeader, parsedBody);
 		}		
 	}

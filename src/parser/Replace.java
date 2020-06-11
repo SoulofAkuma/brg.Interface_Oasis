@@ -10,17 +10,20 @@ public class Replace implements Rule {
 	//Default value
 	public static final boolean REGEX = false;
 	
-	private String find; //String to find
+	private String findValue; //String to find
+	private String find;
 	private String replace; //Replacement String
 	private boolean regex; //Find is a regular expression
+	private boolean useHeader; //Get find Value from the Header
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
 	
 	public Replace() {}
 	
-	public Replace(String find, String replace, boolean regex) {
+	public Replace(String find, String replace, boolean regex, boolean useHeader) {
 		this.find = find;
 		this.replace = replace;
 		this.regex = regex;
+		this.useHeader = useHeader;
 	}
 	
 	@Override
@@ -29,6 +32,7 @@ public class Replace implements Rule {
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		String replace = ParserHandler.returnStringIfExists(constructorArgs, "replace");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
+		Boolean useHeader = ParserHandler.returnBooleanIfExists(constructorArgs, "useHeader");
 		if (find == null) {
 			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
@@ -38,13 +42,26 @@ public class Replace implements Rule {
 		} else if (regex == null) {
 			ParserHandler.reportGenRuleError("regex", this.getClass().getName(), id);
 			return null;
+		} else if (useHeader == null) {
+			ParserHandler.reportGenRuleError("useHeader", this.getClass().getName(), id);
+			return null;
 		} else {
-			return new Replace(find, replace, regex);
+			return new Replace(find, replace, regex, useHeader);
 		}
 	}
 
 	@Override
-	public ArrayList<String> apply(ArrayList<String> input) {
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
+		if (this.useHeader) {
+			if (parsedHeader.containsKey(this.find)) {
+				this.findValue = parsedHeader.get(this.find);
+			} else {
+				this.log.add("Value \"" + this.find +"\" not found in header");
+				return input;
+			}
+		} else {
+			this.findValue = this.find;
+		}
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
 			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
@@ -69,13 +86,13 @@ public class Replace implements Rule {
 		int start = 0;
 		
 		for (int i = 0; i < input.length(); i++) {
-			if (input.charAt(i) == this.find.charAt(matchCount)) {
+			if (input.charAt(i) == this.findValue.charAt(matchCount)) {
 				if (matchCount == 0) {
 					start = i;					
 				}
 				matchCount++;
 			}
-			if (matchCount == find.length()) {
+			if (matchCount == findValue.length()) {
 				this.log.add("Replaced from index " + start + " to " + (start + matchCount));
 				input = input.substring(0, start) + this.replace + input.substring(start + matchCount, input.length());
 				matchCount = 0;
@@ -86,7 +103,7 @@ public class Replace implements Rule {
 	
 	//Replace all appearances of a regex (custom function for logging purposes) with a replacement String
 	private String replaceRegex(String input) {
-		Pattern pattern = Pattern.compile(this.find);
+		Pattern pattern = Pattern.compile(this.findValue);
 		Matcher matcher = pattern.matcher(input);
 		while (matcher.find()) {
 			this.log.add("Replaced from index " + matcher.start() + " to " + matcher.end());
@@ -98,7 +115,7 @@ public class Replace implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.find);
+		rule.put("find", this.findValue);
 		rule.put("replace", this.replace);
 		rule.put("regex", String.valueOf(this.regex));
 		return rule;

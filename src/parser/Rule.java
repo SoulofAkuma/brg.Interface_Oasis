@@ -8,7 +8,7 @@ public interface Rule {
 	public Rule genRule(HashMap<String, String> contructorArgs);
 	
 	//Applies the rule to the Parser
-	public ArrayList<String> apply(ArrayList<String> input);
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader);
 	
 	//Prints the log of the rule application
 	public ArrayList<String> printLog();

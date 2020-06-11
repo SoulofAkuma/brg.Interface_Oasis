@@ -7,24 +7,31 @@ import java.util.regex.Matcher;
 
 public class Isolate implements Rule {
 	
-	private String find; //Regex to isolate
+	private String findValue; //Regex to isolate
+	private String find;
+	private boolean useHeader;
 	private ArrayList<String> log = new ArrayList<String>();
 	
 	public Isolate() {}
 
-	public Isolate(String find) {
+	public Isolate(String find, boolean useHeader) {
 		this.find = find;
+		this.useHeader = useHeader;
 	}
 	
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
 		String id = constructorArgs.get("id");
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
+		Boolean useHeader = ParserHandler.returnBooleanIfExists(constructorArgs, "useHeader");
 		if (find == null) {
 			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
+		} else if (useHeader == null) {
+			ParserHandler.reportGenRuleError("useHeader", this.getClass().getName(), id);
+			return null;
 		} else {
-			return new Isolate(find);
+			return new Isolate(find, useHeader);
 		}
 	}
 
@@ -34,7 +41,17 @@ public class Isolate implements Rule {
 	}
 
 	@Override
-	public ArrayList<String> apply(ArrayList<String> input) {
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
+		if (this.useHeader) {
+			if (parsedHeader.containsKey(this.find)) {
+				this.findValue = parsedHeader.get(this.find);
+			} else {
+				this.log.add("Value \"" + this.find +"\" not found in header");
+				return input;
+			}
+		} else {
+			this.findValue = this.find;
+		}
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
 			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
@@ -47,7 +64,7 @@ public class Isolate implements Rule {
 	}
 	
 	private ArrayList<String> isolations(String input) {
-		Pattern pattern = Pattern.compile(this.find);
+		Pattern pattern = Pattern.compile(this.findValue);
 		Matcher matcher = pattern.matcher(input);
 		ArrayList<String> output = new ArrayList<String>();
 		while (matcher.find()) {
@@ -61,7 +78,7 @@ public class Isolate implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.find);
+		rule.put("find", this.findValue);
 		return rule;
 	}
 }

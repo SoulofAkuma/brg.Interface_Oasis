@@ -11,17 +11,20 @@ public class Split implements Rule {
 	public static final boolean REGEX = false;
 	public static final int N = 1;
 	
-	private String find; //String to find in the input
+	private String findValue; //String to find in the input
+	private String find;
 	private int n; //Splits only at every nth appearance
 	private boolean regex;
+	private boolean useHeader;
 	private ArrayList<String> log = new ArrayList<String>();
 	
 	public Split() {}
 	
-	public Split(String find, int n, boolean regex) {
+	public Split(String find, int n, boolean regex, boolean useHeader) {
 		this.find = find;
 		this.n = n;
 		this.regex = regex;
+		this.useHeader = useHeader;
 	}
 	
 	@Override
@@ -30,6 +33,7 @@ public class Split implements Rule {
 		String find = ParserHandler.returnStringIfExists(constructorArgs, "find");
 		Integer n = ParserHandler.returnIntIfExists(constructorArgs, "n");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
+		Boolean useHeader = ParserHandler.returnBooleanIfExists(constructorArgs, "useHeader");
 		if (find == null) {
 			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
@@ -39,13 +43,26 @@ public class Split implements Rule {
 		} else if (regex == null) {
 			ParserHandler.reportGenRuleError("regex", this.getClass().getName(), id);
 			return null;
+		} else if (useHeader == null) {
+			ParserHandler.reportGenRuleError("useHeader", this.getClass().getName(), id);
+			return null;
 		} else {
-			return new Split(find, n, regex);
+			return new Split(find, n, regex, useHeader);
 		}
 	}
 
 	@Override
-	public ArrayList<String> apply(ArrayList<String> input) {
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
+		if (this.useHeader) {
+			if (parsedHeader.containsKey(this.find)) {
+				this.findValue = parsedHeader.get(this.find);
+			} else {
+				this.log.add("Value \"" + this.find +"\" not found in header");
+				return input;
+			}
+		} else {
+			this.findValue = this.find;
+		}
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
 			this.log.add("Applying Rule on \"" + element.substring(0,  10) + "...\"");
@@ -70,13 +87,13 @@ public class Split implements Rule {
 		int matchCount = 0;
 		int start = 0;
 		for (int i = 0; i < input.length(); i++) {
-			if (input.charAt(i) == this.find.charAt(matchCount)) {
+			if (input.charAt(i) == this.findValue.charAt(matchCount)) {
 				if (matchCount == 0) {
 					start = i;					
 				}
 				matchCount++;
 			}
-			if (matchCount == find.length()) {
+			if (matchCount == findValue.length()) {
 				appearanceCount++;
 				matchCount = 0;
 				this.log.add("Found match number " + appearanceCount + " at index " + start);
@@ -87,7 +104,7 @@ public class Split implements Rule {
 						output.add(input.substring(previousEnd, start));
 						this.log.add("Adding \"" + input.subSequence(previousEnd, start) + "\"");
 					}
-					previousEnd = start + this.find.length();
+					previousEnd = start + this.findValue.length();
 					appearanceCount = 0;
 				}
 			}
@@ -103,7 +120,7 @@ public class Split implements Rule {
 	
 	private ArrayList<String> regexSplit(String input) {
 		ArrayList<String> output = new ArrayList<String>();
-		Pattern pattern = Pattern.compile(this.find);
+		Pattern pattern = Pattern.compile(this.findValue);
 		Matcher matcher = pattern.matcher(input);
 		int previousEnd = 0;
 		int appearanceCount = 0;
@@ -132,7 +149,7 @@ public class Split implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.find);
+		rule.put("find", this.findValue);
 		rule.put("n", String.valueOf(this.n));
 		rule.put("regex", String.valueOf(this.regex));
 		return rule;

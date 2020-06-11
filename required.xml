@@ -18,11 +18,11 @@
 	<Parsers>
 		<Parser requiresKeys="name,id,order" requiresValues="regexname,regexid,regexidlist">
 			<Rule requiresKeys="type,id" requiresValues="ruletype,regexid"/>
-			<Rule type="parser.Cut" requiresKeys="id,find,n,keep,regex,reEval" requiresValues="regexid,string,int,boolean,boolean,boolean"/>
-			<Rule type="parser.Discard" requiresKeys="id,find,inverted,regex,flags" requiresValues="regexid,string,boolean,boolean,stringarray"/>
-			<Rule type="parser.Isolate" requiresKeys="id,find" requiresValues="regexid,string"/>
-			<Rule type="parser.Replace" requiresKeys="id,find,replace,regex" requiresValues="parser.regexid,string,string,boolean"/>
-			<Rule type="parser.Split" requiresKeys="id,find,n,regex" requiresValues="regexid,string,int,boolean"/>+
+			<Rule type="parser.Cut" requiresKeys="id,find,n,keep,regex,reEval,useHeader" requiresValues="regexid,string,int,boolean,boolean,boolean,boolean"/>
+			<Rule type="parser.Discard" requiresKeys="id,find,inverted,regex,flags,useHeader" requiresValues="regexid,string,boolean,boolean,stringarray,boolean"/>
+			<Rule type="parser.Isolate" requiresKeys="id,find,useHeader" requiresValues="regexid,string,boolean"/>
+			<Rule type="parser.Replace" requiresKeys="id,find,replace,regex,useHeader" requiresValues="parser.regexid,string,string,boolean,boolean"/>
+			<Rule type="parser.Split" requiresKeys="id,find,n,regex,useHeader" requiresValues="regexid,string,int,boolean,boolean"/>+
 			<Rule type="xmlhandler.Trace" requiresKeys="id,nodes,defVal" requiresValues="regexid,intstringarray,string"/>
 			<Rule type="jsonhandler.Trace" requiresKeys="id,path,defVal" requiresValues="regexid,intstringarray,string"/>
 		</Parser>

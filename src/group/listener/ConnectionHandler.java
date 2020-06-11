@@ -119,7 +119,7 @@ public class ConnectionHandler implements Runnable {
 		if (success) {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
 			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener successfully parsed request - Reporting to triggers ", this.parentID, null, null, false);
-			TriggerHandler.report(this.parentID, request, body);
+			TriggerHandler.reportListener(this.parentID, request, body);
 		} else {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {null, null});
 			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener parsing failed - Aborting trigger report", this.parentID, null, null, false);

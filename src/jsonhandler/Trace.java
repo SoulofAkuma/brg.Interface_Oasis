@@ -69,7 +69,7 @@ public class Trace implements Rule {
 
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable
 	@Override
-	public ArrayList<String> apply(ArrayList<String> input) {
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
 		String json = input.get(0);
 		this.log.add("Applying Rule on \"" + json + "\"");
 		JSONParser parser = new JSONParser();

@@ -20,8 +20,8 @@ public class ParserHandler {
 	private static Setting parserMasterSetting;
 	private static final String stdGetParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
 	
-	public static HashMap<String, String> parse(String parserID, String input) {
-		return ParserHandler.parsers.get(parserID).parse(input);;
+	public static HashMap<String, String> parse(String parserID, String input, HashMap<String, String> parsedHeader) {
+		return ParserHandler.parsers.get(parserID).parse(input, parsedHeader);
 	}
 	
 	public static void init(Setting parserMasterSetting) {
@@ -53,7 +53,7 @@ public class ParserHandler {
 				}
 				try {
 					Method createRule = Class.forName(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
-					Constructor tempObjC = Class.forName(constructorArgs.get("type")).getConstructor();
+					Constructor<?> tempObjC = Class.forName(constructorArgs.get("type")).getConstructor();
 					Object tempObj = tempObjC.newInstance();
 					Rule newRule = (Rule) createRule.invoke(tempObj, constructorArgs);
 					if (newRule != null) {
@@ -165,10 +165,6 @@ public class ParserHandler {
 		} else {
 			return null;
 		}
-	}
-	
-	public static void useParser(String id, String input) {
-		ParserHandler.parsers.get(id).parse(input);
 	}
 	
 	public static ArrayList<String> getLog(String id) {

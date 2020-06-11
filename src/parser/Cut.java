@@ -14,21 +14,24 @@ public class Cut implements Rule {
 	public static final boolean REEVAL = false;
 	
 	
-	private String find; //String to find
+	private String findValue; //String to find
+	private String find;
 	private int n; //The String is cut at the nth appearance
 	private boolean keep; //Keeps the appearance of find
 	private boolean regex; //Find is a regular expression
 	private boolean reEval; //If true the cut of string will be added to the input list
+	private boolean useHeader; //Get find Value from the header 
 	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
 	
 	public Cut() {}
 	
-	public Cut(String find, int n, boolean keep, boolean regex, boolean reEval) {
+	public Cut(String find, int n, boolean keep, boolean regex, boolean reEval, boolean useHeader) {
 		this.find = find;
 		this.n = (n < 1) ? 1 : n;
 		this.keep = keep;
 		this.regex = regex;
 		this.reEval = reEval;
+		this.useHeader = useHeader;
 	}
 	
 	@Override
@@ -39,6 +42,7 @@ public class Cut implements Rule {
 		Boolean keep = ParserHandler.returnBooleanIfExists(constructorArgs, "keep");
 		Boolean regex = ParserHandler.returnBooleanIfExists(constructorArgs, "regex");
 		Boolean reEval = ParserHandler.returnBooleanIfExists(constructorArgs, "reEval");
+		Boolean useHeader = ParserHandler.returnBooleanIfExists(constructorArgs, "useHeader");
 		if (find == null) {
 			ParserHandler.reportGenRuleError("find", this.getClass().getName(), id);
 			return null;
@@ -54,14 +58,27 @@ public class Cut implements Rule {
 		} else if (reEval == null) {
 			ParserHandler.reportGenRuleError("reEval", this.getClass().getName(), id);
 			return null;
+		} else if (useHeader == null) {
+			ParserHandler.reportGenRuleError("useHeader", this.getClass().getName(), id);
+			return null;
 		} else {
-			return new Cut(find, n, keep, regex, reEval);
+			return new Cut(find, n, keep, regex, reEval, useHeader);
 		}
 	}
 	
 	
 	@Override
-	public ArrayList<String> apply(ArrayList<String> input) {
+	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
+		if (this.useHeader) {
+			if (parsedHeader.containsKey(this.find)) {
+				this.findValue = parsedHeader.get(this.find);
+			} else {
+				this.log.add("Value \"" + this.find +"\" not found in header");
+				return input;
+			}
+		} else {
+			this.findValue = this.find;
+		}
 		ArrayList<String> output = new ArrayList<String>();
 		for (int i = 0; i < input.size(); i++) {
 			String element = input.get(i);
@@ -94,13 +111,13 @@ public class Cut implements Rule {
 		String extra = null;
 		
 		for (int i = 0; i < input.length(); i++) {
-			if (input.charAt(i) == this.find.charAt(matchCount)) {
+			if (input.charAt(i) == this.findValue.charAt(matchCount)) {
 				if (matchCount == 0) {
 					start = i;					
 				}
 				matchCount++;
 			}
-			if (matchCount == find.length()) {
+			if (matchCount == findValue.length()) {
 				appearanceCount++;
 				this.log.add("Match number " + appearanceCount + " found at " + start);
 				matchCount = 0;
@@ -128,7 +145,7 @@ public class Cut implements Rule {
 	//Cut the String at the nth regex match
 	private String[] regexCut(String input) {
 		
-		Pattern pattern = Pattern.compile(this.find);
+		Pattern pattern = Pattern.compile(this.findValue);
 		Matcher matcher = pattern.matcher(input);
 		int appearanceCount = 0;
 		String extra = null;
@@ -155,7 +172,7 @@ public class Cut implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.find);
+		rule.put("find", this.findValue);
 		rule.put("n", String.valueOf(this.n));
 		rule.put("keep", String.valueOf(this.keep));
 		rule.put("regex", String.valueOf(this.regex));

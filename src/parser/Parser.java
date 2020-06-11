@@ -30,8 +30,13 @@ public class Parser {
 	}
 	
 	//Apply all rules to the string
-	public HashMap<String, String> parse(String input) {
+	public HashMap<String, String> parse(String input, HashMap<String, String> parsedHeader) {
 		this.log.add("Starting parsing");
+		
+		if (parsedHeader == null) {
+			this.log.add("No header found");
+			parsedHeader = new HashMap<String, String>();
+		}
 		
 		ArrayList<String> strList = new ArrayList<String>();
 		strList.add(input);
@@ -39,7 +44,7 @@ public class Parser {
 		for (String rule : this.order) {
 			Rule element = elements.get(rule);
 			this.log.add("Applying " + ((Rule) element).getClass().getName() + " " + rule);
-			strList = (((Rule) element).apply(strList));
+			strList = (((Rule) element).apply(strList, parsedHeader));
 			this.log.add("--- Start log ---");
 			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
