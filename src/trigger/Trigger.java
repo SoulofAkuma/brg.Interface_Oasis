@@ -139,4 +139,48 @@ public class Trigger implements Runnable {
 		Logger.addMessage(MessageType.Information, MessageOrigin.Trigger, message, this.triggerID, null, null, false);
 	}
 
+	public TriggerType getType() {
+		return type;
+	}
+
+	public void setType(TriggerType type) {
+		this.type = type;
+	}
+
+	public ArrayList<Pair<String, String>> getResponderIDs() {
+		return responderIDs;
+	}
+
+	public void setResponderIDs(ArrayList<Pair<String, String>> responderIDs) {
+		this.responderIDs = responderIDs;
+	}
+
+	public String getTriggerID() {
+		return triggerID;
+	}
+
+	public String getTriggerName() {
+		return triggerName;
+	}
+
+	public void setTriggerName(String triggerName) {
+		this.triggerName = triggerName;
+	}
+
+	public ArrayList<String> getTriggeredBy() {
+		return triggeredBy;
+	}
+
+	public void setTriggeredBy(ArrayList<String> triggeredBy) {
+		this.triggeredBy = triggeredBy;
+	}
+
+	public int getCooldown() {
+		return cooldown;
+	}
+
+	public void setCooldown(int cooldown) {
+		this.cooldown = cooldown;
+	}
+
 }

@@ -33,7 +33,7 @@ public class ParserHandler {
 			boolean success = false;
 			String id = parser.getAttribute("id");
 			String name = parser.getAttribute("name");
-			String indexAssigner = parser.getAttribute("indexAssigner");
+			ArrayList<String> indexAssigners = new ArrayList<String>(Arrays.asList(parser.getAttribute("indexAssigner").split(",")));
 			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute("order").split(",")));
 			HashMap<String, Rule> rules = new HashMap<String, Rule>();
 			for (Setting rule : parser.getSettings("Rules").get(0).getSettings("Rule")) {
@@ -87,7 +87,7 @@ public class ParserHandler {
 				success = true;
 			}
 			if (success) {
-				ParserHandler.parsers.put(id, new CustomParser(rules, order, indexAssigner));
+				ParserHandler.parsers.put(id, new CustomParser(rules, indexAssigners, order, name));
 			}
 		}
 	}
@@ -173,5 +173,9 @@ public class ParserHandler {
 	
 	public static ArrayList<String> getLog(String id) {
 		return ParserHandler.parsers.get(id).printLog();
+	}
+
+	public static void close() {
+		
 	}
 }

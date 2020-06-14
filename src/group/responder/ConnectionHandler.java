@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import group.GroupHandler;
 import group.RequestType;
 import gui.Logger;
 import gui.MessageOrigin;
@@ -23,13 +24,15 @@ public class ConnectionHandler implements Runnable {
 	private final String url;
 	private final int port;
 	private final String requestType;
+	private final String timeoutID;
 	
-	public ConnectionHandler(String parentID, InputStream is, String url, String requestType, int port) {
+	public ConnectionHandler(String parentID, InputStream is, String url, String requestType, int port, String timeoutID) {
 		this.parentID = parentID;
 		this.is = is;
 		this.url = url;
 		this.port = port;
 		this.requestType = requestType;
+		this.timeoutID = timeoutID;
 	}
 	
 	@Override
@@ -91,6 +94,7 @@ public class ConnectionHandler implements Runnable {
 		} else {
 			Logger.addMessage(MessageType.Information, MessageOrigin.Responder, "Responder parsing of received response failed - Aborting trigger report", this.parentID, null, null, false);
 		}
+		GroupHandler.removeCooldown(this.timeoutID);
 	}
 	
 	private String readLine(InputStream in) {

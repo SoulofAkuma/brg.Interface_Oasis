@@ -14,6 +14,7 @@ import cc.Pair;
 import constant.ConstantHandler;
 import filehandler.Manager;
 import group.GroupHandler;
+import gui.LaunchIDs;
 import gui.Logger;
 import gui.Main;
 import gui.MessageOrigin;
@@ -27,10 +28,10 @@ import trigger.TriggerType;
 public class SettingHandler {
 	
 	private static int fileID; //ID of the setting file for the file handler
-	private static final String SETTINGFOLDER = Manager.PATH + Manager.SEPERATOR + "Settings";
-	private static final String SETTINGBACKUPFOLDER = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "Backups";
-	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPERATOR + "settings.xml"; //Name of the setting file
-	private static final String SETTINGBACKUPPATH = SettingHandler.SETTINGBACKUPFOLDER + Manager.SEPERATOR + "Setting Backup Session " + Main.SESSIONTIME + ".xml";
+	private static final String SETTINGFOLDER = Manager.PATH + Manager.SEPARATOR + "Settings";
+	private static final String SETTINGBACKUPFOLDER = SettingHandler.SETTINGFOLDER + Manager.SEPARATOR + "Backups";
+	private static final String SETTINGFILEPATH = SettingHandler.SETTINGFOLDER + Manager.SEPARATOR + "settings.xml"; //Name of the setting file
+	private static final String SETTINGBACKUPPATH = SettingHandler.SETTINGBACKUPFOLDER + Manager.SEPARATOR + "Setting Backup Session " + Main.SESSIONTIME + ".xml";
 	private static final String BASESETTING = "InterfaceOasis"; //Name of the root Element in the xml setting
 	private static Setting masterSetting; //The content of the setting file parsed into a setting
 	private static Setting groupMasterSetting; //The master group setting element derived from the master setting
@@ -55,6 +56,7 @@ public class SettingHandler {
 	public static final Set<String> GROUPIDS = Collections.synchronizedSet(new HashSet<String>()); //List of all valid group ids for quick validation with O(1)
 	public static final Set<String> PARSERIDS = Collections.synchronizedSet(new HashSet<String>()); //List of all valid parser ids for quick validation with O(1)
 	public static final Set<String> INDEXASSIGNERIDS = Collections.synchronizedSet(new HashSet<String>()); //List of all valid indexassigner ids for quick validation with O(1)
+	public static final Set<String> TRIGGERIDS = Collections.synchronizedSet(new HashSet<String>()); //List of all valid trigger ids for quick validation with O(1)
 	
 	public static final String REGEXNAME = "[0-9A-Za-z_.()\\[\\]\\-{};,:%/!?& ]{0,50}"; //Regex for names defined in attributes which can be empty
 	public static final String REGEXID = "[0-9]{9}"; //Regex for ids defined in attributes
@@ -109,6 +111,7 @@ public class SettingHandler {
 				resetInformation("The setting file syntax is corrutp - Resetting to default");
 				masterSetting = Setting.parseSetting("", 1);
 				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				masterSetting.addSetting("Groups", null, null);
 				alteredInformation = true;
 				dpCorrupt = true;
 			}
@@ -122,6 +125,8 @@ public class SettingHandler {
 				resetInformation("The setting file syntax is corrutp - Resetting to default");
 				masterSetting = Setting.parseSetting("", 1);
 				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				masterSetting.addSetting("Groups", null, null);
+				masterSetting.addSetting("Triggers", null, null);
 				alteredInformation = true;
 				dpCorrupt = true;
 			}
@@ -135,6 +140,9 @@ public class SettingHandler {
 				resetInformation("The setting file syntax is corrutp - Resetting to default");
 				masterSetting = Setting.parseSetting("", 1);
 				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				masterSetting.addSetting("Groups", null, null);
+				masterSetting.addSetting("Triggers", null, null);
+				masterSetting.addSetting("Parsers", null, null);
 				alteredInformation = true;
 				dpCorrupt = true;
 			}
@@ -148,6 +156,10 @@ public class SettingHandler {
 				resetInformation("The setting file syntax is corrutp - Resetting to default");
 				masterSetting = Setting.parseSetting("", 1);
 				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				masterSetting.addSetting("Groups", null, null);
+				masterSetting.addSetting("Triggers", null, null);
+				masterSetting.addSetting("Parsers", null, null);
+				masterSetting.addSetting("Constants", null, null);
 				alteredInformation = true;
 				dpCorrupt = true;
 			}
@@ -161,11 +173,22 @@ public class SettingHandler {
 				resetInformation("The setting file syntax is corrutp - Resetting to default");
 				masterSetting = Setting.parseSetting("", 1);
 				masterSetting.resetSetting(SettingHandler.BASESETTING);
+				masterSetting.addSetting("Groups", null, null);
+				masterSetting.addSetting("Triggers", null, null);
+				masterSetting.addSetting("Parsers", null, null);
+				masterSetting.addSetting("Constants", null, null);
+				masterSetting.addSetting("IndexAssigners", null, null);
 				alteredInformation = true;
 				dpCorrupt = true;
 			}
 			resetInformation("No LaunchIDS found - resetting to default");
 			masterSetting.addSetting("LaunchIDS", null, null);
+			HashMap<String, String> dummy1 = new HashMap<String, String>();
+			dummy1.put("ids", "");
+			masterSetting.getSettings("LaunchIDS").get(0).addSetting("Listeners", null, dummy1);
+			HashMap<String, String> dummy2 = new HashMap<String, String>();
+			dummy2.put("ids", "");
+			masterSetting.getSettings("LaunchIDS").get(0).addSetting("Triggers", null, dummy2);
 			alteredInformation = true;
 		}
 		
@@ -245,6 +268,10 @@ public class SettingHandler {
 		IndexAssignerHandler.init(SettingHandler.indexAssignerMasterSetting);
 	}
 	
+	public static String alts(ArrayList<String> al) {
+		return String.join(",", al.toArray(new String[al.size()]));
+	}
+	
 	public static void disableSubByIdAttribute(Setting master, ArrayList<String> disable) {
 		HashMap<String, Setting> idSettings = new HashMap<String, Setting>();
 		for (Setting sub : master.getSubsettings()) {
@@ -271,6 +298,12 @@ public class SettingHandler {
 	}
 	
 	public static void close() {
+		TriggerHandler.close();
+		GroupHandler.close();
+		ConstantHandler.close();
+		ParserHandler.close();
+		IndexAssignerHandler.close();
+		LaunchIDs.close();
 		Manager.writeFile(fileID, masterSetting.getXML(), false);
 	}
 	
@@ -344,7 +377,16 @@ public class SettingHandler {
 	
 	private static void checkSettingStructure(String name) {
 		if (SettingHandler.masterSetting.getSettings(name).size() != 1) {
-			Logger.addMessage(MessageType.Warning, MessageOrigin.SettingHandler, "Duplicate " + name + " setting - Every Setting except the first one is ignored", SettingHandler.SETTINGHANDLERID, null, null, false);
+			boolean hadMatch = false;
+			for (Setting match : SettingHandler.masterSetting.getSettings(name)) {
+				if (match.getLevel() == 2) {
+					if (hadMatch) {
+						Logger.addMessage(MessageType.Warning, MessageOrigin.SettingHandler, "Duplicate " + name + " setting - Every Setting except the first one is ignored", SettingHandler.SETTINGHANDLERID, null, null, false);
+						break;
+					}
+					hadMatch= true;
+				}
+			}
 		}
 	}
 
@@ -356,11 +398,129 @@ public class SettingHandler {
 			checkMe.disable();
 			return;
 		}
-		boolean disable = checkIndIndexAssignerSetting(checkMe, ite, localIDs);
+		boolean disable = !checkIndIndexAssignerSetting(checkMe, ite, localIDs);
+		String id = (disable) ? "unset" : checkMe.getAttribute("id");
+		if (!disable) {
+			int innerIte = 0;
+			for (Setting index : checkMe.getSettings("Indexes").get(0).getSubsettings()) {
+				innerIte++;
+				if (!checkIndIndexSetting(index, id, innerIte)) {
+					index.disable();
+				}
+			}
+			innerIte = 0;
+			for (Setting regex : checkMe.getSettings("Regexes").get(0).getSubsettings()) {
+				innerIte++;
+				if (!checkIndRegexSetting(regex, id, innerIte)) {
+					regex.disable();
+				}
+			}
+		}
+		
+		SettingHandler.IDS.putAll(localIDs);
+		SettingHandler.INDEXASSIGNERIDS.addAll(localIDs.keySet());
 	}
 	
 	private static void checkLaunchIDSSetting(Setting checkMe) {
-		//TODO: Implement
+		boolean isValid = true;
+		boolean hadListeners = false;
+		boolean hadTriggers = false;
+		int ite = 0;
+		for (Setting sub : checkMe.getSubsettings()) {
+			ite++;
+			if (sub.getName().equals("Listeners")) {
+				if (hadListeners) {
+					reportSyntaxError("LaunchIDS Element Checker", "Duplicate Listeners Element", true, ite);
+				}
+				hadListeners = true;
+			} else if (sub.getName().equals("Triggers")) {
+				if (hadTriggers) {
+					reportSyntaxError("LaunchIDS Element Checker", "Duplicate Triggers Element", true, ite);
+				}
+				hadTriggers = true;
+			} else {
+				reportSyntaxError("LaunchIDs Element Checker", "Unknown Element \"" + sub.getName() + "\"", true, ite);
+			}
+		}
+		
+		if (!hadListeners) {
+			reportSyntaxError("LaunchIDS Element Checker", "Missing Listeners Element", false);
+			isValid = false;
+		}
+		if (!hadTriggers) {
+			reportSyntaxError("LaunchIDS Element Checker", "Missing Triggers Element", false);
+			isValid = false;
+		}
+		
+		String[] listenerIDs = null;
+		String[] triggerIDs = null;
+		if (isValid) {
+			Setting listeners = checkMe.getSettings("Listeners").get(0);
+			boolean hadIDS = false;
+			for (Map.Entry<String, String> attribute : listeners.getAttributes().entrySet()) {
+				if (attribute.getKey().equals("ids")) {
+					hadIDS = true;
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
+						reportSyntaxError("LaunchIDs Listeners Attribute Checker", "Invalid ids Value \"" + attribute.getValue() +"\"", false);
+						isValid = false;
+					} else {
+						listenerIDs = attribute.getValue().split(",");
+					}
+				} else {
+					reportSyntaxError("LaunchIDS Listeners Attribute Checker", "Unknown attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true);
+				}
+			}
+			if (!hadIDS) {
+				reportSyntaxError("LaunchIDS Listeners Attribute Checker", "Missing ids Attribute", false);
+				isValid = false;
+			}
+			Setting triggers = checkMe.getSettings("Triggers").get(0);
+			hadIDS = false;
+			for (Map.Entry<String, String> attribute : triggers.getAttributes().entrySet()) {
+				if (attribute.getKey().equals("ids")) {
+					hadIDS = true;
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
+						reportSyntaxError("LaunchIDs Triggers Attribute Checker", "Invalid ids Value \"" + attribute.getValue() +"\"", false);
+						isValid = false;
+					} else {
+						triggerIDs = attribute.getValue().split(",");
+					}
+				} else {
+					reportSyntaxError("LaunchIDS Triggers Attribute Checker", "Unknown attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true);
+				}
+			}
+			if (!hadIDS) {
+				reportSyntaxError("LaunchIDS Triggers Attribute Checker", "Missing ids Attribute", false);
+				isValid = false;
+			}
+		}
+		
+		if (isValid) {
+			for (String listenerID : listenerIDs) {
+				if (!SettingHandler.LISTENERIDS.contains(listenerID)) {
+					reportSyntaxError("LaunchIDS Listeners Attribute Checker", "Invalid listener id \"" + listenerID + "\"", false);
+					isValid = false;
+				}
+			}
+			for (String triggerID : triggerIDs) {
+				if (!SettingHandler.TRIGGERIDS.contains(triggerID)) {
+					reportSyntaxError("LaunchIDS Listeners Attribute Checker", "Invalid trigger id \"" + triggerID + "\"", false);
+					isValid = false;
+				}
+			}
+		}
+		
+		if (!isValid) {
+			reportSyntaxError("LaunchIDs Checker", "Invalid LaunchIDS Setting, Resetting to default", false);
+			SettingHandler.masterSetting.removeSetting(checkMe.getSID());
+			SettingHandler.masterSetting.addSetting("LaunchIDS", null, null);
+			HashMap<String, String> dummy1 = new HashMap<String, String>();
+			dummy1.put("ids", "");
+			SettingHandler.masterSetting.getSettings("LaunchIDS").get(0).addSetting("Listeners", null, dummy1);
+			HashMap<String, String> dummy2 = new HashMap<String, String>();
+			dummy2.put("ids", "");
+			SettingHandler.masterSetting.getSettings("LaunchIDS").get(0).addSetting("Triggers", null, dummy2);
+		}
 	}
 	
 	private static void checkGroupSetting(Setting checkMe, int ite) {
@@ -370,20 +530,20 @@ public class SettingHandler {
 			checkMe.disable();
 			return;
 		}
-		boolean disable = checkIndGroupSetting(checkMe, ite, localIDs);
+		boolean disable = !checkIndGroupSetting(checkMe, ite, localIDs);
 		String id = (disable) ? "unset" : checkMe.getAttribute("id");
 		if (!disable) {
 			int listenerIte = 0;
 			for (Setting listener : checkMe.getSettings("Listeners").get(0).getSubsettings()) {
 				listenerIte++;
-				if (checkIndListenerSetting(listener, listenerIte, id, localIDs)) {
+				if (!checkIndListenerSetting(listener, listenerIte, id, localIDs)) {
 					listener.disable();
 				}
 			}
 			int responderIte = 0;
 			for (Setting responder : checkMe.getSettings("Responders").get(0).getSubsettings()) {
 				responderIte++;
-				if (checkIndResponderSetting(responder, responderIte, id, localIDs)) {
+				if (!checkIndResponderSetting(responder, responderIte, id, localIDs)) {
 					responder.disable();
 				}
 			}
@@ -415,12 +575,12 @@ public class SettingHandler {
 			return;
 		}
 		HashMap<String, IDType> localIDs = new HashMap<String, IDType>();
-		boolean disable = checkIndParserSetting(checkMe, ite, localIDs);
+		boolean disable = !checkIndParserSetting(checkMe, ite, localIDs);
 		String id = (disable) ? null : checkMe.getAttribute("id");
 		if (!disable) {
 			int ruleIte = 0;
-			for (Setting rule : checkMe.getSettings("Rules").get(0).getSubsettings()) {
-				if (checkIndRuleSetting(rule, id, ruleIte, localIDs)) {
+			for (Setting rule : checkMe.getSettings("Rules").get(0).getSettings("Rule")) {
+				if (!checkIndRuleSetting(rule, id, ruleIte, localIDs)) {
 					rule.disable();
 				}
 			}
@@ -465,6 +625,7 @@ public class SettingHandler {
 			checkMe.disable();
 		} else {
 			SettingHandler.IDS.putAll(localIDs);
+			SettingHandler.TRIGGERIDS.addAll(localIDs.keySet());
 		}
 	}
 	
@@ -475,12 +636,12 @@ public class SettingHandler {
 			checkMe.disable();
 			return;
 		}
-		boolean disable = checkIndConstantSetting(checkMe, ite, localIDs);
+		boolean disable = !checkIndConstantSetting(checkMe, ite, localIDs);
 		String id = (disable) ? null : checkMe.getAttribute("id");
 		if (!disable) {
 			int valueIte = 0;
-			for (Setting value : checkMe.getSettings("Values").get(0).getSubsettings()) {
-				if (checkIndValueSetting(value, id, valueIte, localIDs, toCheckReference)) {
+			for (Setting value : checkMe.getSettings("Values").get(0).getSettings("Value")) {
+				if (!checkIndValueSetting(value, id, valueIte, localIDs, toCheckReference)) {
 					value.disable();
 				}
 			}
@@ -551,7 +712,32 @@ public class SettingHandler {
 			}
 		}
 		if (!hasAll()) {
-			reportSyntaxError("Trigger Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", true, ite);
+			reportSyntaxError("IndexAssigner Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", false, ite);
+			next = true;
+		}
+		
+		boolean hadIndexes = false;
+		boolean hadRegexes = false;
+		for (Setting sub : checkMe.getSubsettings()) {
+			if (sub.getName().equals("Indexes")) {
+				if (hadIndexes) {
+					reportSyntaxError("IndexAssigner Element Checker", "Duplicate Indexes Element", false, ite);
+				}
+				hadIndexes = true;
+			} else if (sub.getName().equals("Regexes")) {
+				if (hadRegexes) {
+					reportSyntaxError("IndexAssigner Element Checker", "Duplicate Regexes Element", false, ite);
+				}
+				hadRegexes = true;
+			}
+		}
+		
+		if (!hadIndexes) {
+			reportSyntaxError("IndexAssigner Element Checker", "Missing Indexes Element", false, ite);
+			next = true;
+		}
+		if (!hadRegexes) {
+			reportSyntaxError("IndexAssigner Element Checker", "Missing Regexes Element", false, ite);
 			next = true;
 		}
 		
@@ -562,53 +748,62 @@ public class SettingHandler {
 		return !next;
 	}
 	
-	public static boolean checkIndIndexSetting(Setting checkMe, String id) {
+	public static boolean checkIndIndexSetting(Setting checkMe, String id, int innerIte) {
 		boolean next = false;
 		createMissingTable("position","key");
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {
 				case "position":
 					if (!matchesRegex("[0-9]+", attribute.getValue())) {
-						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid position value \"" + attribute.getValue() + "\"", false, id);
+						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid position value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
 					}
 				break;
 				case "key":
 					if (!matchesRegex(SettingHandler.REGEXSTRICTNAME, attribute.getValue())) {
-						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid key value \"" + attribute.getValue() + "\"", false, id);
+						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid key value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
 					}
 				break;
 				default:
-					reportSyntaxError("IndexAssigner Index Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id);
+					reportSyntaxError("IndexAssigner Index Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id, innerIte);
 			}
+		}
+		
+		if (next) {
+			reportSyntaxError("IndexAssigner Index Checker", "Disabling last mentioned Index", false, id, innerIte);
 		}
 		
 		return !next;
 	}
 	
-	public static boolean checkIndRegexSetting(Setting checkMe, String id) {
+	public static boolean checkIndRegexSetting(Setting checkMe, String id, int innerIte) {
 		boolean next = false;
 		createMissingTable("regex","keys","defInd");
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {
 				case "defInd":
 					if (!matchesRegex("[0-9]+", attribute.getValue())) {
-						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid defInd value \"" + attribute.getValue() + "\"", false, id);
+						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid defInd value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
 					}
 				break;
 				case "keys":
 					if (!matchesRegex(SettingHandler.REGEXSTRICTNAMELIST, attribute.getValue())) {
-						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid keys value \"" + attribute.getValue() + "\"", false, id);
+						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid keys value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
 					}
 				break;
 				case "regex":
 					updateMissing("regex");
+				break;
 				default:
-					reportSyntaxError("IndexAssigner Index Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id);
+					reportSyntaxError("IndexAssigner Index Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id, innerIte);
 			}
+		}
+		
+		if (next) {
+			reportSyntaxError("IndexAssigner Index Checker", "Disabling last mentioned Regex", false, id, innerIte);
 		}
 		
 		return !next;
@@ -676,13 +871,13 @@ public class SettingHandler {
 			}
 		}
 		if (!hasAll()) {
-			reportSyntaxError("Trigger Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", true, ite);
+			reportSyntaxError("Trigger Attribute Checker", "Missing attribute(s) (" + printMissing() + ")", false, ite);
 			next = true;
 		}
 		if (!next) {
 			if (type == TriggerType.Listener || type == TriggerType.Responder) {
 				if (!checkMe.hasAttribute("triggeredBy")) {
-					reportSyntaxError("Trigger Attribute Checker", "Missing attribute (triggeredBy)", true, ite);
+					reportSyntaxError("Trigger Attribute Checker", "Missing attribute (triggeredBy)", false, ite);
 					next = true;
 				} else {
 					if (!matchesRegex(SettingHandler.REGEXIDLIST, checkMe.getAttribute("triggeredBy"))) {
@@ -700,7 +895,7 @@ public class SettingHandler {
 				}
 			} else if (type == TriggerType.Timer) {
 				if (!checkMe.hasAttribute("cooldown")) {
-					reportSyntaxError("Trigger Attribute Checker", "Missing attribute (cooldown)", true, ite);
+					reportSyntaxError("Trigger Attribute Checker", "Missing attribute (cooldown)", false, ite);
 					next = true;
 				} else {
 					if (!matchesRegex("[0-9]+", checkMe.getAttribute("cooldown"))) {
@@ -711,25 +906,27 @@ public class SettingHandler {
 			}
 			for (String lid : listenerIDs) {
 				if (!SettingHandler.LISTENERIDS.contains(lid)) {
-					reportSyntaxError("Trigger Attribute Checker", "Invalid listenerID in trigger \"" + lid + "\"", true, ite);
+					reportSyntaxError("Trigger Attribute Checker", "Invalid listenerID in trigger \"" + lid + "\"", false, ite);
 					next = true;
 				}
 			}
 			for (String rid : responderIDs) {
 				if (!SettingHandler.RESPONDERIDS.contains(rid)) {
-					reportSyntaxError("Trigger Attribute Checker", "Invalid responderID in trigger \"" + rid + "\"", true, ite);
+					reportSyntaxError("Trigger Attribute Checker", "Invalid responderID in trigger \"" + rid + "\"", false, ite);
 					next = true;
 				}
 			}
 			for (String pid : parserIDs) {
 				if (!SettingHandler.PARSERIDS.contains(pid)) {
-					reportSyntaxError("Trigger Attribute Checker", "Invalid responderID in trigger \"" + pid + "\"", true, ite);
+					reportSyntaxError("Trigger Attribute Checker", "Invalid parserID in trigger \"" + pid + "\"", false, ite);
 					next = true;
 				}
 			}
 		}
 		if (!next) {
 			localIDs.put(id, IDType.Trigger);
+		} else {
+			reportSyntaxError("Trigger Checker", "Removing last mentioned Trigger", false, ite);
 		}
 		return !next;
 	}
@@ -876,7 +1073,7 @@ public class SettingHandler {
 		} else {
 			localIDs.put(id, IDType.Group);
 		}
-		return disable;
+		return !disable;
 	}
 	
 	public static boolean checkIndListenerSetting(Setting subject, int listenerIte, String id, HashMap<String, IDType> localIDs) {
@@ -939,7 +1136,7 @@ public class SettingHandler {
 		} else {
 			localIDs.put(listenerID, IDType.Listener);
 		}
-		return next;
+		return !next;
 	}
 	
 	public static boolean checkIndResponderSetting(Setting subject, int responderIte, String id, HashMap<String, IDType> localIDs) {
@@ -999,7 +1196,7 @@ public class SettingHandler {
 						reportSyntaxError("Group Responder Element Checker", "Duplicate Header Element", true, responderID, inner);
 						continue;
 					}
-					createMissingTable("url");
+					createMissingTable("url", "requestType");
 					for (Map.Entry<String, String> attribute : sub.getAttributes().entrySet()) {
 						switch (attribute.getKey()) {
 							case "url":
@@ -1027,6 +1224,13 @@ public class SettingHandler {
 									next = true;
 								} else if (!SettingHandler.CONSTANTIDS.contains(attribute.getValue())) {
 									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid contentType value \"" + attribute.getValue() + "\" (This constant does not exist)", false, responderID, inner);
+									next = true;
+								}
+							break;
+							case "requestType":
+								updateMissing("requestType");
+								if (!matchesRegex("(post|get|head|auto)", attribute.getValue())) {
+									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid requestType value \"" + attribute.getValue() + "\" (Not post,get,head or auto)", false, responderID, inner);
 									next = true;
 								}
 							break;
@@ -1061,7 +1265,7 @@ public class SettingHandler {
 						reportSyntaxError("Group Responder Element Checker", "Duplicate Body Element", true, responderID, inner);
 						continue;
 					}
-					createMissingTable("constants", "seperator");
+					createMissingTable("constants", "separator");
 					for (Map.Entry<String, String> attribute : sub.getAttributes().entrySet()) {
 						switch (attribute.getKey()) {
 							case "constants":
@@ -1083,8 +1287,8 @@ public class SettingHandler {
 									reportSyntaxError("Group Responder Body Attribute Checker", "Invalid constants value \"" + attribute.getValue() + " (The following constants do not exist: " + missing.substring(0, missing.length() - 1) + ")", false, responderID, inner);
 								}
 							break;
-							case "seperator":
-								updateMissing("seperator");
+							case "separator":
+								updateMissing("separator");
 							break;
 							default:
 								reportSyntaxError("Group Responder Body Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, responderID, inner);
@@ -1101,7 +1305,7 @@ public class SettingHandler {
 			localIDs.put(responderID, IDType.Responder);
 		}
 		
-		return next;
+		return !next;
 	}
 	
 	public static boolean checkIndParserSetting(Setting checkMe, int ite, HashMap<String, IDType> localIDs) {
@@ -1140,12 +1344,24 @@ public class SettingHandler {
 				break;
 				case "indexAssigner":
 					updateMissing("indexAssigner");
-					if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
 						reportSyntaxError("Parser Attribute Checker", "Invalid indexAssigner Value \"" + attribute.getValue() + "\"", false, ite);
 						next = true;
+					} else if (attribute.getValue().isBlank()) {
+						reportSyntaxError("Parser Attribute Checker", "Invalid indexAssigner Value. Every Parser needs at least one IndexAssigner", false, ite);
+						next = true;
+					} else {
+						String[] iIDs = attribute.getValue().split(",");
+						for (String iID : iIDs) {
+							if (!SettingHandler.INDEXASSIGNERIDS.contains(iID)) {
+								reportSyntaxError("Parser Attribute Checker", "The indexAssigner \"" + iID + "\" does not exist", false, ite);
+								next = true;
+							}
+						}
 					}
+				break;
 				default:
-					reportSyntaxError("Parser Attribute Checker", "Unknown Attribute\"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, ite);
+					reportSyntaxError("Parser Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, ite);
 			}
 		}
 		if (!hasAll()) {
@@ -1177,7 +1393,7 @@ public class SettingHandler {
 			localIDs.put(id, IDType.Parser);
 		}
 		
-		return next;
+		return !next;
 	}
 	
 	public static boolean checkIndRuleSetting(Setting rule, String id, int ruleIte, HashMap<String, IDType> localIDs) {
@@ -1219,7 +1435,7 @@ public class SettingHandler {
 			localIDs.put(ruleID, IDType.Rule);
 		}
 		
-		return next;
+		return !next;
 	}
 	
 	public static boolean checkIndValueSetting(Setting value, String id, int valueIte, HashMap<String, IDType> localIDs, ArrayList<Pair<String, String>> toCheckRefernce) {
@@ -1308,7 +1524,7 @@ public class SettingHandler {
 			}
 		}
 		
-		return next;
+		return !next;
 	}
 	
 	public static void createMissingTable(String... keys) {

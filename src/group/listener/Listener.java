@@ -25,15 +25,17 @@ public class Listener implements Runnable {
 	private String listenerID; //the id of this listener to uniquely identify it
 	private boolean isActive = false; //indicates whether the listener thread is currently listening to the port
 	private ServerSocket serverSocket = null;
+	private boolean log;
 	
 	private ArrayList<Thread> connections = new ArrayList<Thread>(); //The threads of ConnectionHandlers to enable multiple requests at once
 	
-	protected Listener(String portString, String name, String groupID, String groupName, String triggerID) {
+	protected Listener(String portString, String name, String groupID, String groupName, String listenerID, boolean log) {
 		this.name = name;
 		this.portString = portString;
 		this.groupID = groupID;
 		this.groupName = groupName;
 		this.listenerID = listenerID;
+		this.log = log;
 		ListenerHandler.inputs.put(this.groupID, new ArrayList<String[]>());
 		int tempPort = -1;
 		boolean isValid = false;
@@ -92,11 +94,11 @@ public class Listener implements Runnable {
 				Socket clientSocket = this.serverSocket.accept();
 				int myID = ListenerHandler.inputs.get(this.listenerID).size();
 				ListenerHandler.inputs.get(this.listenerID).add(null);
-				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket);
+				String timeoutID = GroupHandler.addSocketTimeout(clientSocket, 500);
+				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket, timeoutID);
 				this.connections.add(new Thread(connectionHandler));
 				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port + ". Forwarding to handler with responseID " + myID, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
 				this.connections.get(this.connections.size() - 1).start();
-				GroupHandler.addSocketTimeout(clientSocket, 500);
 			} catch (IOException e) {
 				reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
 				Logger.reportException("Listener", "run", e);
@@ -112,5 +114,28 @@ public class Listener implements Runnable {
 		Logger.addMessage(MessageType.Error, MessageOrigin.Listener, message, this.listenerID, elements, values, false);
 	}
 
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean getLog() {
+		return this.log;
+	}
+	
+	public void setLog(boolean log) {
+		this.log = log;
+	}
+	
+	public String getListenerID() {
+		return this.listenerID;
+	}
 
 }

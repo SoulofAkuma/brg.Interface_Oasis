@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import group.GroupHandler;
 import group.RequestType;
 import gui.Logger;
 import gui.MessageOrigin;
@@ -27,11 +28,13 @@ public class ConnectionHandler implements Runnable {
 	private Socket socket;
 	private RequestType requestType;
 	private static final String[] stdCharsets = new String[] {"US-ASCII","ISO-8859-1","UTF-8","UTF-16BE","UTF-16LE","UTF-16"};
-
-	public ConnectionHandler(int responseID, String parentID, Socket socket) {
+	private final String timeoutID;
+	
+	public ConnectionHandler(int responseID, String parentID, Socket socket, String timeoutID) {
 		this.responseID = responseID;
 		this.parentID = parentID;
 		this.socket = socket;
+		this.timeoutID = timeoutID;
 	}
 	
 	@Override
@@ -162,6 +165,7 @@ public class ConnectionHandler implements Runnable {
 			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {null, null});
 			Logger.addMessage(MessageType.Warning, MessageOrigin.Listener, "Listener parsing of received request failed - Aborting trigger report", this.parentID, null, null, false);
 		}
+		GroupHandler.removeCooldown(this.timeoutID);
 	}
 	
 	private String readLine(InputStream in) {

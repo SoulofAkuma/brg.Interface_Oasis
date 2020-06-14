@@ -46,4 +46,32 @@ public class Constant {
 		return this.id + " " + this.name;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public ArrayList<String> getOrder() {
+		return order;
+	}
+
+	public void setOrder(ArrayList<String> order) {
+		this.order = order;
+	}
+
+	public ConcurrentHashMap<String, Value> getValues() {
+		return values;
+	}
+
+	public void setValues(ConcurrentHashMap<String, Value> values) {
+		this.values = values;
+	}
+
+	public String getId() {
+		return id;
+	}
+	
 }

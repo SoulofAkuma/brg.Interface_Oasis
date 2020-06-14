@@ -19,8 +19,8 @@ import settings.SettingHandler;
 
 public class Manager {
 	
-	public static final String SEPERATOR = File.separator;
-	public static final String PATH = System.getProperty("user.home") + Manager.SEPERATOR + "Interface Oasis"; //Base program folder path
+	public static final String SEPARATOR = File.separator;
+	public static final String PATH = System.getProperty("user.home") + Manager.SEPARATOR + "Interface Oasis"; //Base program folder path
 	private static int fID = 0;
 	private static ArrayList<File> files = new ArrayList<File>();
 	

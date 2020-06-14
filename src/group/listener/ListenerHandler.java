@@ -26,6 +26,12 @@ public class ListenerHandler {
 	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
 	protected static ConcurrentHashMap<String, ArrayList<String[]>> inputs = new ConcurrentHashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
 	
+	private static final String IDNAME = "id";
+	private static final String NAMENAME = "name";
+	private static final String LOGNAME = "log";
+	private static final String PORTNAME = "port";
+	private static final String SETTINGNAME = "Listener";
+	
 	public ListenerHandler(Setting listenerMasterSetting, String groupID, String groupName) {
 		this.listenerMasterSetting = listenerMasterSetting;
 		this.groupID = groupID;
@@ -33,17 +39,18 @@ public class ListenerHandler {
 	}
 	
 	public void init() {
-		for (Setting listenerSetting : this.listenerMasterSetting.getSubsettings()) {
+		for (Setting listenerSetting : this.listenerMasterSetting.getSettings(ListenerHandler.SETTINGNAME)) {
 			if (!listenerSetting.isEnabled()) {
 				continue;
 			}
-			String name = listenerSetting.getAttribute("name");
-			String port = listenerSetting.getAttribute("port");
-			String listenerID = listenerSetting.getAttribute("id");
-			this.listeners.put(listenerID, new Listener(port, name, groupID, listenerID, this.groupName));
+			String name = listenerSetting.getAttribute(ListenerHandler.NAMENAME);
+			String port = listenerSetting.getAttribute(ListenerHandler.PORTNAME);
+			String listenerID = listenerSetting.getAttribute(ListenerHandler.IDNAME);
+			boolean log = Boolean.parseBoolean(listenerSetting.getAttribute(ListenerHandler.LOGNAME));
+			this.listeners.put(listenerID, new Listener(port, name, groupID, this.groupName, listenerID, log));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);
-			ListenerHandler.idToName.put(listenerID, port);
+			ListenerHandler.idToName.put(listenerID, name);
 			TriggerHandler.registerListener(listenerID);
 			GroupHandler.registerListener(listenerID, this.groupID);
 		}
@@ -116,5 +123,38 @@ public class ListenerHandler {
 	
 	public static ArrayList<String[]> getRequest(String listenerID) {
 		return ListenerHandler.inputs.get(listenerID);
+	}
+	
+	public void close() {
+		for (Setting listenerSetting : this.listenerMasterSetting.getSettings(ListenerHandler.SETTINGNAME)) {
+			if (!listenerSetting.isEnabled()) {
+				continue;
+			}
+			String id = listenerSetting.getAttribute(ListenerHandler.IDNAME);
+			if (this.listeners.containsKey(id)) {
+				HashMap<String, String> newAttributes = new HashMap<String, String>();
+				Listener listener = this.listeners.get(id);
+				newAttributes.put(ListenerHandler.IDNAME, id);
+				newAttributes.put(ListenerHandler.NAMENAME, listener.getName());
+				newAttributes.put(ListenerHandler.LOGNAME, String.valueOf(listener.getLog()));
+				newAttributes.put(ListenerHandler.PORTNAME, String.valueOf(listener.getPort()));
+				listenerSetting.addReplaceAttributes(newAttributes);
+			}
+		}
+	}
+	
+	public void addListener(Listener listener) {
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put(ListenerHandler.IDNAME, listener.getListenerID());
+		attributes.put(ListenerHandler.NAMENAME, listener.getName());
+		attributes.put(ListenerHandler.LOGNAME, String.valueOf(listener.getLog()));
+		attributes.put(ListenerHandler.PORTNAME, String.valueOf(listener.getPort()));
+		this.listenerMasterSetting.addSetting(ListenerHandler.SETTINGNAME, null, attributes);
+		this.listeners.put(listener.getListenerID(), listener);
+		this.listenerThreads.put(listener.getListenerID(), new Thread(listener));
+		this.listenerThreadStatus.put(listener.getListenerID(), false);
+		ListenerHandler.idToName.put(listener.getListenerID(), listener.getName());
+		TriggerHandler.registerListener(listener.getListenerID());
+		GroupHandler.registerListener(listener.getListenerID(), this.groupID);
 	}
 }

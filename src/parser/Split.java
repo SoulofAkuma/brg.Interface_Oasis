@@ -53,6 +53,7 @@ public class Split implements Rule {
 
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
+		this.log.clear();
 		if (this.useHeader) {
 			if (parsedHeader.containsKey(this.find)) {
 				this.findValue = parsedHeader.get(this.find);

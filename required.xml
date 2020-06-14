@@ -6,8 +6,8 @@
 			</Listeners>
 			<Responders>
 				<Responder requiresKeys="log,name,id" requiresValues="regexbool,regexname,regexid">
-					<Header requiresKeys="url,requestType" optionalKeys="userAgent,contentType,customArgs" requiresValues="regexid,specialstring" optionalValues="regexid,regexid,regexidlist"/>
-					<Body requiresKeys="constants,seperator" requiresValues="regexidlist,string"/>
+					<Header requiresKeys="url,requestType" optionalKeys="userAgent,contentType,customArgs" requiresValues="regexid,specialstring,requesttype" optionalValues="regexid,regexid,regexidlist"/>
+					<Body requiresKeys="constants,separator" requiresValues="regexidlist,string"/>
 				</Responder>
 			</Responders>
 		</Group>
@@ -51,6 +51,7 @@
 		</IndexAssigner>
 	</IndexAssigners>
 	<LaunchIDS>
-
+		<Listeners requiresKeys="ids" requiresValues="regexidlist"/>
+		<Triggers requiresKeys="ids" requiresValues="regexidlist"/>
 	</LaunchIDS>
 </InterfaceOasis>

@@ -9,8 +9,10 @@ import settings.Setting;
 public class IndexAssignerHandler {
 	
 	private static ConcurrentHashMap<String, IndexAssigner> indexAssigners = new ConcurrentHashMap<String, IndexAssigner>();
+	private static Setting indexAssingerMastserSetting;
 	
 	public static void init(Setting indexAssignerMasterSetting) {
+		IndexAssignerHandler.indexAssingerMastserSetting = indexAssignerMasterSetting;
 		for (Setting indexAssignerSetting : indexAssignerMasterSetting.getSubsettings()) {
 			if (!indexAssignerSetting.isEnabled()) {
 				continue;
@@ -46,6 +48,10 @@ public class IndexAssignerHandler {
 	
 	public static HashMap<String, String> assign(String indexAssignerID, ArrayList<String> input) {
 		return IndexAssignerHandler.indexAssigners.get(indexAssignerID).assign(input);
+	}
+
+	public static void close() {
+		
 	}
 
 }

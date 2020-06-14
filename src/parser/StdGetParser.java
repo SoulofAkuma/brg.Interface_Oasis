@@ -16,6 +16,7 @@ public class StdGetParser implements Parser {
 	
 	@Override
 	public HashMap<String, String> parse(String input, HashMap<String, String> parsedHeader) {
+		this.log.clear();
 		String url = parsedHeader.get("URL");
 		this.log.add("Applying GET Parser on url \"" + url + "\"");
 		URI uri;

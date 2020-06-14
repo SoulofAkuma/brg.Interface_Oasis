@@ -43,8 +43,16 @@ public class Setting {
 		return this.name;
 	}
 	
+	public int getSID() {
+		return this.sID;
+	}
+	
 	public String getValue() {
 		return this.value;
+	}
+	
+	public void setValue(String value) {
+		this.value = value;
 	}
 	
 	public int getID() {
@@ -77,6 +85,10 @@ public class Setting {
 	
 	public void disable() {
 		this.enabled = false;
+	}
+	
+	public void addReplaceAttributes(HashMap<String, String> newAttributes) {
+		this.attributes.putAll(newAttributes);
 	}
 	
 	//Parses an xml String into a setting
@@ -290,6 +302,9 @@ public class Setting {
 	public String getAttrXML() {
 		String attrXML = " ";
 		for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
+			if (attribute.getValue() == null) {
+				continue;
+			}
 			attrXML += attribute.getKey() + "=\"" + escapeSpecialChars(attribute.getValue()) + "\" ";
 		}
 		attrXML = attrXML.substring(0, attrXML.length() - 1);
@@ -427,14 +442,16 @@ public class Setting {
 		return false;
 	}
 	
-	//Adds a custom setting this setting on the level below
-	public void addSetting(String name, String value, HashMap<String, String> attributes) {
+	//Adds a custom setting this setting on the level below and return the setting which has been added
+	public Setting addSetting(String name, String value, HashMap<String, String> attributes) {
 		attributes = (attributes == null) ? new HashMap<String, String>() : attributes;
 		value = (value == null) ? "" : value;
-		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
+		Setting ns = new Setting(name, value, attributes, this.level + 1);
+		this.subsettings.add(ns);
+		return ns;
 	}
 	
-	//Removes the specified setting id and returns the successfulness of the oepration
+	//Removes the specified setting id and returns the successfulness of the operation
 	public boolean removeSetting(int sID) {
 		if (sID < Setting.sIDState && this.sID != sID) {
 			for (int i = 0; i < this.subsettings.size(); i++) {

@@ -44,7 +44,7 @@ public class Responder {
 		String headerString = this.header.getHeader(parsedHeader, parsedBody, bodyString.getBytes().length);
 		if (headerString != null) {
 			String response = headerString + "\r\n" + bodyString;
-			sendResponse(header.getHost(), header.getURL(), header.getPort(), header.getRequestType(), response);
+			sendResponse(header.getHost(), header.getUrl(), header.getPort(), header.getRequestType(), response);
 		}
 	}
 	
@@ -68,10 +68,10 @@ public class Responder {
 			
 			Thread.sleep(1000);
 			
-			Runnable handler = new ConnectionHandler(this.responderID, in, url, requestType, port);
+			String timeoutID = GroupHandler.addSocketTimeout(responder, 10);
+			Runnable handler = new ConnectionHandler(this.responderID, in, url, requestType, port, timeoutID);
 			Thread handlerThread = new Thread(handler);
 			handlerThread.start();
-			GroupHandler.addSocketTimeout(responder, 10);
 		} catch (IOException e) {
 			reportError("Couldn't connect socket", e.getMessage());
 			Logger.reportException("Responder", "sendResponse", e);
@@ -103,4 +103,52 @@ public class Responder {
 		Logger.addMessage(MessageType.Error, MessageOrigin.Responder, message, this.responderID, elements, values, false);
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean getLog() {
+		return log;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public Header getHeader() {
+		return header;
+	}
+
+	public void setHeader(Header header) {
+		this.header = header;
+	}
+
+	public Body getBody() {
+		return body;
+	}
+
+	public void setBody(Body body) {
+		this.body = body;
+	}
+
+	public String getResponderID() {
+		return responderID;
+	}
+
+	public String getGroupID() {
+		return groupID;
+	}
+	
 }

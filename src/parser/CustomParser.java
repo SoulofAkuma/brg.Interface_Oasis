@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import indexassigner.IndexAssigner;
+import indexassigner.IndexAssignerHandler;
 
 /* This class can apply one or multiple different 
  * parsing rules to an input string. The output will
@@ -18,10 +19,10 @@ public class CustomParser implements Parser {
 	private ArrayList<String> order;
 	private HashMap<String, Rule> elements;
 	private ArrayList<String> log = new ArrayList<String>();
-	private IndexAssigner indexAssigner;
+	private ArrayList<String> indexAssigners;
 	
-	public CustomParser(HashMap<String, Rule> elements, IndexAssigner indexAssigner, ArrayList<String> order, String name) {
-		this.indexAssigner = indexAssigner;
+	public CustomParser(HashMap<String, Rule> elements, ArrayList<String> indexAssigners, ArrayList<String> order, String name) {
+		this.indexAssigners = indexAssigners;
 		this.elements = elements;
 		this.order = order;
 	}
@@ -29,6 +30,7 @@ public class CustomParser implements Parser {
 	//Apply all rules to the string
 	@Override
 	public HashMap<String, String> parse(String input, HashMap<String, String> parsedHeader) {
+		this.log.clear();
 		this.log.add("Starting parsing");
 		
 		if (parsedHeader == null) {
@@ -47,7 +49,11 @@ public class CustomParser implements Parser {
 			this.log.addAll((((Rule) element).printLog()));
 			this.log.add("--- End log ---");
 		}
-		return this.indexAssigner.assign(strList);
+		HashMap<String, String> res = new HashMap<String, String>();
+		for (String indexAssigner : this.indexAssigners) {
+			res.putAll(IndexAssignerHandler.assign(indexAssigner, strList));
+		}
+		return res;
 	}
 	
 	public HashMap<String, String> storeParser() {
@@ -65,10 +71,6 @@ public class CustomParser implements Parser {
 			rules.add(rule);
 		}
 		return rules;
-	}
-	
-	public HashMap<String, String> storeIndexAssigner() {
-		return this.indexAssigner.storeIndexAssigner();
 	}
 	
 	@Override

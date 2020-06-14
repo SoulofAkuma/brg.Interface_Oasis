@@ -16,10 +16,10 @@ public class Logger implements Runnable {
 	private static ArrayList<MessageObject> messages = new ArrayList<MessageObject>(); //Messages to be viewable in log
 	private static ArrayList<String> errorElements = new ArrayList<String>();
 	private static Thread myThread;
-	private static final String BASEFOLDER = Manager.PATH + Manager.SEPERATOR + "Log";
-	private static final String SESSIONFOLDER = Logger.BASEFOLDER + Manager.SEPERATOR + "Log " + Main.SESSIONTIME;
-	private static final String ERRORLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPERATOR + "ErrorLog_Session" + Main.SESSIONTIME + ".xml";
-	private static final String EXCEPTIONLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPERATOR + "ExceptionLog_Session" + Main.SESSIONTIME + ".xml";
+	private static final String BASEFOLDER = Manager.PATH + Manager.SEPARATOR + "Log";
+	private static final String SESSIONFOLDER = Logger.BASEFOLDER + Manager.SEPARATOR + "Log " + Main.SESSIONTIME;
+	private static final String ERRORLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ErrorLog_Session" + Main.SESSIONTIME + ".xml";
+	private static final String EXCEPTIONLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ExceptionLog_Session" + Main.SESSIONTIME + ".xml";
 	private static int fileID;
 	private static int exceptionFileID;
 	

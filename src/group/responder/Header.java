@@ -128,21 +128,53 @@ public class Header {
 		} catch (Exception e) {}
 		return false;
 	}
-	
-	public String getHost() {
-		return this.hostVal;
-	}
-	
-	public int getPort() {
-		return this.portVal;
-	}
-	
-	public String getURL() {
-		return this.urlVal;
-	}
-	
+
 	public String getRequestType() {
-		return this.requestTypeValue;
+		return requestType;
+	}
+
+	public void setRequestType(String requestType) {
+		this.requestType = requestType;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public ArrayList<String> getCustomArgs() {
+		return customArgs;
+	}
+
+	public void setCustomArgs(ArrayList<String> customArgs) {
+		this.customArgs = customArgs;
+	}
+
+	public int getPort() {
+		return portVal;
+	}
+
+	public String getHost() {
+		return hostVal;
 	}
 	
 }

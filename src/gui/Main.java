@@ -53,7 +53,6 @@ public class Main extends JFrame {
 			@Override
 			public void run() {
 				SettingHandler.close();
-				GroupHandler.close();
 			}
 		});
 		EventQueue.invokeLater(new Runnable() {
@@ -67,7 +66,7 @@ public class Main extends JFrame {
 			}
 		});
 		
-		GroupHandler.getListenerHandler("000000010").runListener("000000011");
+		GroupHandler.getListenerHandler(GroupHandler.ltgID("000000011")).runListener("000000011");
 		TriggerHandler.runTrigger("000000080");
 		
 	}
