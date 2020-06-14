@@ -13,7 +13,7 @@
 		</Group>
 	</Groups>
 	<Triggers>
-
+		<Trigger name="g1LToR" id="000000080" type="Listener" responderIDs="000000030,000000012" triggeredBy="000000011"/>
 	</Triggers>
 	<Parsers>
 		<Parser name="testParser" id="000000030" order="000000031,000000032,000000033">

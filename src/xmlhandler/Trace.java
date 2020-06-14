@@ -34,7 +34,7 @@ public class Trace implements Rule {
 	public Rule genRule(HashMap<String, String> constructorArgs) {
 		String id = constructorArgs.get("id");
 		String nodeStrings[] = ParserHandler.returnStringArrayIfExists(constructorArgs, "nodes");
-		if (nodeStrings == null || nodeStrings.length / 2 != Math.round(nodeStrings.length / 2)) {
+		if (nodeStrings == null || nodeStrings.length / 2.0 != Math.round(nodeStrings.length / 2.0)) {
 			ParserHandler.reportGenRuleError("nodes", this.getClass().getName(), id);
 			return null;
 		}

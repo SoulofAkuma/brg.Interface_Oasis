@@ -23,6 +23,7 @@ import group.GroupHandler;
 import javax.swing.UIManager;
 
 import settings.*;
+import trigger.TriggerHandler;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
@@ -65,6 +66,9 @@ public class Main extends JFrame {
 				}
 			}
 		});
+		
+		GroupHandler.getListenerHandler("000000010").runListener("000000011");
+		TriggerHandler.runTrigger("000000080");
 		
 	}
 	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!

@@ -8,5 +8,6 @@ public enum MessageOrigin {
 	SettingParser,
 	Trigger,
 	FileHandler,
-	IndexAssigner
+	IndexAssigner,
+	Parser
 }

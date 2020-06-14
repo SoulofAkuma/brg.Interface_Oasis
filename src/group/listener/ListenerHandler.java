@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
+import group.GroupHandler;
 import group.TimeoutController;
 import settings.Setting;
 import trigger.TriggerHandler;
@@ -20,8 +21,6 @@ public class ListenerHandler {
 	private Setting listenerMasterSetting; //Setting in which the listeners of the corresponding group are stored in
 	private String groupID; //The id of the group the handler handles the listeners for
 	private String groupName; //The name of the group the handler handles the listeners for
-	private String handlerID; //The unique id of the handler
-	private boolean controllerRunning = false; //Indicates whether the handler has a TimeoutController for its listeners
 	
 	private static ConcurrentHashMap<String, String> activePorts = new ConcurrentHashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
 	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
@@ -31,7 +30,6 @@ public class ListenerHandler {
 		this.listenerMasterSetting = listenerMasterSetting;
 		this.groupID = groupID;
 		this.groupName = groupName;
-		this.handlerID = listenerMasterSetting.getAttribute("id");
 	}
 	
 	public void init() {
@@ -47,6 +45,7 @@ public class ListenerHandler {
 			this.listenerThreadStatus.put(listenerID, false);
 			ListenerHandler.idToName.put(listenerID, port);
 			TriggerHandler.registerListener(listenerID);
+			GroupHandler.registerListener(listenerID, this.groupID);
 		}
 	}
 	

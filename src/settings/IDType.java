@@ -12,5 +12,7 @@ public enum IDType {
 	Parser,
 	Rule,
 	Constant,
-	Value
+	Value,
+	Trigger,
+	IndexAssigner
 }

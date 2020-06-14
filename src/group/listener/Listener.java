@@ -59,8 +59,7 @@ public class Listener implements Runnable {
 	}
 	
 	public void setActive(boolean isActive) {
-		this.isActive = isActive;
-		if (!isActive) {
+		if (this.isActive) {
 			try {
 				this.serverSocket.close();
 			} catch (IOException e) {
@@ -68,6 +67,7 @@ public class Listener implements Runnable {
 				Logger.reportException("Listener", "setActive", e);
 			}
 		}
+		this.isActive = isActive;
 	}
 	
 	@Override
@@ -96,7 +96,7 @@ public class Listener implements Runnable {
 				this.connections.add(new Thread(connectionHandler));
 				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port + ". Forwarding to handler with responseID " + myID, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
 				this.connections.get(this.connections.size() - 1).start();
-				GroupHandler.addSocketTimeout(clientSocket, 10);
+				GroupHandler.addSocketTimeout(clientSocket, 500);
 			} catch (IOException e) {
 				reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
 				Logger.reportException("Listener", "run", e);

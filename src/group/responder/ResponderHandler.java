@@ -3,17 +3,19 @@ package group.responder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import constant.Constant;
+import group.GroupHandler;
 import settings.Setting;
+import trigger.TriggerHandler;
 
 public class ResponderHandler {
 
 	private Setting responderMasterSetting;
 	private String groupID;
 	private String groupName;
-	private HashMap<String, Responder> responders = new HashMap<String, Responder>();
-	private HashMap<String, String> idToName = new HashMap<String, String>();
+	private ConcurrentHashMap<String, Responder> responders = new ConcurrentHashMap<String, Responder>();
 	
 	public ResponderHandler(Setting responderMasterSetting, String groupID, String groupName) {
 		this.responderMasterSetting = responderMasterSetting;
@@ -26,14 +28,23 @@ public class ResponderHandler {
 			if (!responder.isEnabled()) {
 				continue;
 			}
-			String responderName = responder.getAttribute("name");
-			String responderID = responder.getAttribute("id");
-			String portString = responder.getAttribute("port");
-			String parserID = responder.getAttribute("parserID");
-			Constant url;
-			ArrayList<Constant> constants = new ArrayList<Constant>();
-			this.responders.put(responderID, new Responder(responderID));
-			this.idToName.put(responderID, responderName);
+			String name = responder.getAttribute("name");
+			String id = responder.getAttribute("id");
+			boolean log = Boolean.parseBoolean(responder.getAttribute("log"));
+			Setting headerSetting = responder.getSettings("Header").get(0);
+			Setting bodySetting = responder.getSettings("Body").get(0);
+			String url = headerSetting.getAttribute("url");
+			String requestType = headerSetting.getAttribute("requestType");
+			String userAgent = headerSetting.getAttribute("userAgent");
+			String contentType = headerSetting.getAttribute("contentType");
+			ArrayList<String> customArgs = (headerSetting.hasAttribute("customArgs")) ? new ArrayList<String>(Arrays.asList(headerSetting.getAttribute("customArgs").split(","))) : new ArrayList<String>();
+			ArrayList<String> constants = new ArrayList<String>(Arrays.asList(bodySetting.getAttribute("constants").split(",")));
+			String seperator = bodySetting.getAttribute("seperator");
+			Header header = new Header(requestType, url, contentType, userAgent, customArgs, id, name);
+			Body body = new Body(constants, seperator);
+			this.responders.put(id, new Responder(id, name, log, this.groupID, this.groupName, header, body));
+			TriggerHandler.registerResponder(id);
+			GroupHandler.registerResponder(id, this.groupID);
 		}
 	}
 	

@@ -6,25 +6,31 @@
 			</Listeners>
 			<Responders>
 				<Responder requiresKeys="log,name,id" requiresValues="regexbool,regexname,regexid">
-					<Header requiresKeys="url" optionalKeys="userAgent,contentType,customArgs" requiresValues="regexid" optionalValues="regexid,regexid,regexidlist"/>
+					<Header requiresKeys="url,requestType" optionalKeys="userAgent,contentType,customArgs" requiresValues="regexid,specialstring" optionalValues="regexid,regexid,regexidlist"/>
 					<Body requiresKeys="constants,seperator" requiresValues="regexidlist,string"/>
 				</Responder>
 			</Responders>
 		</Group>
 	</Groups>
 	<Triggers>
-
+		<Trigger requiresKeys="type,name,id,responderIDs" requiresValues="triggertype,regexname,regexid,stringstringarray"/>
+		<Trigger type="Manual" requiresKeys="name,id,responderIDs" requiresValues="regexname,regexid,stringstringarray"/>
+		<Trigger type="Listener" requiresValues="name,id,responderIDs,triggeredBy" requiresValues="regexname,regexid,stringstringarray,regexidlist"/>
+		<Trigger type="Timer" requiresValues="name,id,responderIDs,cooldown" requiresValues="regexname,regexid,stringstringarray,int"/>
+		<Trigger type="Responder" requiresValues="name,id,responderIDs,triggeredBy" requiresValues="regexname,regexid,stringstringarray,regexidlist"/>
 	</Triggers>
 	<Parsers>
 		<Parser requiresKeys="name,id,order" requiresValues="regexname,regexid,regexidlist">
-			<Rule requiresKeys="type,id" requiresValues="ruletype,regexid"/>
-			<Rule type="parser.Cut" requiresKeys="id,find,n,keep,regex,reEval,useHeader" requiresValues="regexid,string,int,boolean,boolean,boolean,boolean"/>
-			<Rule type="parser.Discard" requiresKeys="id,find,inverted,regex,flags,useHeader" requiresValues="regexid,string,boolean,boolean,stringarray,boolean"/>
-			<Rule type="parser.Isolate" requiresKeys="id,find,useHeader" requiresValues="regexid,string,boolean"/>
-			<Rule type="parser.Replace" requiresKeys="id,find,replace,regex,useHeader" requiresValues="parser.regexid,string,string,boolean,boolean"/>
-			<Rule type="parser.Split" requiresKeys="id,find,n,regex,useHeader" requiresValues="regexid,string,int,boolean,boolean"/>+
-			<Rule type="xmlhandler.Trace" requiresKeys="id,nodes,defVal" requiresValues="regexid,intstringarray,string"/>
-			<Rule type="jsonhandler.Trace" requiresKeys="id,path,defVal" requiresValues="regexid,intstringarray,string"/>
+			<Rules>
+				<Rule requiresKeys="type,id" requiresValues="ruletype,regexid"/>
+				<Rule type="parser.Cut" requiresKeys="id,find,n,keep,regex,reEval,useHeader" requiresValues="regexid,string,int,boolean,boolean,boolean,boolean"/>
+				<Rule type="parser.Discard" requiresKeys="id,find,inverted,regex,flags,useHeader" requiresValues="regexid,string,boolean,boolean,stringarray,boolean"/>
+				<Rule type="parser.Isolate" requiresKeys="id,find,useHeader" requiresValues="regexid,string,boolean"/>
+				<Rule type="parser.Replace" requiresKeys="id,find,replace,regex,useHeader" requiresValues="parser.regexid,string,string,boolean,boolean"/>
+				<Rule type="parser.Split" requiresKeys="id,find,n,regex,useHeader" requiresValues="regexid,string,int,boolean,boolean"/>+
+				<Rule type="xmlhandler.Trace" requiresKeys="id,nodes,defVal" requiresValues="regexid,intstringarray,string"/>
+				<Rule type="jsonhandler.Trace" requiresKeys="id,path,defVal" requiresValues="regexid,intstringarray,string"/>
+			</Rules>
 		</Parser>
 	</Parsers>
 	<Constants>
@@ -34,4 +40,17 @@
 			</Values>
 		</Constant>
 	</Constants>
+	<IndexAssigners>
+		<IndexAssigner requiresKeys="name,id,rmMatch" requiresValues="regexname,regexid,regexbool"/>
+			<Indexes>
+				<Index requiresKeys="position,key" requiresValues="int,string"/>
+			</Indexes>
+			<Regexes>
+				<Regex requiresKeys="regex,keys,defInd" requiresValues="string,stringarray,int"/>
+			</Regexes>
+		</IndexAssigner>
+	</IndexAssigners>
+	<LaunchIDS>
+
+	</LaunchIDS>
 </InterfaceOasis>

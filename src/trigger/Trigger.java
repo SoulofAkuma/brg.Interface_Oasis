@@ -13,25 +13,32 @@ import group.responder.ResponderHandler;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
-import parser.IndexAssigner;
+import indexassigner.IndexAssigner;
 import parser.ParserHandler;
 
 public class Trigger implements Runnable {
 	
 	private TriggerType type; //Type of the trigger
-	private ArrayList<Pair<String, Pair<String, String>>> responderIDs = new ArrayList<Pair<String, Pair<String, String>>>(); //Responder details to trigger from listener (parserID, (groupID, responderID))
-	private String triggerID;
-	private String triggerName;
-	private ArrayList<String> triggeredBy = new ArrayList<String>(); //The listenerIDs which can trigger the responder
-	private boolean trigger = false;
-	private boolean runMe = false;
-	private int cooldown; //Timer in seconds
+	private ArrayList<Pair<String, String>> responderIDs;//Responder details to trigger from listener (parserID, (groupID, responderID))
+	private String triggerID; //id of the trigger
+	private String triggerName; //name of the trigger
+	private ArrayList<String> triggeredBy; //the ids which will be watched by the trigger (Type Responder: ResponderIDs, Type Listener: ListenerIDs)
+	private boolean trigger = false; //boolean to be set by a button in the gui to initialize a manual trigger when type is manual 
+	private boolean runMe = false; //boolean indicating whether the trigger should run or stop running
+	private int cooldown; //Timer in seconds for Type Timer
 	
-	public Trigger(TriggerType type, ArrayList<Pair<String, Pair<String, String>>> responderIDs, String actionID) {
+	
+	
+	public Trigger(TriggerType type, ArrayList<Pair<String, String>> responderIDs, String triggerID,
+			String triggerName, ArrayList<String> triggeredBy, int cooldown) {
 		this.type = type;
 		this.responderIDs = responderIDs;
+		this.triggerID = triggerID;
+		this.triggerName = triggerName;
+		this.triggeredBy = triggeredBy;
+		this.cooldown = cooldown;
 	}
-	
+
 	@Override
 	public void run() {
 		this.runMe = true;
@@ -55,7 +62,7 @@ public class Trigger implements Runnable {
 				while (this.runMe) {
 					for (int i = 0; i < this.triggeredBy.size(); i++) {
 						if (TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).size() > lrSize.get(i)) {
-							triggerMe(TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).get(i));
+							triggerMeLis(TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).get(lrSize.get(i)));
 							lrSize.set(i, lrSize.get(i) + 1);
 						}
 						try {
@@ -85,7 +92,7 @@ public class Trigger implements Runnable {
 				while (this.runMe) {
 					for (int i = 0; i < this.triggeredBy.size(); i++) {
 						if (TriggerHandler.responderReports.get(this.triggeredBy.get(i)).size() > rrSize.get(i)) {
-							triggerMe(TriggerHandler.responderReports.get(this.triggeredBy.get(i)).get(i));
+							triggerMeRes(TriggerHandler.responderReports.get(this.triggeredBy.get(i)).get(rrSize.get(i)));
 							rrSize.set(i, rrSize.get(i) + 1);
 						}
 						try {
@@ -97,17 +104,29 @@ public class Trigger implements Runnable {
 		}
 	}
 	
+	protected void stopTrigger() {
+		this.runMe = false;
+	}
+	
 	private void triggerMe() {
-		for (Pair<String, Pair<String, String>> grp : this.responderIDs) {
-			GroupHandler.getResponderHandler(grp.getValue().getKey()).respond(grp.getValue().getValue(), new HashMap<String, String>(), new HashMap<String, String>());
+		for (Pair<String, String> grp : this.responderIDs) {
+			GroupHandler.getResponderHandler(GroupHandler.rtgID(grp.getValue())).respond(grp.getValue(), new HashMap<String, String>(), new HashMap<String, String>());
 		}
 	}
 	
-	private void triggerMe(Pair<String, String> params) {
-		HashMap<String, String> parsedHeader = IndexAssigner.transformHeader(params.getKey());
-		for (Pair<String, Pair<String, String>> grp : this.responderIDs) {
+	private void triggerMeRes(Pair<String, String> params) {
+		HashMap<String, String> parsedHeader = IndexAssigner.transformHeaderRes(params.getKey());
+		for (Pair<String, String> grp : this.responderIDs) {
 			HashMap<String, String> parsedBody = (grp.getKey() == null) ? new HashMap<String, String>() : ParserHandler.parse(grp.getKey(), params.getValue(), parsedHeader);
-			GroupHandler.getResponderHandler(grp.getValue().getKey()).respond(grp.getValue().getValue(), parsedHeader, parsedBody);
+			GroupHandler.getResponderHandler(GroupHandler.rtgID(grp.getValue())).respond(grp.getValue(), parsedHeader, parsedBody);
+		}	
+	}
+	
+	private void triggerMeLis(Pair<String, String> params) {
+		HashMap<String, String> parsedHeader = IndexAssigner.transformHeaderReq(params.getKey());
+		for (Pair<String, String> grp : this.responderIDs) {
+			HashMap<String, String> parsedBody = (grp.getKey() == null) ? new HashMap<String, String>() : ParserHandler.parse(grp.getKey(), params.getValue(), parsedHeader);
+			GroupHandler.getResponderHandler(GroupHandler.rtgID(grp.getValue())).respond(grp.getValue(), parsedHeader, parsedBody);
 		}		
 	}
 	

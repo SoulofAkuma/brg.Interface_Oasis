@@ -2,6 +2,7 @@ package group.responder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -10,7 +11,9 @@ import java.util.HashMap;
 
 import cc.Pair;
 import constant.Constant;
+import group.GroupHandler;
 import group.RequestType;
+import group.TimeoutController;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
@@ -41,23 +44,34 @@ public class Responder {
 		String headerString = this.header.getHeader(parsedHeader, parsedBody, bodyString.getBytes().length);
 		if (headerString != null) {
 			String response = headerString + "\r\n" + bodyString;
-			sendResponse(header.getHost(), header.getPort(), response);
+			sendResponse(header.getHost(), header.getURL(), header.getPort(), header.getRequestType(), response);
 		}
 	}
 	
 	//The response here is an http request. However, everything is considered a response here because it happens in response to a trigger
-	public void sendResponse(String host, int port, String response) {
+	public void sendResponse(String host, String url, int port, String requestType, String response) {
 		try {
 			Socket responder = new Socket(host, port);
 			PrintWriter out = new PrintWriter(responder.getOutputStream());
-			BufferedReader in = new BufferedReader(new InputStreamReader(responder.getInputStream()));
+			InputStream in = responder.getInputStream();
+
+			if (!responder.isConnected()) {
+				reportError("Socket connection failed", "Unknown");
+				responder.close();
+				return;
+			}
 			
 			out.write(response);
 			out.flush();
 			
-			Thread.sleep(1000);
-
+			logSend(response, host, port);
 			
+			Thread.sleep(1000);
+			
+			Runnable handler = new ConnectionHandler(this.responderID, in, url, requestType, port);
+			Thread handlerThread = new Thread(handler);
+			handlerThread.start();
+			GroupHandler.addSocketTimeout(responder, 10);
 		} catch (IOException e) {
 			reportError("Couldn't connect socket", e.getMessage());
 			Logger.reportException("Responder", "sendResponse", e);
@@ -65,6 +79,14 @@ public class Responder {
 			reportError("Interrupted responder response", e.getMessage());
 			Logger.reportException("Responder", "sendResponse", e);
 		}
+	}
+	
+	private void logSend(String send, String host, int port) {
+		
+	}
+	
+	private void logReceive(String receive, String host, int port) {
+		
 	}
 	
 	private void reportError(String causes, String errorMessage) {

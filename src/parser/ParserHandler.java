@@ -18,13 +18,13 @@ public class ParserHandler {
 	
 	private static HashMap<String, Parser> parsers = new HashMap<String, Parser>();
 	private static Setting parserMasterSetting;
-	private static final String stdGetParser = "<Parser id=\"" + SettingHandler.PARSERHANDLERID + "\" name=\"Standard GET Parser\"> <>";
 	
 	public static HashMap<String, String> parse(String parserID, String input, HashMap<String, String> parsedHeader) {
 		return ParserHandler.parsers.get(parserID).parse(input, parsedHeader);
 	}
 	
 	public static void init(Setting parserMasterSetting) {
+		ParserHandler.parsers.put(SettingHandler.GETPARSERID, new StdGetParser());
 		ParserHandler.parserMasterSetting = parserMasterSetting;
 		for (Setting parser : parserMasterSetting.getSubsettings()) {
 			if (!parser.isEnabled()) {
@@ -33,9 +33,13 @@ public class ParserHandler {
 			boolean success = false;
 			String id = parser.getAttribute("id");
 			String name = parser.getAttribute("name");
+			String indexAssigner = parser.getAttribute("indexAssigner");
 			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute("order").split(",")));
 			HashMap<String, Rule> rules = new HashMap<String, Rule>();
 			for (Setting rule : parser.getSettings("Rules").get(0).getSettings("Rule")) {
+				if (!rule.isEnabled()) {
+					continue;
+				}
 				success = false;
 				HashMap<String, String> attributes = rule.getAttributes();
 				HashMap<String, String> constructorArgs = new HashMap<String, String>();
@@ -83,7 +87,7 @@ public class ParserHandler {
 				success = true;
 			}
 			if (success) {
-				ParserHandler.parsers.put(id, new Parser(rules, order));
+				ParserHandler.parsers.put(id, new CustomParser(rules, order, indexAssigner));
 			}
 		}
 	}

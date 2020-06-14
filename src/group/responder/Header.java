@@ -13,23 +13,26 @@ import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
 import constant.Constant;
+import constant.ConstantHandler;
 
 public class Header {
 	//TODO: Returns a dynamic header string. Header values may consist of constants
-	private RequestType requestType;
-	private Constant url;
+	private String requestTypeValue;  
+	private String requestType; //The request type to be used by the responder, can be auto (get if body length == 0, otherwise post)
+	private String url;
+	private String urlVal;
 	private ArrayList<String> reserved = new ArrayList<String>(Arrays.asList(new String[] {"Host","Connection", "Content-Type", "User-Agent","Content-Length"}));
 	private String connection = "Close";
-	private Constant contentType;
-	private Constant userAgent;
-	private ArrayList<Constant> customArgs;
+	private String contentType;
+	private String userAgent;
+	private ArrayList<String> customArgs;
 	private int portVal;
 	private String hostVal;
 	private String responderID;
 	private String responderName;
 	
-	public Header(RequestType requestType, Constant url, Constant contentType, Constant userAgent,
-			ArrayList<Constant> customArgs, String responderID, String responderName) {
+	public Header(String requestType, String url, String contentType, String userAgent,
+			ArrayList<String> customArgs, String responderID, String responderName) {
 		this.requestType = requestType;
 		this.url = url;
 		this.contentType = contentType;
@@ -40,29 +43,36 @@ public class Header {
 	}
 
 	public String getHeader(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody, int contentLength) {
-		String urlString = this.url.getConstant(parsedHeader, parsedBody);
-		String contentType = (this.contentType == null) ? "Content-Type: text/plain" : "Content-Type: " + this.contentType.getConstant(parsedHeader, parsedBody) + "\r\n";
-		if (this.requestType != RequestType.POST) {
+		if (this.requestType.equals("auto")) {
+			if (contentLength == 0) {
+				this.requestTypeValue = "GET";
+			} else {
+				this.requestTypeValue = "POST";
+			}
+		}
+		this.urlVal = ConstantHandler.getConstant(this.url, parsedHeader, parsedBody);
+		String contentType = (this.contentType == null) ? "Content-Type: text/plain" : "Content-Type: " + ConstantHandler.getConstant(this.contentType, parsedHeader, parsedBody) + "\r\n";
+		if (!this.requestTypeValue.equals("POST")) {
 			contentType = "";
 		}
-		String userAgent = (this.userAgent == null) ? "" : "User-Agent: " + this.userAgent.getConstant(parsedHeader, parsedBody) + "\r\n";
-		if (isIPSyntax(urlString)) {
-			if (!isValidIP(urlString)) {
+		String userAgent = (this.userAgent == null) ? "" : "User-Agent: " + ConstantHandler.getConstant(this.userAgent, parsedHeader, parsedBody) + "\r\n";
+		if (isIPSyntax(this.urlVal)) {
+			if (!isValidIP(this.urlVal)) {
 				String[] elements = {"URL", "ContentType", "UserAgent", "ResponderName"};
-				String[] values = {urlString, contentType, userAgent, this.responderName};
-				Logger.addMessage(MessageType.Error, MessageOrigin.Responder, this.responderName + " Invalid IP Address " + urlString, this.responderID, elements, values, false);
+				String[] values = {this.urlVal, contentType, userAgent, this.responderName};
+				Logger.addMessage(MessageType.Error, MessageOrigin.Responder, this.responderName + " Invalid IP Address " + this.urlVal, this.responderID, elements, values, false);
 				return null;
 			}
 		} else {
 			try {
 				URI uri = null;
-				if (!urlString.startsWith("http://")) {
-					if (urlString.startsWith("https://")) {
-						Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, this.responderName + " Https connection unsupported in " + urlString + ", swapping to http", this.responderID, null, null, false);
-						urlString = "http://" + urlString.substring(7, urlString.length());
+				if (!this.urlVal.startsWith("http://")) {
+					if (this.urlVal.startsWith("https://")) {
+						Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, this.responderName + " Https connection unsupported in " + this.urlVal + ", swapping to http", this.responderID, null, null, false);
+						this.urlVal = "http://" + this.urlVal.substring(7, this.urlVal.length());
 					} else {
-						Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, this.responderName + " Protocol missing, adding http:// to " + urlString, this.responderID, null, null, false);
-						urlString = "http://" + urlString;
+						Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, this.responderName + " Protocol missing, adding http:// to " + this.urlVal, this.responderID, null, null, false);
+						this.urlVal = "http://" + this.urlVal;
 					}
 				}
 				uri = new URI("parsedHeader");
@@ -70,23 +80,23 @@ public class Header {
 				this.hostVal = uri.getHost();
 			} catch (URISyntaxException e) {
 				String[] elements = {"URL", "ContentType", "UserAgent", "ResponderName"};
-				String[] values = {urlString, contentType, userAgent, this.responderName};
-				Logger.addMessage(MessageType.Error, MessageOrigin.Responder, this.responderName + " Invalid url " + urlString + " failed to parse for host and port. Response cannot be send", this.responderID, elements, values, false);
+				String[] values = {this.urlVal, contentType, userAgent, this.responderName};
+				Logger.addMessage(MessageType.Error, MessageOrigin.Responder, this.responderName + " Invalid url " + this.urlVal + " failed to parse for host and port. Response cannot be send", this.responderID, elements, values, false);
 				return null;
 			}
 		}
-		String header = this.requestType.name() + " " + urlString + " HTTP/1.1\r\n"
+		String header = this.requestTypeValue + " " + this.urlVal + " HTTP/1.1\r\n"
 				+ "Host: " + this.hostVal + "\r\n"
 				+ "Connection: " + this.connection + "\r\n"
 				+ contentType
 				+ userAgent
 				+ "Content-Length: " + contentLength + "\r\n";
-		for (Constant customArg : this.customArgs) {
-			String val = customArg.getConstant(parsedHeader, parsedBody);
+		for (String customArg : this.customArgs) {
+			String val = ConstantHandler.getConstant(customArg, parsedHeader, parsedBody);
 			if (val.indexOf(":") == -1) {
-				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + customArg.identification() + " is in an invalid format \"" + val + "\". Skipping Constant", this.responderID, null, null, false);
+				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + ConstantHandler.identification(customArg) + " is in an invalid format \"" + val + "\". Skipping Constant", this.responderID, null, null, false);
 			} else if (this.reserved.contains(val.substring(0, val.indexOf(":")))) {
-				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + customArg.identification() + " contains a reserved attribute \"" + val.substring(0, val.indexOf(":")) + "\". Skipping Constant", this.responderID, null, null, false);
+				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + ConstantHandler.identification(customArg) + " contains a reserved attribute \"" + val.substring(0, val.indexOf(":")) + "\". Skipping Constant", this.responderID, null, null, false);
 				
 			} else {
 				header += val + "\r\n";
@@ -125,6 +135,14 @@ public class Header {
 	
 	public int getPort() {
 		return this.portVal;
+	}
+	
+	public String getURL() {
+		return this.urlVal;
+	}
+	
+	public String getRequestType() {
+		return this.requestTypeValue;
 	}
 	
 }

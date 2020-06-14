@@ -383,6 +383,11 @@ public class Setting {
 		return (this.getSettingsSub(name, false).size() > 0);
 	}
 	
+	//Returns whether the setting has the specified attribute key
+	public boolean hasAttribute(String name) {
+		return this.attributes.containsKey(name);
+	}
+	
 	//Returns the value of the defined attribute name
 	public String getAttribute(String name) {
 		if (this.attributes.containsKey(name)) {
@@ -424,9 +429,8 @@ public class Setting {
 	
 	//Adds a custom setting this setting on the level below
 	public void addSetting(String name, String value, HashMap<String, String> attributes) {
-		if (attributes == null) {
-			attributes = new HashMap<String, String>();
-		}
+		attributes = (attributes == null) ? new HashMap<String, String>() : attributes;
+		value = (value == null) ? "" : value;
 		this.subsettings.add(new Setting(name, value, attributes, this.level + 1));
 	}
 	
