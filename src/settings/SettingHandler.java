@@ -1366,7 +1366,6 @@ public class SettingHandler {
 								}
 								String missing = "";
 								String[] cids = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
-								System.out.println(cids[0]);
 								for (String cid : cids) {
 									if (!SettingHandler.CONSTANTIDS.contains(cid)) {
 										missing += cid + ",";
