@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import gui.Logger;
 import gui.MessageOrigin;
@@ -18,6 +20,16 @@ public class ParserHandler {
 	
 	private static HashMap<String, Parser> parsers = new HashMap<String, Parser>();
 	private static Setting parserMasterSetting;
+
+	private static final String IDNAME = "id";
+	private static final String NAMENAME = "name";
+	private static final String ORDERNAME = "order";
+	private static final String INDEXASSIGNERNAME = "indexAssigner";
+	private static final String TYPENAME = "type";
+
+	private static final String RULESNAME = "Rules";
+	private static final String RULENAME = "Rule";
+	private static final String SETTINGNAME = "Parser";
 	
 	public static HashMap<String, String> parse(String parserID, String input, HashMap<String, String> parsedHeader) {
 		return ParserHandler.parsers.get(parserID).parse(input, parsedHeader);
@@ -26,17 +38,17 @@ public class ParserHandler {
 	public static void init(Setting parserMasterSetting) {
 		ParserHandler.parsers.put(SettingHandler.GETPARSERID, new StdGetParser());
 		ParserHandler.parserMasterSetting = parserMasterSetting;
-		for (Setting parser : parserMasterSetting.getSubsettings()) {
+		for (Setting parser : parserMasterSetting.getSettings(ParserHandler.SETTINGNAME)) {
 			if (!parser.isEnabled()) {
 				continue;
 			}
 			boolean success = false;
-			String id = parser.getAttribute("id");
-			String name = parser.getAttribute("name");
-			ArrayList<String> indexAssigners = new ArrayList<String>(Arrays.asList(parser.getAttribute("indexAssigner").split(",")));
-			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute("order").split(",")));
-			HashMap<String, Rule> rules = new HashMap<String, Rule>();
-			for (Setting rule : parser.getSettings("Rules").get(0).getSettings("Rule")) {
+			String id = parser.getAttribute(ParserHandler.IDNAME);
+			String name = parser.getAttribute(ParserHandler.NAMENAME);
+			ArrayList<String> indexAssigners = new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.INDEXASSIGNERNAME).split(",")));
+			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.ORDERNAME).split(",")));
+			ConcurrentHashMap<String, Rule> rules = new ConcurrentHashMap<String, Rule>();
+			for (Setting rule : parser.getSettings("Rules").get(0).getSettings(ParserHandler.RULENAME)) {
 				if (!rule.isEnabled()) {
 					continue;
 				}
@@ -46,22 +58,22 @@ public class ParserHandler {
 				for (Map.Entry<String, String> attribute : attributes.entrySet()) {
 					constructorArgs.put(attribute.getKey(), attribute.getValue());
 				}
-				if (!constructorArgs.containsKey("type")) {
+				if (!constructorArgs.containsKey(ParserHandler.TYPENAME)) {
 					reportError("rule type not set in rules of parser " + id + " "+ name, true);
 					break;
 				}
 				
-				if (!constructorArgs.containsKey("id")) {
+				if (!constructorArgs.containsKey(ParserHandler.IDNAME)) {
 					reportError("rule id not set in rules of parser " + id + " " + name, true);
 					break;
 				}
 				try {
-					Method createRule = Class.forName(constructorArgs.get("type")).getDeclaredMethod("genRule", HashMap.class);
+					Method createRule = Class.forName(constructorArgs.get(ParserHandler.TYPENAME)).getDeclaredMethod("genRule", HashMap.class);
 					Constructor<?> tempObjC = Class.forName(constructorArgs.get("type")).getConstructor();
 					Object tempObj = tempObjC.newInstance();
 					Rule newRule = (Rule) createRule.invoke(tempObj, constructorArgs);
 					if (newRule != null) {
-						rules.put(constructorArgs.get("id"), newRule);
+						rules.put(constructorArgs.get(IDNAME), newRule);
 					} else {
 						break;
 					}
@@ -87,7 +99,7 @@ public class ParserHandler {
 				success = true;
 			}
 			if (success) {
-				ParserHandler.parsers.put(id, new CustomParser(rules, indexAssigners, order, name));
+				ParserHandler.parsers.put(id, new CustomParser(rules, indexAssigners, order, name, id));
 			}
 		}
 	}
@@ -176,6 +188,50 @@ public class ParserHandler {
 	}
 
 	public static void close() {
-		
+		for (Setting parserSetting : ParserHandler.parserMasterSetting.getSettings(ParserHandler.SETTINGNAME)) {
+			String id = parserSetting.getAttribute(ParserHandler.IDNAME);
+			if (ParserHandler.parsers.containsKey(id)) {
+				HashMap<String, String> newAttributes = new HashMap<String, String>();
+				Parser preParser = ParserHandler.parsers.get(id);
+				if (!(preParser instanceof CustomParser)) {
+					continue;
+				}
+				CustomParser parser = (CustomParser) preParser;
+				newAttributes.put(ParserHandler.IDNAME, id);
+				newAttributes.put(ParserHandler.NAMENAME, parser.getName());
+				newAttributes.put(ParserHandler.ORDERNAME, SettingHandler.alts(parser.getOrder()));
+				newAttributes.put(ParserHandler.INDEXASSIGNERNAME, SettingHandler.alts(parser.getIndexAssigners()));
+				Setting rulesSetting = parserSetting.getSettings(ParserHandler.RULESNAME).get(0);
+				ConcurrentHashMap<String, Rule> rules = parser.getElements();
+				for (Setting ruleSetting : rulesSetting.getSettings(ParserHandler.RULENAME)) {
+					String ruleID = ruleSetting.getAttribute(ParserHandler.IDNAME);
+					if (rules.containsKey(ruleID)) {
+						HashMap<String, String> newRuleAttributes = new HashMap<String, String>();
+						Rule rule = rules.get(ruleID);
+						newRuleAttributes.put(ParserHandler.IDNAME, ruleID);
+						newRuleAttributes.put(ParserHandler.TYPENAME, rule.getClass().getName());
+						newRuleAttributes.putAll(rule.storeRule());
+						ruleSetting.addReplaceAttributes(newRuleAttributes);
+					}
+				}
+			}
+		}
+	}
+	
+	public static void addParser(CustomParser parser) {
+		HashMap<String, String> attributes = new HashMap<String, String>();
+		attributes.put(ParserHandler.IDNAME, parser.getID());
+		attributes.put(ParserHandler.NAMENAME, parser.getName());
+		attributes.put(ParserHandler.ORDERNAME, SettingHandler.alts(parser.getOrder()));
+		Setting parserSetting = ParserHandler.parserMasterSetting.addSetting(ParserHandler.SETTINGNAME, null, attributes);
+		Setting rulesSetting = parserSetting.addSetting(ParserHandler.RULESNAME, null, null);
+		ConcurrentHashMap<String, Rule> rules = parser.getElements();
+		for (Entry<String, Rule> rule : rules.entrySet()) {
+			HashMap<String, String> ruleAttributes = new HashMap<String, String>();
+			ruleAttributes.put(ParserHandler.IDNAME, rule.getKey());
+			ruleAttributes.put(ParserHandler.TYPENAME, rule.getValue().getClass().getName());
+			ruleAttributes.putAll(rule.getValue().storeRule());
+			rulesSetting.addSetting(ParserHandler.RULENAME, null, ruleAttributes);
+		}
 	}
 }

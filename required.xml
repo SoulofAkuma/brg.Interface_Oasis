@@ -20,7 +20,7 @@
 		<Trigger type="Responder" requiresValues="name,id,responderIDs,triggeredBy" requiresValues="regexname,regexid,stringstringarray,regexidlist"/>
 	</Triggers>
 	<Parsers>
-		<Parser requiresKeys="name,id,order" requiresValues="regexname,regexid,regexidlist">
+		<Parser requiresKeys="name,id,order,indexAssigners" requiresValues="regexname,regexid,regexidlist,regexidlistne">
 			<Rules>
 				<Rule requiresKeys="type,id" requiresValues="ruletype,regexid"/>
 				<Rule type="parser.Cut" requiresKeys="id,find,n,keep,regex,reEval,useHeader" requiresValues="regexid,string,int,boolean,boolean,boolean,boolean"/>

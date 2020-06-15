@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import indexassigner.IndexAssigner;
 import indexassigner.IndexAssignerHandler;
@@ -17,14 +18,16 @@ public class CustomParser implements Parser {
 	//TODO: Debugging without index assigner
 	private String name;
 	private ArrayList<String> order;
-	private HashMap<String, Rule> elements;
+	private ConcurrentHashMap<String, Rule> elements;
 	private ArrayList<String> log = new ArrayList<String>();
 	private ArrayList<String> indexAssigners;
+	private String id;
 	
-	public CustomParser(HashMap<String, Rule> elements, ArrayList<String> indexAssigners, ArrayList<String> order, String name) {
+	public CustomParser(ConcurrentHashMap<String, Rule> elements, ArrayList<String> indexAssigners, ArrayList<String> order, String name, String id) {
 		this.indexAssigners = indexAssigners;
 		this.elements = elements;
 		this.order = order;
+		this.id = id;
 	}
 	
 	//Apply all rules to the string
@@ -77,6 +80,41 @@ public class CustomParser implements Parser {
 	public ArrayList<String> printLog() {
 		return this.log;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public ArrayList<String> getOrder() {
+		return order;
+	}
+
+	public void setOrder(ArrayList<String> order) {
+		this.order = order;
+	}
+
+	public ConcurrentHashMap<String, Rule> getElements() {
+		return elements;
+	}
+
+	public void setElements(ConcurrentHashMap<String, Rule> elements) {
+		this.elements = elements;
+	}
+
+	public ArrayList<String> getIndexAssigners() {
+		return indexAssigners;
+	}
+
+	public void setIndexAssigners(ArrayList<String> indexAssigners) {
+		this.indexAssigners = indexAssigners;
+	}
 	
-	
+	public String getID() {
+		return this.id;
+	}
+ 	
 }

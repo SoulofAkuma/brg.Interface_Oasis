@@ -11,6 +11,14 @@ public class IndexAssignerHandler {
 	private static ConcurrentHashMap<String, IndexAssigner> indexAssigners = new ConcurrentHashMap<String, IndexAssigner>();
 	private static Setting indexAssingerMastserSetting;
 	
+	private static final String IDNAME = "id";
+	private static final String NAMENAME = "name";
+	private static final String RMMATCHNAME = "rmMatch";
+	
+	private static final String INDEXESNAME = "Indexes";
+	private static final String INDEXNAME = "Index";
+	private static final String SETTINGNAME = "IndexAssigner";
+	
 	public static void init(Setting indexAssignerMasterSetting) {
 		IndexAssignerHandler.indexAssingerMastserSetting = indexAssignerMasterSetting;
 		for (Setting indexAssignerSetting : indexAssignerMasterSetting.getSubsettings()) {
@@ -51,7 +59,12 @@ public class IndexAssignerHandler {
 	}
 
 	public static void close() {
-		
+		for (Setting indexAssignerSetting : IndexAssignerHandler.indexAssingerMastserSetting.getSettings(IndexAssignerHandler.SETTINGNAME)) {
+			String id = indexAssignerSetting.getAttribute(IndexAssignerHandler.IDNAME);
+			if (IndexAssignerHandler.indexAssigners.containsKey(id)) {
+				HashMap<String, String> attriubtes = new HashMap<String, String>();
+			}
+		}
 	}
 
 }

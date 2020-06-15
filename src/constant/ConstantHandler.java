@@ -3,6 +3,7 @@ package constant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import settings.Setting;
@@ -93,6 +94,20 @@ public class ConstantHandler {
 	
 	public static void addConstant(Constant constant) {
 		HashMap<String, String> attributes = new HashMap<String, String>();
-		
+		attributes.put(ConstantHandler.IDNAME, constant.getId());
+		attributes.put(ConstantHandler.NAMENAME, constant.getName());
+		attributes.put(ConstantHandler.ORDERNAME, SettingHandler.alts(constant.getOrder()));
+		Setting constantSetting = ConstantHandler.constantMasterSetting.addSetting(ConstantHandler.SETTINGNAME, null, attributes);
+		ConcurrentHashMap<String, Value> values = constant.getValues();
+		Setting valuesSetting = constantSetting.addSetting(ConstantHandler.VALUESNAME, null, null);
+		for (Entry<String, Value> value : values.entrySet()) {
+			HashMap<String, String> valueAttributes = new HashMap<String, String>();
+			valueAttributes.put(ConstantHandler.IDNAME, value.getKey());
+			valueAttributes.put(ConstantHandler.ISKEYNAME, String.valueOf(value.getValue().isKey()));
+			valueAttributes.put(ConstantHandler.BACKREFERENCENAME, String.valueOf(value.getValue().isBackReference()));
+			valueAttributes.put(ConstantHandler.USEHEADERNAME, String.valueOf(value.getValue().isUseHeader()));
+			String valueValue = value.getValue().getValue();
+			valuesSetting.addSetting(ConstantHandler.VALUENAME, valueValue, valueAttributes);
+		}
 	}
 }
