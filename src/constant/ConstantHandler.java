@@ -35,7 +35,7 @@ public class ConstantHandler {
 			}
 			String id = constantSetting.getAttribute(ConstantHandler.IDNAME);
 			String name = constantSetting.getAttribute(ConstantHandler.NAMENAME);
-			ArrayList<String> order = new ArrayList<String>(Arrays.asList(constantSetting.getAttribute(ConstantHandler.ORDERNAME).split(",")));
+			ArrayList<String> order = (constantSetting.getAttribute(ConstantHandler.ORDERNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(constantSetting.getAttribute(ConstantHandler.ORDERNAME).split(",")));
 			ArrayList<Setting> valueSettings = constantSetting.getSettings(ConstantHandler.VALUESNAME).get(0).getSettings(ConstantHandler.VALUENAME);
 			ConcurrentHashMap<String, Value> values = new ConcurrentHashMap<String, Value>();
 			for (Setting valueSetting : valueSettings) {

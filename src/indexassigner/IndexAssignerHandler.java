@@ -62,7 +62,8 @@ public class IndexAssignerHandler {
 					if (!regexSetting.isEnabled()) {
 						continue;
 					}
-					regexes.put(regexSetting.getAttribute(IndexAssignerHandler.IDNAME), new Pair<String, String[]>(regexSetting.getAttribute(IndexAssignerHandler.REGEXNAME), regexSetting.getAttribute(IndexAssignerHandler.KEYSNAME).split(",")));
+					String[] keys = (regexSetting.getAttribute(IndexAssignerHandler.KEYSNAME).isBlank()) ? new String[] {} : regexSetting.getAttribute(IndexAssignerHandler.KEYSNAME).split(",");
+					regexes.put(regexSetting.getAttribute(IndexAssignerHandler.IDNAME), new Pair<String, String[]>(regexSetting.getAttribute(IndexAssignerHandler.REGEXNAME), keys));
 					defInd.put(regexSetting.getAttribute(IndexAssignerHandler.IDNAME), Integer.parseInt(regexSetting.getAttribute(IndexAssignerHandler.DEFINDNAME)));
 				}
 			}

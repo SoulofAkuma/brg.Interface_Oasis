@@ -46,8 +46,8 @@ public class ParserHandler {
 			boolean success = false;
 			String id = parser.getAttribute(ParserHandler.IDNAME);
 			String name = parser.getAttribute(ParserHandler.NAMENAME);
-			ArrayList<String> indexAssigners = new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.INDEXASSIGNERNAME).split(",")));
-			ArrayList<String> order = new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.ORDERNAME).split(",")));
+			ArrayList<String> indexAssigners = (parser.getAttribute(ParserHandler.INDEXASSIGNERNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.INDEXASSIGNERNAME).split(",")));
+			ArrayList<String> order = (parser.getAttribute(ParserHandler.ORDERNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.ORDERNAME).split(",")));
 			ConcurrentHashMap<String, Rule> rules = new ConcurrentHashMap<String, Rule>();
 			for (Setting rule : parser.getSettings("Rules").get(0).getSettings(ParserHandler.RULENAME)) {
 				if (!rule.isEnabled()) {
@@ -170,7 +170,7 @@ public class ParserHandler {
 	
 	public static String[] returnStringArrayIfExists(HashMap<String, String> map, String name) {
 		if (map.containsKey(name)) {
-			return map.get(name).split(",");
+			return (map.get(name).isBlank()) ? new String[] {} : map.get(name).split(",");
 		} else {
 			return null;
 		}

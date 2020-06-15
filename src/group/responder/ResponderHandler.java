@@ -53,8 +53,8 @@ public class ResponderHandler {
 			String requestType = headerSetting.getAttribute(ResponderHandler.REQUESTTYPENAME);
 			String userAgent = headerSetting.getAttribute(ResponderHandler.USERAGENTNAME);
 			String contentType = headerSetting.getAttribute(ResponderHandler.CONTENTTYPENAME);
-			ArrayList<String> customArgs = (headerSetting.hasAttribute(ResponderHandler.CUSTOMARGSNAME)) ? new ArrayList<String>(Arrays.asList(headerSetting.getAttribute(ResponderHandler.CUSTOMARGSNAME).split(","))) : new ArrayList<String>();
-			ArrayList<String> constants = new ArrayList<String>(Arrays.asList(bodySetting.getAttribute(ResponderHandler.CONSTANTSNAME).split(",")));
+			ArrayList<String> customArgs = (headerSetting.hasAttribute(ResponderHandler.CUSTOMARGSNAME) && !headerSetting.getAttribute(ResponderHandler.CUSTOMARGSNAME).isBlank()) ? new ArrayList<String>(Arrays.asList(headerSetting.getAttribute(ResponderHandler.CUSTOMARGSNAME).split(","))) : new ArrayList<String>();
+			ArrayList<String> constants = (bodySetting.getAttribute(ResponderHandler.CONSTANTSNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(bodySetting.getAttribute(ResponderHandler.CONSTANTSNAME).split(",")));
 			String separator = bodySetting.getAttribute(ResponderHandler.SEPARATORNAME);
 			Header header = new Header(requestType, url, contentType, userAgent, Collections.synchronizedList(customArgs), id, name);
 			Body body = new Body(Collections.synchronizedList(constants), separator);

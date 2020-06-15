@@ -528,7 +528,7 @@ public class SettingHandler {
 						reportSyntaxError("LaunchIDs Listeners Attribute Checker", "Invalid ids Value \"" + attribute.getValue() +"\"", false);
 						isValid = false;
 					} else {
-						listenerIDs = attribute.getValue().split(",");
+						listenerIDs = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
 					}
 				} else {
 					reportSyntaxError("LaunchIDS Listeners Attribute Checker", "Unknown attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true);
@@ -547,7 +547,7 @@ public class SettingHandler {
 						reportSyntaxError("LaunchIDs Triggers Attribute Checker", "Invalid ids Value \"" + attribute.getValue() +"\"", false);
 						isValid = false;
 					} else {
-						triggerIDs = attribute.getValue().split(",");
+						triggerIDs = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
 					}
 				} else {
 					reportSyntaxError("LaunchIDS Triggers Attribute Checker", "Unknown attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true);
@@ -649,7 +649,7 @@ public class SettingHandler {
 				}
 			}
 			
-			ArrayList<String> orderList = new ArrayList<String>(Arrays.asList(checkMe.getAttribute("order").split(",")));
+			ArrayList<String> orderList = (checkMe.getAttribute("order").isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(checkMe.getAttribute("order").split(",")));
 			Set<String> order = new HashSet<String>(orderList);
 			if (orderList.size() != order.size()) {
 				reportSyntaxError("Parser Attribute Checker", "Duplicate id in order", false, ite);
@@ -717,7 +717,7 @@ public class SettingHandler {
 			}
 			String missing = "";
 			ArrayList<String> valueIDs = new ArrayList<String>();
-			ArrayList<String> orderList = new ArrayList<String>(Arrays.asList(checkMe.getAttribute("order").split(",")));
+			ArrayList<String> orderList = (checkMe.getAttribute("order").isBlank()) ? new ArrayList<String>() :  new ArrayList<String>(Arrays.asList(checkMe.getAttribute("order").split(",")));
 			Set<String> order = new HashSet<String>(orderList);
 			if (order.size() != orderList.size()) {
 				reportSyntaxError("Constant Attribute Checker", "Duplicate ID in order value", false, ite);
@@ -789,7 +789,8 @@ public class SettingHandler {
 						reportSyntaxError("Index Assigner Attribute Checker", "Invalid iorder value \"" + attribute.getValue() + "\"", false, ite);
 						next = true;
 					} else {
-						iorder.addAll(new ArrayList<String>(Arrays.asList(attribute.getValue().split(","))));
+						ArrayList<String> iorderd = (attribute.getValue().isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(attribute.getValue().split(",")));
+						iorder.addAll(iorderd);
 					}
 				break;
 				case "rorder":
@@ -798,7 +799,8 @@ public class SettingHandler {
 						reportSyntaxError("Index Assigner Attribute Checker", "Invalid rorder value \"" + attribute.getValue() + "\"", false, ite);
 						next = true;
 					} else {
-						rorder.addAll(new ArrayList<String>(Arrays.asList(attribute.getValue().split(","))));
+						ArrayList<String> rorderd = (attribute.getValue().isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(attribute.getValue().split(",")));
+						rorder.addAll(rorderd);
 					}
 				break;
 				default:
@@ -973,7 +975,7 @@ public class SettingHandler {
 				break;
 				case "responderIDs":
 					updateMissing("responderIDs");
-					String[] array = attribute.getValue().split(",");
+					String[] array = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
 					if (array.length / 2.0 != Math.round(array.length / 2.0)) {
 						reportSyntaxError("Trigger Attribute Checker", "Invalid responderIDs syntax" + attribute.getValue() + "\"", false, ite);
 						next = true;
@@ -1006,7 +1008,7 @@ public class SettingHandler {
 						reportSyntaxError("Trigger Attribute Checker", "Invalid triggeredBy value \"" + checkMe.getAttribute("triggeredBy") + "\"", true, ite);
 						next = true;						
 					}
-					String[] array = checkMe.getAttribute("triggeredBy").split(",");
+					String[] array = (checkMe.getAttribute("triggeredBy").isBlank()) ? new String[] {} : checkMe.getAttribute("triggeredBy").split(",");
 					for (String eid : array) {
 						if (type == TriggerType.Listener) {
 							listenerIDs.add(eid);
@@ -1363,7 +1365,7 @@ public class SettingHandler {
 									break;
 								}
 								String missing = "";
-								String[] cids = attribute.getValue().split(",");
+								String[] cids = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
 								System.out.println(cids[0]);
 								for (String cid : cids) {
 									if (!SettingHandler.CONSTANTIDS.contains(cid)) {
@@ -1399,7 +1401,7 @@ public class SettingHandler {
 									break;
 								}
 								String missing = "";
-								String[] cids = attribute.getValue().split(",");
+								String[] cids = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
 								for (String cid : cids) {
 									if (!SettingHandler.CONSTANTIDS.contains(cid)) {
 										missing += cid + ",";
@@ -1474,7 +1476,7 @@ public class SettingHandler {
 						reportSyntaxError("Parser Attribute Checker", "Invalid indexAssigner Value. Every Parser needs at least one IndexAssigner", false, ite);
 						next = true;
 					} else {
-						String[] iIDs = attribute.getValue().split(",");
+						String[] iIDs = (attribute.getValue().isBlank()) ? new String[] {} : attribute.getValue().split(",");
 						for (String iID : iIDs) {
 							if (!SettingHandler.INDEXASSIGNERIDS.contains(iID)) {
 								reportSyntaxError("Parser Attribute Checker", "The indexAssigner \"" + iID + "\" does not exist", false, ite);

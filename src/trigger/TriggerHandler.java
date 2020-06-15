@@ -40,12 +40,12 @@ public class TriggerHandler {
 			String name = triggerSetting.getAttribute(TriggerHandler.NAMENAME);
 			TriggerType type = TriggerType.valueOf(triggerSetting.getAttribute(TriggerHandler.TYPENAME));
 			ArrayList<Pair<String, String>> responderIDs = new ArrayList<Pair<String, String>>();
-			String[] responderIDArray = triggerSetting.getAttribute(TriggerHandler.RESPONDERIDSNAME).split(",");
+			String[] responderIDArray = (triggerSetting.getAttribute(TriggerHandler.RESPONDERIDSNAME).isBlank()) ? new String[] {} : triggerSetting.getAttribute(TriggerHandler.RESPONDERIDSNAME).split(",");
 			for (int i = 0; i < responderIDArray.length; i += 2) {
 				responderIDs.add(new Pair<String, String>(responderIDArray[i], responderIDArray[i + 1]));
 			}
 			int cooldown = (type == TriggerType.Timer) ? Integer.parseInt(TriggerHandler.COOLDOWNNAME) : 0; 
-			ArrayList<String> triggeredBy = new ArrayList<String>(Arrays.asList(triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).split(",")));
+			ArrayList<String> triggeredBy = (triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).split(",")));
 			Trigger trigger = new Trigger(type, responderIDs, id, name, triggeredBy, cooldown);
 			triggers.put(id, trigger);
 			triggerThreads.put(id, new Thread(trigger));

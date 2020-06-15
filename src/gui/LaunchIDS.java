@@ -22,8 +22,8 @@ public class LaunchIDS {
 		LaunchIDS.launchIDSMasterSetting = launchIDSMasterSetting;
 		Setting listeners = launchIDSMasterSetting.getSettings(LaunchIDS.LISTENERSNAME).get(0);
 		Setting triggers = launchIDSMasterSetting.getSettings(LaunchIDS.TRIGGERSNAME).get(0);
-		LaunchIDS.listenerIDs = Collections.synchronizedList(new ArrayList<String>(Arrays.asList(listeners.getAttribute("ids").split(","))));
-		LaunchIDS.triggerIDs = Collections.synchronizedList(new ArrayList<String>(Arrays.asList(triggers.getAttribute("ids").split(","))));
+		LaunchIDS.listenerIDs = (listeners.getAttribute("ids").isBlank()) ? Collections.synchronizedList(new ArrayList<String>()): Collections.synchronizedList(new ArrayList<String>(Arrays.asList(listeners.getAttribute("ids").split(","))));
+		LaunchIDS.triggerIDs = (triggers.getAttribute("ids").isBlank()) ? Collections.synchronizedList(new ArrayList<String>()) : Collections.synchronizedList(new ArrayList<String>(Arrays.asList(triggers.getAttribute("ids").split(",", 0))));
 	}
 	
 	public static void close() {
