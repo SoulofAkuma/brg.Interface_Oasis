@@ -2,6 +2,7 @@ package constant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,7 +19,7 @@ public class ConstantHandler {
 	private static final String NAMENAME = "name";
 	private static final String ORDERNAME = "order";
 	private static final String ISKEYNAME = "isKey";
-	private static final String BACKREFERENCENAME = "backRefernce";
+	private static final String BACKREFERENCENAME = "backReference";
 	private static final String USEHEADERNAME = "useHeader";
 	private static final String VALUESNAME = "Values";
 	private static final String VALUENAME = "Value";
@@ -48,8 +49,9 @@ public class ConstantHandler {
 				boolean backReference = Boolean.parseBoolean(valueSetting.getAttribute(ConstantHandler.BACKREFERENCENAME));
 				values.put(vID, new Value(vID, value, isKey, useHeader, backReference));
 			}
-			constants.put(id, new Constant(id, name, order, values));
+			constants.put(id, new Constant(id, name, Collections.synchronizedList(order), values));
 		}
+		ConstantHandler.constants = constants;
 	}
 	
 	public static String getConstant(String id, HashMap<String, String>  parsedHeader, HashMap<String, String> parsedBody) {
@@ -74,8 +76,12 @@ public class ConstantHandler {
 				newAttributes.put(ConstantHandler.ORDERNAME, SettingHandler.alts(constant.getOrder()));
 				constantSetting.addReplaceAttributes(newAttributes);
 				ConcurrentHashMap<String, Value> values = constant.getValues();
+				HashMap<String, Boolean> valueMatches = SettingHandler.getMatchList(values.keySet(), false);
 				Setting valuesSetting = constantSetting.getSettings(ConstantHandler.VALUESNAME).get(0);
 				for (Setting valueSetting : valuesSetting.getSettings(ConstantHandler.VALUENAME)) {
+					if (!valueSetting.isEnabled()) {
+						continue;
+					}
 					String vID = valueSetting.getAttribute(ConstantHandler.IDNAME);
 					if (values.containsKey(vID)) {
 						HashMap<String, String> newValueAttributes = new HashMap<String, String>();
@@ -86,7 +92,19 @@ public class ConstantHandler {
 						newValueAttributes.put(ConstantHandler.USEHEADERNAME, String.valueOf(value.isUseHeader()));
 						valueSetting.addReplaceAttributes(newValueAttributes);
 						valueSetting.setValue(value.getValue());
+						valueMatches.put(vID, true);
 					}
+				}
+				ArrayList<String> missingValues = SettingHandler.getConditionalList(valueMatches, false);
+				for (String valueID : missingValues) {
+					Value value = values.get(valueID);
+					HashMap<String, String> valueAttributes = new HashMap<String, String>();
+					valueAttributes.put(ConstantHandler.IDNAME, valueID);
+					valueAttributes.put(ConstantHandler.ISKEYNAME, String.valueOf(value.isKey()));
+					valueAttributes.put(ConstantHandler.BACKREFERENCENAME, String.valueOf(value.isBackReference()));
+					valueAttributes.put(ConstantHandler.USEHEADERNAME, String.valueOf(value.isUseHeader()));
+					String valueValue = value.getValue();
+					valuesSetting.addSetting(ConstantHandler.VALUENAME, valueValue, valueAttributes);
 				}
 			}
 		}

@@ -6,7 +6,9 @@ import parser.ParserHandler;
 import parser.Rule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.io.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
@@ -18,13 +20,13 @@ public class Trace implements Rule {
 	private static final int ELEMENTINDEX = 2; //The string is an integer which indicates the index of a child element
 	private static final int COMBINE = 3; //The string is a key key-value pair in format key1:key2=value. key1 is an element name, key2 an attribute name and value the corresponding attribute value. Combine will search through all elements with the matching element name and match the first element which has the search attribute. 
 	
-	private ArrayList<Pair<Short, String>> nodes; //List of Trace pairs which contain a node type constant and a node name
+	private List<Pair<Short, String>> nodes; //List of Trace pairs which contain a node type constant and a node name
 	private String defVal;
-	private ArrayList<String> log = new ArrayList<String>();
+	private List<String> log = Collections.synchronizedList(new ArrayList<String>());
 	
 	public Trace() {}
 	
-	public Trace(ArrayList<Pair<Short, String>> nodes, String defVal) {
+	public Trace(List<Pair<Short, String>> nodes, String defVal) {
 		this.nodes = nodes;
 		this.defVal = defVal;
 	}
@@ -60,7 +62,7 @@ public class Trace implements Rule {
 		if (defVal == null) {
 			ParserHandler.reportGenRuleError("defVal", this.getClass().getName(), id);
 		}
-		return new Trace(nodes, defVal);
+		return new Trace(Collections.synchronizedList(nodes), defVal);
 	}
 	
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable
@@ -81,7 +83,7 @@ public class Trace implements Rule {
 	}
 
 	@Override
-	public ArrayList<String> printLog() {
+	public List<String> printLog() {
 		return this.log;
 	}
 	
@@ -229,8 +231,8 @@ public class Trace implements Rule {
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
 		String nodes = "";
-		for (int i = 0; i < this.nodes.size(); i += 2) {
-			nodes += this.nodes.get(i).getKey() + "," + this.nodes.get(i + 1).getValue() + ",";
+		for (int i = 0; i < this.nodes.size(); i++) {
+			nodes += this.nodes.get(i).getKey() + "," + this.nodes.get(i).getValue() + ",";
 		}
 		if (nodes.length() > 1) {
 			nodes = nodes.substring(0, nodes.length() - 1);

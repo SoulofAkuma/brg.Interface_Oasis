@@ -1,5 +1,6 @@
 package parser;
 
+import java.util.List;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -183,12 +184,15 @@ public class ParserHandler {
 		}
 	}
 	
-	public static ArrayList<String> getLog(String id) {
+	public static List<String> getLog(String id) {
 		return ParserHandler.parsers.get(id).printLog();
 	}
 
 	public static void close() {
 		for (Setting parserSetting : ParserHandler.parserMasterSetting.getSettings(ParserHandler.SETTINGNAME)) {
+			if (!parserSetting.isEnabled()) {
+				continue;
+			}
 			String id = parserSetting.getAttribute(ParserHandler.IDNAME);
 			if (ParserHandler.parsers.containsKey(id)) {
 				HashMap<String, String> newAttributes = new HashMap<String, String>();
@@ -203,16 +207,30 @@ public class ParserHandler {
 				newAttributes.put(ParserHandler.INDEXASSIGNERNAME, SettingHandler.alts(parser.getIndexAssigners()));
 				Setting rulesSetting = parserSetting.getSettings(ParserHandler.RULESNAME).get(0);
 				ConcurrentHashMap<String, Rule> rules = parser.getElements();
+				HashMap<String, Boolean> ruleMatches = SettingHandler.getMatchList(rules.keySet(), false);
 				for (Setting ruleSetting : rulesSetting.getSettings(ParserHandler.RULENAME)) {
+					if (!ruleSetting.isEnabled()) {
+						continue;
+					}
 					String ruleID = ruleSetting.getAttribute(ParserHandler.IDNAME);
 					if (rules.containsKey(ruleID)) {
-						HashMap<String, String> newRuleAttributes = new HashMap<String, String>();
 						Rule rule = rules.get(ruleID);
-						newRuleAttributes.put(ParserHandler.IDNAME, ruleID);
-						newRuleAttributes.put(ParserHandler.TYPENAME, rule.getClass().getName());
+						HashMap<String, String> newRuleAttributes = new HashMap<String, String>();
 						newRuleAttributes.putAll(rule.storeRule());
+						newRuleAttributes.put(ParserHandler.TYPENAME, rule.getClass().getName());
+						newRuleAttributes.put(ParserHandler.IDNAME, ruleID);
 						ruleSetting.addReplaceAttributes(newRuleAttributes);
+						ruleMatches.put(ruleID, true);
 					}
+				}
+				ArrayList<String> missingRules = SettingHandler.getConditionalList(ruleMatches, false);
+				for (String ruleID : missingRules) {
+					Rule rule = rules.get(ruleID);
+					HashMap<String, String> ruleAttributes = new HashMap<String, String>();
+					ruleAttributes.putAll(rule.storeRule());
+					ruleAttributes.put(ParserHandler.IDNAME, ruleID);
+					ruleAttributes.put(ParserHandler.TYPENAME, rule.getClass().getName());
+					rulesSetting.addSetting(ParserHandler.RULENAME, null, ruleAttributes);
 				}
 			}
 		}
@@ -228,9 +246,9 @@ public class ParserHandler {
 		ConcurrentHashMap<String, Rule> rules = parser.getElements();
 		for (Entry<String, Rule> rule : rules.entrySet()) {
 			HashMap<String, String> ruleAttributes = new HashMap<String, String>();
+			ruleAttributes.putAll(rule.getValue().storeRule());
 			ruleAttributes.put(ParserHandler.IDNAME, rule.getKey());
 			ruleAttributes.put(ParserHandler.TYPENAME, rule.getValue().getClass().getName());
-			ruleAttributes.putAll(rule.getValue().storeRule());
 			rulesSetting.addSetting(ParserHandler.RULENAME, null, ruleAttributes);
 		}
 	}

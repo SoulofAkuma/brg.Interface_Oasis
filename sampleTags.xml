@@ -76,14 +76,14 @@
 		</Constant>
 	</Constants>
 	<IndexAssigners>
-		<IndexAssigner name="sampleAssigner" id="000000090" rmMatch="false">
+		<IndexAssigner name="sampleAssigner" id="000000090" rmMatch="false" iorder="000000091,000000092,000000093" rorder="000000094">
 			<Indexes>
-				<Index position="2" key="arg1"/>
-				<Index position="3" key="arg2"/>
-				<Index position="4" key="arg3"/>
+				<Index position="2" key="arg1" id="000000091"/>
+				<Index position="3" key="arg2" id="000000092"/>
+				<Index position="4" key="arg3" id="000000093"/>
 			</Indexes>
 			<Regexes>
-				<Regex regex=".+" keys="t1,t2,t3" defInd="2"/>
+				<Regex regex=".+" keys="t1,t2,t3" defInd="2" id="000000094"/>
 			</Regexes>
 		</IndexAssigner>
 	</IndexAssigners>

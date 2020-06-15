@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class Discard implements Rule {
 	
@@ -19,7 +21,7 @@ public class Discard implements Rule {
 	private boolean regex;
 	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
 	private boolean useHeader;
-	private ArrayList<String> log = new ArrayList<String>(); //Log for the rule
+	private List<String> log = Collections.synchronizedList(new ArrayList<String>()); //Log for the rule
 	
 	public Discard() {}
 	
@@ -129,7 +131,7 @@ public class Discard implements Rule {
 	}
 	
 	@Override
-	public ArrayList<String> printLog() {
+	public List<String> printLog() {
 		return this.log;
 	}
 	

@@ -27,7 +27,8 @@
 				<Rule type="parser.Discard" requiresKeys="id,find,inverted,regex,flags,useHeader" requiresValues="regexid,string,boolean,boolean,stringarray,boolean"/>
 				<Rule type="parser.Isolate" requiresKeys="id,find,useHeader" requiresValues="regexid,string,boolean"/>
 				<Rule type="parser.Replace" requiresKeys="id,find,replace,regex,useHeader" requiresValues="parser.regexid,string,string,boolean,boolean"/>
-				<Rule type="parser.Split" requiresKeys="id,find,n,regex,useHeader" requiresValues="regexid,string,int,boolean,boolean"/>+
+				<Rule type="parser.Split" requiresKeys="id,find,n,regex,useHeader" requiresValues="regexid,string,int,boolean,boolean"/>
+				<Rule type="parser.AddHeaderVal" requiresKeys="id,find" requiresValues="regexid,string"/>
 				<Rule type="xmlhandler.Trace" requiresKeys="id,nodes,defVal" requiresValues="regexid,intstringarray,string"/>
 				<Rule type="jsonhandler.Trace" requiresKeys="id,path,defVal" requiresValues="regexid,intstringarray,string"/>
 			</Rules>
@@ -41,12 +42,12 @@
 		</Constant>
 	</Constants>
 	<IndexAssigners>
-		<IndexAssigner requiresKeys="name,id,rmMatch" requiresValues="regexname,regexid,regexbool"/>
+		<IndexAssigner requiresKeys="name,id,rmMatch,iorder,rorder" requiresValues="regexname,regexid,regexbool,regexidlist,regexidlist"/>
 			<Indexes>
-				<Index requiresKeys="position,key" requiresValues="int,string"/>
+				<Index requiresKeys="id,position,key" requiresValues="regexid,int,string"/>
 			</Indexes>
 			<Regexes>
-				<Regex requiresKeys="regex,keys,defInd" requiresValues="string,stringarray,int"/>
+				<Regex requiresKeys="id,regex,keys,defInd" requiresValues="regexid,string,stringarray,int"/>
 			</Regexes>
 		</IndexAssigner>
 	</IndexAssigners>

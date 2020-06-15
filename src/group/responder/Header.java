@@ -4,7 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import cc.Pair;
@@ -21,18 +23,18 @@ public class Header {
 	private String requestType; //The request type to be used by the responder, can be auto (get if body length == 0, otherwise post)
 	private String url;
 	private String urlVal;
-	private ArrayList<String> reserved = new ArrayList<String>(Arrays.asList(new String[] {"Host","Connection", "Content-Type", "User-Agent","Content-Length"}));
+	private List<String> reserved = Collections.synchronizedList(new ArrayList<String>(Arrays.asList(new String[] {"Host","Connection", "Content-Type", "User-Agent","Content-Length"})));
 	private String connection = "Close";
 	private String contentType;
 	private String userAgent;
-	private ArrayList<String> customArgs;
+	private List<String> customArgs;
 	private int portVal;
 	private String hostVal;
 	private String responderID;
 	private String responderName;
 	
 	public Header(String requestType, String url, String contentType, String userAgent,
-			ArrayList<String> customArgs, String responderID, String responderName) {
+			List<String> customArgs, String responderID, String responderName) {
 		this.requestType = requestType;
 		this.url = url;
 		this.contentType = contentType;
@@ -161,7 +163,7 @@ public class Header {
 		this.userAgent = userAgent;
 	}
 
-	public ArrayList<String> getCustomArgs() {
+	public List<String> getCustomArgs() {
 		return customArgs;
 	}
 

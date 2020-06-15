@@ -2,6 +2,7 @@ package group.responder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -55,8 +56,8 @@ public class ResponderHandler {
 			ArrayList<String> customArgs = (headerSetting.hasAttribute(ResponderHandler.CUSTOMARGSNAME)) ? new ArrayList<String>(Arrays.asList(headerSetting.getAttribute(ResponderHandler.CUSTOMARGSNAME).split(","))) : new ArrayList<String>();
 			ArrayList<String> constants = new ArrayList<String>(Arrays.asList(bodySetting.getAttribute(ResponderHandler.CONSTANTSNAME).split(",")));
 			String separator = bodySetting.getAttribute(ResponderHandler.SEPARATORNAME);
-			Header header = new Header(requestType, url, contentType, userAgent, customArgs, id, name);
-			Body body = new Body(constants, separator);
+			Header header = new Header(requestType, url, contentType, userAgent, Collections.synchronizedList(customArgs), id, name);
+			Body body = new Body(Collections.synchronizedList(constants), separator);
 			this.responders.put(id, new Responder(id, name, log, this.groupID, this.groupName, header, body));
 			TriggerHandler.registerResponder(id);
 			GroupHandler.registerResponder(id, this.groupID);

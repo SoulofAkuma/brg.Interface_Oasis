@@ -1,7 +1,9 @@
 package jsonhandler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,14 +23,14 @@ public class Trace implements Rule {
 	private static final int ARRAYQUERYREGEX = 3; //The string is a key value pair separated by an = sign which can be contained by an object in an array
 	//If an array is the last index this rule will return a boolean whether the last search was successful
 	
-	private ArrayList<Pair<Integer, String>> path; //The list of the JSON parameter names to trace stored by name - trace
+	private List<Pair<Integer, String>> path; //The list of the JSON parameter names to trace stored by name - trace
 	private String defVal; //Default value to add when this rule has failed
 	private String id;
-	private ArrayList<String> log = new ArrayList<String>(); 
+	private List<String> log = Collections.synchronizedList(new ArrayList<String>()); 
 	
 	public Trace() {}
 
-	public Trace(ArrayList<Pair<Integer, String>> path, String defVal, String id) {
+	public Trace(List<Pair<Integer, String>> path, String defVal, String id) {
 		this.path = path;
 		this.defVal = defVal;
 		this.id = id;
@@ -64,7 +66,7 @@ public class Trace implements Rule {
 		if (defVal == null) {
 			ParserHandler.reportGenRuleError("defVal", this.getClass().getName(), id);
 		}
-		return new Trace(path, defVal, id);
+		return new Trace(Collections.synchronizedList(path), defVal, id);
 	}
 
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable
@@ -269,7 +271,7 @@ public class Trace implements Rule {
 	}
 
 	@Override
-	public ArrayList<String> printLog() {
+	public List<String> printLog() {
 		return this.log;
 	}
 	

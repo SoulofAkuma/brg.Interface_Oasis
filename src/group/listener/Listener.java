@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import group.GroupHandler;
 import gui.Logger;
@@ -36,7 +37,7 @@ public class Listener implements Runnable {
 		this.groupName = groupName;
 		this.listenerID = listenerID;
 		this.log = log;
-		ListenerHandler.inputs.put(this.groupID, new ArrayList<String[]>());
+		ListenerHandler.inputs.put(this.groupID, Collections.synchronizedList(new ArrayList<String[]>()));
 		int tempPort = -1;
 		boolean isValid = false;
 		try {

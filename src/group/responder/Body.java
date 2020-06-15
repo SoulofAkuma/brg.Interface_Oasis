@@ -2,16 +2,17 @@ package group.responder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import constant.Constant;
 import constant.ConstantHandler;
 
 public class Body {
 
-	private ArrayList<String> content = new ArrayList<String>();
+	private List<String> content;
 	private String separator;
 
-	public Body(ArrayList<String> content, String separator) {
+	public Body(List<String> content, String separator) {
 		this.content = content;
 		this.separator = separator;
 	}
@@ -27,7 +28,7 @@ public class Body {
 		return body;
 	}
 
-	public ArrayList<String> getContent() {
+	public List<String> getContent() {
 		return content;
 	}
 

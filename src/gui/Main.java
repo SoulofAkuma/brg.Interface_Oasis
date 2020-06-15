@@ -14,16 +14,20 @@ import java.awt.Color;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 import javax.swing.border.LineBorder;
 
+import cc.Pair;
 import cc.Shell;
 import group.GroupHandler;
 
 import javax.swing.UIManager;
 
 import settings.*;
+import trigger.Trigger;
 import trigger.TriggerHandler;
+import trigger.TriggerType;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
@@ -65,6 +69,12 @@ public class Main extends JFrame {
 				}
 			}
 		});
+		ArrayList<Pair<String, String>> dummy = new ArrayList<Pair<String, String>>();
+		dummy.add(new Pair<String, String>("000000030", "000000012"));
+		ArrayList<String> dummy1 = new ArrayList<String>();
+		dummy1.add("000000011");
+		Trigger trigger = new Trigger(TriggerType.Listener, dummy, "000000100", "Test", dummy1, -1);
+		TriggerHandler.addTrigger(trigger);
 		
 		GroupHandler.getListenerHandler(GroupHandler.ltgID("000000011")).runListener("000000011");
 		TriggerHandler.runTrigger("000000080");

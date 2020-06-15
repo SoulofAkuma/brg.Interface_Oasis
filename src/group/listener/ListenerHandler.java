@@ -3,6 +3,7 @@ package group.listener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +25,7 @@ public class ListenerHandler {
 	
 	private static ConcurrentHashMap<String, String> activePorts = new ConcurrentHashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
 	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
-	protected static ConcurrentHashMap<String, ArrayList<String[]>> inputs = new ConcurrentHashMap<String, ArrayList<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
+	protected static ConcurrentHashMap<String, List<String[]>> inputs = new ConcurrentHashMap<String, List<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
 	
 	private static final String IDNAME = "id";
 	private static final String NAMENAME = "name";
@@ -121,7 +122,7 @@ public class ListenerHandler {
 		return null;
 	}
 	
-	public static ArrayList<String[]> getRequest(String listenerID) {
+	public static List<String[]> getRequest(String listenerID) {
 		return ListenerHandler.inputs.get(listenerID);
 	}
 	

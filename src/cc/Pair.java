@@ -18,4 +18,5 @@ public class Pair<K, V> {
 	public V getValue() {
 		return this.value;
 	}
+	
 }

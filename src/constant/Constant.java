@@ -2,6 +2,7 @@ package constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
@@ -10,10 +11,10 @@ public class Constant {
 	
 	private String id;
 	private String name;
-	private ArrayList<String> order;
+	private List<String> order;
 	private ConcurrentHashMap<String, Value> values;
 	
-	public Constant(String id, String name, ArrayList<String> order, ConcurrentHashMap<String, Value> values) {
+	public Constant(String id, String name, List<String> order, ConcurrentHashMap<String, Value> values) {
 		this.id = id;
 		this.name = name;
 		this.order = order;
@@ -54,7 +55,7 @@ public class Constant {
 		this.name = name;
 	}
 
-	public ArrayList<String> getOrder() {
+	public List<String> getOrder() {
 		return order;
 	}
 

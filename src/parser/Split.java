@@ -1,7 +1,9 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -16,7 +18,7 @@ public class Split implements Rule {
 	private int n; //Splits only at every nth appearance
 	private boolean regex;
 	private boolean useHeader;
-	private ArrayList<String> log = new ArrayList<String>();
+	private List<String> log = Collections.synchronizedList(new ArrayList<String>());
 	
 	public Split() {}
 	
@@ -77,7 +79,7 @@ public class Split implements Rule {
 	}
 
 	@Override
-	public ArrayList<String> printLog() {
+	public List<String> printLog() {
 		return this.log;
 	}
 	

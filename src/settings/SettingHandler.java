@@ -1,9 +1,11 @@
 package settings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +16,7 @@ import cc.Pair;
 import constant.ConstantHandler;
 import filehandler.Manager;
 import group.GroupHandler;
-import gui.LaunchIDs;
+import gui.LaunchIDS;
 import gui.Logger;
 import gui.Main;
 import gui.MessageOrigin;
@@ -266,10 +268,29 @@ public class SettingHandler {
 		ParserHandler.init(SettingHandler.parserMasterSetting);
 		ConstantHandler.init(SettingHandler.constantMasterSetting);
 		IndexAssignerHandler.init(SettingHandler.indexAssignerMasterSetting);
+		LaunchIDS.init(SettingHandler.launchIDSMasterSetting);
 	}
 	
-	public static String alts(ArrayList<String> al) {
+	public static String alts(List<String> al) {
 		return String.join(",", al.toArray(new String[al.size()]));
+	}
+	
+	public static HashMap<String, Boolean> getMatchList(Set<String> keySet, boolean state) {
+		HashMap<String, Boolean> matchList = new HashMap<String, Boolean>();
+		for (String key : keySet) {
+			matchList.put(key, state);
+		}
+		return matchList;
+	}
+	
+	public static ArrayList<String> getConditionalList(HashMap<String, Boolean> matchList, boolean condition) {
+		ArrayList<String> matches = new ArrayList<String>();
+		for (Map.Entry<String, Boolean> matchPair : matchList.entrySet()) {
+			if (matchPair.getValue() == condition) {
+				matches.add(matchPair.getKey());
+			}
+		}
+		return matches;
 	}
 	
 	public static void disableSubByIdAttribute(Setting master, ArrayList<String> disable) {
@@ -303,7 +324,7 @@ public class SettingHandler {
 		ConstantHandler.close();
 		ParserHandler.close();
 		IndexAssignerHandler.close();
-		LaunchIDs.close();
+		LaunchIDS.close();
 		Manager.writeFile(fileID, masterSetting.getXML(), false);
 	}
 	
@@ -398,27 +419,70 @@ public class SettingHandler {
 			checkMe.disable();
 			return;
 		}
-		boolean disable = !checkIndIndexAssignerSetting(checkMe, ite, localIDs);
+		ArrayList<String> iorder = new ArrayList<String>();
+		ArrayList<String> rorder = new ArrayList<String>();
+		ArrayList<String> indexIDS = new ArrayList<String>();
+		ArrayList<String> regexIDS = new ArrayList<String>();
+		boolean disable = !checkIndIndexAssignerSetting(checkMe, ite, localIDs, iorder, rorder);
 		String id = (disable) ? "unset" : checkMe.getAttribute("id");
 		if (!disable) {
 			int innerIte = 0;
 			for (Setting index : checkMe.getSettings("Indexes").get(0).getSubsettings()) {
 				innerIte++;
-				if (!checkIndIndexSetting(index, id, innerIte)) {
+				if (!checkIndIndexSetting(index, id, innerIte, indexIDS)) {
 					index.disable();
 				}
 			}
 			innerIte = 0;
 			for (Setting regex : checkMe.getSettings("Regexes").get(0).getSubsettings()) {
 				innerIte++;
-				if (!checkIndRegexSetting(regex, id, innerIte)) {
+				if (!checkIndRegexSetting(regex, id, innerIte, regexIDS)) {
 					regex.disable();
+				}
+			}
+			
+			Set<String> indexIDSSet = new HashSet<String>(indexIDS);
+			Set<String> regexIDSSet = new HashSet<String>(regexIDS);
+			if (indexIDSSet.size() != indexIDS.size()) {
+				reportSyntaxError("IndexAssigner Attribute Checker", "Duplicate id in iorder", false, ite);
+				disable = true;
+			}
+			if (regexIDSSet.size() != regexIDS.size()) {
+				reportSyntaxError("IndexAssigner Attribute Checker", "Duplicate id in rorder", false, ite);
+				disable = true;
+			}
+			if (!disable) {
+				String missingIndex = "";
+				for (String indexID : iorder) {
+					if (!indexIDS.contains(indexID)) {
+						missingIndex += indexID + ",";
+					}
+				}
+				String missingRegex = "";
+				for (String regexID : rorder) {
+					if (!regexIDS.contains(regexID)) {
+						missingRegex += regexID + ",";
+					}
+				}
+				if (missingIndex.length() > 0) {
+					reportSyntaxError("IndexAssigner Attribute Checker", "Missing iorder indexes (" + missingIndex.substring(0, missingIndex.length() - 1), false, ite);
+					disable = true;
+				}
+				if (missingRegex.length() > 0) {
+					reportSyntaxError("IndexAssigner Attribute Checker", "Missing rorder indexes (" + missingRegex.substring(0, missingRegex.length() - 1), false, ite);
+					disable = true;
 				}
 			}
 		}
 		
-		SettingHandler.IDS.putAll(localIDs);
-		SettingHandler.INDEXASSIGNERIDS.addAll(localIDs.keySet());
+		if (disable) {
+			reportSyntaxError("IndexAssigner Checker", "Removing last mentioned IndexAssigner", false, ite);
+			checkMe.disable();
+		} else {
+			SettingHandler.IDS.putAll(localIDs);
+			SettingHandler.INDEXASSIGNERIDS.addAll(localIDs.keySet());
+		}
+		
 	}
 	
 	private static void checkLaunchIDSSetting(Setting checkMe) {
@@ -585,22 +649,28 @@ public class SettingHandler {
 				}
 			}
 			
-			String[] order = checkMe.getAttribute("order").split(",");
-			ArrayList<String> ruleIDs = new ArrayList<String>();
-			for (Map.Entry<String, IDType> idE : localIDs.entrySet()) {
-				if (idE.getValue() == IDType.Rule) {
-					ruleIDs.add(idE.getKey());
-				}
-			}
-			String missing = "";
-			for (String rule : order) {
-				if (!ruleIDs.contains(rule)) {
-					missing += rule + ",";
-				}
-			}
-			if (missing.length() > 0) {
-				reportSyntaxError("Parser Attribute Checker", "Missing Rules (" + missing.substring(0, missing.length() - 1) + ")", false, id);
+			ArrayList<String> orderList = new ArrayList<String>(Arrays.asList(checkMe.getAttribute("order").split(",")));
+			Set<String> order = new HashSet<String>(orderList);
+			if (orderList.size() != order.size()) {
+				reportSyntaxError("Parser Attribute Checker", "Duplicate id in order", false, ite);
 				disable = true;
+			} else {
+				ArrayList<String> ruleIDs = new ArrayList<String>();
+				for (Map.Entry<String, IDType> idE : localIDs.entrySet()) {
+					if (idE.getValue() == IDType.Rule) {
+						ruleIDs.add(idE.getKey());
+					}
+				}
+				String missing = "";
+				for (String rule : order) {
+					if (!ruleIDs.contains(rule)) {
+						missing += rule + ",";
+					}
+				}
+				if (missing.length() > 0) {
+					reportSyntaxError("Parser Attribute Checker", "Missing Rules (" + missing.substring(0, missing.length() - 1) + ")", false, id);
+					disable = true;
+				}
 			}
 		}
 		
@@ -646,21 +716,27 @@ public class SettingHandler {
 				}
 			}
 			String missing = "";
-			String[] order = checkMe.getAttribute("order").split(",");
 			ArrayList<String> valueIDs = new ArrayList<String>();
-			for (Map.Entry<String, IDType> idE : localIDs.entrySet()) {
-				if (idE.getValue() == IDType.Value) {
-					valueIDs.add(idE.getKey());
-				}
-			}
-			for (String value : order) {
-				if (!valueIDs.contains(value)) {
-					missing += value + ",";
-				}
-			}
-			if (missing.length() > 0) {
-				reportSyntaxError("Constant Attribute Checker", "Missing Values (" + missing.substring(0, missing.length() - 1) + ")", false, id);
+			ArrayList<String> orderList = new ArrayList<String>(Arrays.asList(checkMe.getAttribute("order").split(",")));
+			Set<String> order = new HashSet<String>(orderList);
+			if (order.size() != orderList.size()) {
+				reportSyntaxError("Constant Attribute Checker", "Duplicate ID in order value", false, ite);
 				disable = true;
+			} else {
+				for (Map.Entry<String, IDType> idE : localIDs.entrySet()) {
+					if (idE.getValue() == IDType.Value) {
+						valueIDs.add(idE.getKey());
+					}
+				}
+				for (String value : order) {
+					if (!valueIDs.contains(value)) {
+						missing += value + ",";
+					}
+				}
+				if (missing.length() > 0) {
+					reportSyntaxError("Constant Attribute Checker", "Missing Values (" + missing.substring(0, missing.length() - 1) + ")", false, id);
+					disable = true;
+				}
 			}
 		}
 		
@@ -673,10 +749,10 @@ public class SettingHandler {
 		}
 	}
 	
-	public static boolean checkIndIndexAssignerSetting(Setting checkMe, int ite, HashMap<String, IDType> localIDs) {
+	public static boolean checkIndIndexAssignerSetting(Setting checkMe, int ite, HashMap<String, IDType> localIDs, ArrayList<String> iorder, ArrayList<String> rorder) {
 		boolean next = false;
 		String id = null;
-		createMissingTable("name","id","rmMatch");
+		createMissingTable("name","id","rmMatch", "iorder", "rorder");
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {
 				case "name":
@@ -705,6 +781,24 @@ public class SettingHandler {
 					if (!matchesRegex(SettingHandler.REGEXBOOL, attribute.getValue())) {
 						reportSyntaxError("IndexAssigner Attribute Checker", "Invalid rmMatch value " + attribute.getValue() + "\"", false, ite);
 						next = true;
+					}
+				break;
+				case "iorder":
+					updateMissing("iorder");
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
+						reportSyntaxError("Index Assigner Attribute Checker", "Invalid iorder value \"" + attribute.getValue() + "\"", false, ite);
+						next = true;
+					} else {
+						iorder.addAll(new ArrayList<String>(Arrays.asList(attribute.getValue().split(","))));
+					}
+				break;
+				case "rorder":
+					updateMissing("rorder");
+					if (!matchesRegex(SettingHandler.REGEXIDLIST, attribute.getValue())) {
+						reportSyntaxError("Index Assigner Attribute Checker", "Invalid rorder value \"" + attribute.getValue() + "\"", false, ite);
+						next = true;
+					} else {
+						rorder.addAll(new ArrayList<String>(Arrays.asList(attribute.getValue().split(","))));
 					}
 				break;
 				default:
@@ -748,21 +842,33 @@ public class SettingHandler {
 		return !next;
 	}
 	
-	public static boolean checkIndIndexSetting(Setting checkMe, String id, int innerIte) {
+	public static boolean checkIndIndexSetting(Setting checkMe, String id, int innerIte, ArrayList<String> indexIDS) {
 		boolean next = false;
-		createMissingTable("position","key");
+		String indexID = null;
+		createMissingTable("position","key", "id");
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {
 				case "position":
+					updateMissing("position");
 					if (!matchesRegex("[0-9]+", attribute.getValue())) {
 						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid position value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
 					}
 				break;
 				case "key":
+					updateMissing("key");
 					if (!matchesRegex(SettingHandler.REGEXSTRICTNAME, attribute.getValue())) {
 						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid key value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
+					}
+				break;
+				case "id":
+					updateMissing("id");
+					if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+						reportSyntaxError("IndexAssigner Index Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\"", false, id, innerIte);
+						next = true;
+					} else {
+						indexID = attribute.getValue();
 					}
 				break;
 				default:
@@ -772,23 +878,28 @@ public class SettingHandler {
 		
 		if (next) {
 			reportSyntaxError("IndexAssigner Index Checker", "Disabling last mentioned Index", false, id, innerIte);
+		} else {
+			indexIDS.add(indexID);
 		}
 		
 		return !next;
 	}
 	
-	public static boolean checkIndRegexSetting(Setting checkMe, String id, int innerIte) {
+	public static boolean checkIndRegexSetting(Setting checkMe, String id, int innerIte, ArrayList<String> regexIDS) {
 		boolean next = false;
-		createMissingTable("regex","keys","defInd");
+		String regexID = null;
+		createMissingTable("regex","keys","defInd", "id");
 		for (Map.Entry<String, String> attribute : checkMe.getAttributes().entrySet()) {
 			switch (attribute.getKey()) {
 				case "defInd":
+					updateMissing("defInd");
 					if (!matchesRegex("[0-9]+", attribute.getValue())) {
 						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid defInd value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
 					}
 				break;
 				case "keys":
+					updateMissing("keys");
 					if (!matchesRegex(SettingHandler.REGEXSTRICTNAMELIST, attribute.getValue())) {
 						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid keys value \"" + attribute.getValue() + "\"", false, id, innerIte);
 						next = true;
@@ -797,6 +908,15 @@ public class SettingHandler {
 				case "regex":
 					updateMissing("regex");
 				break;
+				case "id":
+					updateMissing("id");
+					if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+						reportSyntaxError("IndexAssigner Regex Attribute Checker", "Invalid id value \"" + attribute.getValue() + "\"", false, id, innerIte);
+						next = true;
+					} else {
+						regexID = attribute.getValue();
+					}
+				break;
 				default:
 					reportSyntaxError("IndexAssigner Index Attribute Checker", "Unknown Attribute \"" + attribute.getKey() + "\" = \"" + attribute.getValue() + "\"", true, id, innerIte);
 			}
@@ -804,6 +924,8 @@ public class SettingHandler {
 		
 		if (next) {
 			reportSyntaxError("IndexAssigner Index Checker", "Disabling last mentioned Regex", false, id, innerIte);
+		} else {
+			regexIDS.add(regexID);
 		}
 		
 		return !next;
@@ -1242,14 +1364,15 @@ public class SettingHandler {
 								}
 								String missing = "";
 								String[] cids = attribute.getValue().split(",");
+								System.out.println(cids[0]);
 								for (String cid : cids) {
 									if (!SettingHandler.CONSTANTIDS.contains(cid)) {
 										missing += cid + ",";
 									}
 								}
 								if (missing.length() > 0) {
-									next = true;
 									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid customArgs value \"" + attribute.getValue() + " (The following constants do not exist: " + missing.substring(0, missing.length() - 1) + ")", false, responderID, inner);
+									next = true;
 								}
 							break;
 							default:

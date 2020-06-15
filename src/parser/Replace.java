@@ -1,7 +1,9 @@
 package parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -15,7 +17,7 @@ public class Replace implements Rule {
 	private String replace; //Replacement String
 	private boolean regex; //Find is a regular expression
 	private boolean useHeader; //Get find Value from the Header
-	private ArrayList<String> log = new ArrayList<String>(); //Log of rule steps
+	private List<String> log = Collections.synchronizedList(new ArrayList<String>()); //Log of rule steps
 	
 	public Replace() {}
 	
@@ -77,7 +79,7 @@ public class Replace implements Rule {
 	}
 	
 	@Override
-	public ArrayList<String> printLog() {
+	public List<String> printLog() {
 		return this.log;
 	}
 	

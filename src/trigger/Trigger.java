@@ -19,7 +19,7 @@ import parser.ParserHandler;
 public class Trigger implements Runnable {
 	
 	private TriggerType type; //Type of the trigger
-	private ArrayList<Pair<String, String>> responderIDs;//Responder details to trigger from listener (parserID, (groupID, responderID))
+	private ArrayList<Pair<String, String>> responderIDs;//Responder details to trigger from listener (parserID, responderID)
 	private String triggerID; //id of the trigger
 	private String triggerName; //name of the trigger
 	private ArrayList<String> triggeredBy; //the ids which will be watched by the trigger (Type Responder: ResponderIDs, Type Listener: ListenerIDs)
