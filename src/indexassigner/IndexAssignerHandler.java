@@ -41,8 +41,8 @@ public class IndexAssignerHandler {
 			}
 			String name = indexAssignerSetting.getAttribute(IndexAssignerHandler.NAMENAME);
 			String id = indexAssignerSetting.getAttribute(IndexAssignerHandler.IDNAME);
-			ArrayList<String> iorder = new ArrayList<String>(Arrays.asList(indexAssignerSetting.getAttribute(IndexAssignerHandler.IORDERNAME)));
-			ArrayList<String> rorder = new ArrayList<String>(Arrays.asList(indexAssignerSetting.getAttribute(IndexAssignerHandler.RORDERNAME)));
+			ArrayList<String> iorder = (indexAssignerSetting.getAttribute(IndexAssignerHandler.IORDERNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(indexAssignerSetting.getAttribute(IndexAssignerHandler.IORDERNAME).split(",")));
+			ArrayList<String> rorder = (indexAssignerSetting.getAttribute(IndexAssignerHandler.RORDERNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(indexAssignerSetting.getAttribute(IndexAssignerHandler.RORDERNAME).split(",")));
 			boolean rmMatch = Boolean.parseBoolean(indexAssignerSetting.getAttribute(IndexAssignerHandler.RMMATCHNAME));
 			Setting indexesSetting = indexAssignerSetting.getSettings(IndexAssignerHandler.INDEXESNAME).get(0);
 			ConcurrentHashMap<String, Pair<Integer, String>> indexes = new ConcurrentHashMap<String, Pair<Integer, String>>();
@@ -89,6 +89,7 @@ public class IndexAssignerHandler {
 				newAttributes.put(IndexAssignerHandler.RMMATCHNAME, String.valueOf(indexAssigner.getRmMatch()));
 				newAttributes.put(IndexAssignerHandler.IORDERNAME, SettingHandler.alts(indexAssigner.getIorder()));
 				newAttributes.put(IndexAssignerHandler.RORDERNAME, SettingHandler.alts(indexAssigner.getRorder()));
+				indexAssignerSetting.addReplaceAttributes(newAttributes);
 				Setting indexesSetting = indexAssignerSetting.getSettings(IndexAssignerHandler.INDEXESNAME).get(0);
 				Setting regexesSetting = indexAssignerSetting.getSettings(IndexAssignerHandler.REGEXESNAME).get(0);
 				ConcurrentHashMap<String, Pair<Integer, String>> indexes = indexAssigner.getIndexes();
@@ -178,5 +179,22 @@ public class IndexAssignerHandler {
 			regexesSetting.addSetting(IndexAssignerHandler.SREGEXNAME, null, regexAttributes);
 		}
 	}
-
+	
+	public static IndexAssigner getIndexAsssigner(String id) {
+		return (IndexAssignerHandler.indexAssigners.containsKey(id)) ? IndexAssignerHandler.indexAssigners.get(id) : null;
+	}
+	
+	public static void removeIndexAssigner(String id) {
+		if (SettingHandler.removeParent(id, IndexAssignerHandler.IDNAME, IndexAssignerHandler.SETTINGNAME, IndexAssignerHandler.indexAssingerMastserSetting)) {
+			IndexAssignerHandler.indexAssigners.remove(id);
+		}
+	}
+	
+	public static void removeRegex(String indexAssignerID, String regexID) {
+		SettingHandler.removeElement(indexAssignerID, regexID, IndexAssignerHandler.IDNAME, IndexAssignerHandler.SETTINGNAME, IndexAssignerHandler.REGEXESNAME, IndexAssignerHandler.SREGEXNAME, IndexAssignerHandler.indexAssingerMastserSetting);
+	}
+	
+	public static void removeIndex(String indexAssignerID, String indexID) {
+		SettingHandler.removeElement(indexAssignerID, indexID, IndexAssignerHandler.IDNAME, IndexAssignerHandler.SETTINGNAME, IndexAssignerHandler.INDEXESNAME, IndexAssignerHandler.INDEXNAME, IndexAssignerHandler.indexAssingerMastserSetting);
+	}
 }

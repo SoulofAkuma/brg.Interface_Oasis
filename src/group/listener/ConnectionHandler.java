@@ -23,15 +23,13 @@ import trigger.TriggerHandler;
 
 public class ConnectionHandler implements Runnable {
 	
-	private final int responseID;
 	private final String parentID;
 	private Socket socket;
 	private RequestType requestType;
 	private static final String[] stdCharsets = new String[] {"US-ASCII","ISO-8859-1","UTF-8","UTF-16BE","UTF-16LE","UTF-16"};
 	private final String timeoutID;
 	
-	public ConnectionHandler(int responseID, String parentID, Socket socket, String timeoutID) {
-		this.responseID = responseID;
+	public ConnectionHandler(String parentID, Socket socket, String timeoutID) {
 		this.parentID = parentID;
 		this.socket = socket;
 		this.timeoutID = timeoutID;
@@ -125,8 +123,8 @@ public class ConnectionHandler implements Runnable {
 							byte[] bodyBuffer = new byte[contentLength];
 							in.read(bodyBuffer);
 							body = new String(bodyBuffer, stdC);
-							reportInformation(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"), false);
-							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"));
+							reportInformation(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\"}"), false);
+							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\"}"));
 							out.flush();
 							success = true;
 							break;
@@ -141,8 +139,8 @@ public class ConnectionHandler implements Runnable {
 							reportInformation(getResponse(200, "OK"), false);
 							out.write(getResponse(200, "OK"));
 						} else {
-							reportInformation(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"), false);
-							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\",\"Request-Header-Content\":\" " + request + "\",\"Request-Body-Content\":\"" + body + "\"}"));							
+							reportInformation(getResponse(200, "OK", "text/json", "{\"Status\":\"Received Request\"}"), false);	
+							out.write(getResponse(200, "OK", "text/json", "{\"Status\":\"Received Request\"}"));
 						}
 						out.flush();
 						success = true;
@@ -158,11 +156,9 @@ public class ConnectionHandler implements Runnable {
 			Logger.reportException("ConnectionHandler", "run", e);
 		}
 		if (success) {
-			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {request, body});
 			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener successfully parsed received request - Reporting to trigger", this.parentID, null, null, false);
 			TriggerHandler.reportListener(this.parentID, request, body);
 		} else {
-			ListenerHandler.inputs.get(this.parentID).set(this.responseID, new String[] {null, null});
 			Logger.addMessage(MessageType.Warning, MessageOrigin.Listener, "Listener parsing of received request failed - Aborting trigger report", this.parentID, null, null, false);
 		}
 		GroupHandler.removeCooldown(this.timeoutID);
@@ -211,7 +207,7 @@ public class ConnectionHandler implements Runnable {
 	
 	private void reportInformation(String send, boolean isError) {
 		MessageType type = (isError) ? MessageType.Error : MessageType.Information;
-		Logger.addMessage(type, MessageOrigin.Listener, "Sent response " + this.responseID + " to " + this.requestType.name() + " request", this.parentID, new String[] {"ResponseID", "RequestType", "Sent"}, new String[] {String.valueOf(this.responseID), this.requestType.name(), send}, false);
+		Logger.addMessage(type, MessageOrigin.Listener, "Sent response to " + this.requestType.name() + " request", this.parentID, new String[] {"RequestType", "Sent"}, new String[] {this.requestType.name(), send}, false);
 	}
 		
 

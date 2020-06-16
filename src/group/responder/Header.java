@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import cc.Pair;
@@ -51,6 +52,8 @@ public class Header {
 			} else {
 				this.requestTypeValue = "POST";
 			}
+		} else {
+			this.requestTypeValue = this.requestType;
 		}
 		this.urlVal = ConstantHandler.getConstant(this.url, parsedHeader, parsedBody);
 		String contentType = (this.contentType == null) ? "Content-Type: text/plain" : "Content-Type: " + ConstantHandler.getConstant(this.contentType, parsedHeader, parsedBody) + "\r\n";
@@ -77,7 +80,7 @@ public class Header {
 						this.urlVal = "http://" + this.urlVal;
 					}
 				}
-				uri = new URI("parsedHeader");
+				uri = new URI(this.urlVal);
 				this.portVal = (uri.getPort() == -1) ? 80 : uri.getPort();
 				this.hostVal = uri.getHost();
 			} catch (URISyntaxException e) {

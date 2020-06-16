@@ -19,20 +19,12 @@ public class StdGetParser implements Parser {
 		this.log.clear();
 		String url = parsedHeader.get("URL");
 		this.log.add("Applying GET Parser on url \"" + url + "\"");
-		URI uri;
-		try {
-			uri = new URI(url);
-		} catch (URISyntaxException e) {
-			this.log.add("Malformed URL - Returning empty Map");
-			Logger.addMessage(MessageType.Error, MessageOrigin.Parser, "Header URL syntax malformed - Cannot transform into uri (\"" + url + "\")", SettingHandler.GETPARSERID, null, null, false);
-			return new HashMap<String, String>();
-		}
-		String query = uri.getQuery();
+		String query = url.substring(url.indexOf("?") + 1, url.length());
 		if (query == null) {
 			return new HashMap<String, String>();
 		}
 		HashMap<String, String> res = new HashMap<String, String>();
-		String[] parts = query.split("\\?");
+		String[] parts = query.split("\\&");
 		for (String part : parts) {
 			String[] params = part.split("=");
 			if (params.length != 2) {

@@ -30,11 +30,6 @@ public class Constant {
 		values.put(value.id, value);
 	}
 	
-	public void removeValue(int index) {
-		this.values.remove(order.get(index));
-		this.order.remove(index);
-	}
-	
 	public String getConstant(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
 		String reVal = "";
 		for (String valueID : this.order) {
@@ -73,6 +68,22 @@ public class Constant {
 
 	public String getId() {
 		return id;
+	}
+	
+	public void addValue(String id, Value value) {
+		this.values.put(id, value);
+		this.order.add(id);
+	}
+	
+	public void removeValue(String id) {
+		this.values.remove(id);
+		this.order.remove(id);
+		ConstantHandler.removeValue(this.id, id);
+	}
+	
+	public void changeValuePosition(String id, int position) {
+		this.order.remove(id);
+		this.order.add(position, id);
 	}
 	
 }

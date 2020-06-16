@@ -15,7 +15,7 @@ import settings.SettingHandler;
 
 public class TriggerHandler {
 	
-	private static ConcurrentHashMap<String, Trigger> triggers = new ConcurrentHashMap<String, Trigger>(); //List of all the triggers which will be swept through if their group is active
+	public static ConcurrentHashMap<String, Trigger> triggers = new ConcurrentHashMap<String, Trigger>(); //List of all the triggers which will be swept through if their group is active
 	private static ConcurrentHashMap<String, Thread> triggerThreads = new ConcurrentHashMap<String, Thread>(); //List of all the trigger threads
 	private static ConcurrentHashMap<String, Boolean> triggerThreadStates = new ConcurrentHashMap<String, Boolean>(); //List of all trigger thread states (running or not running)
 	protected static ConcurrentHashMap<String, List<Pair<String, String>>> listenerReports = new ConcurrentHashMap<String, List<Pair<String, String>>>();
@@ -55,8 +55,9 @@ public class TriggerHandler {
 	
 	public static void runTrigger(String triggerID) {
 		if (!TriggerHandler.triggerThreadStates.get(triggerID)) {
-			triggerThreads.get(triggerID).start();
 			triggerThreadStates.put(triggerID, true);
+			triggerThreads.put(triggerID, new Thread(TriggerHandler.triggers.get(triggerID)));
+			triggerThreads.get(triggerID).start();
 		}
 	}
 	
@@ -114,6 +115,14 @@ public class TriggerHandler {
 		TriggerHandler.triggers.put(trigger.getTriggerID(), trigger);
 		TriggerHandler.triggerThreads.put(trigger.getTriggerID(), new Thread(trigger));
 		TriggerHandler.triggerThreadStates.put(trigger.getTriggerID(), false);
+	}
+	
+	public static void removeTrigger(String id) {
+		if (SettingHandler.removeParent(id, TriggerHandler.IDNAME, TriggerHandler.SETTINGNAME, TriggerHandler.triggerMasterSetting)) {
+			TriggerHandler.triggers.remove(id);
+			TriggerHandler.triggerThreads.remove(id);
+			TriggerHandler.triggerThreadStates.remove(id);
+		}
 	}
 	
 	private static String responderIDsToString(ArrayList<Pair<String, String>> responderIDs) {

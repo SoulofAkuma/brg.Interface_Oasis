@@ -11,6 +11,7 @@ import cc.Pair;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
+import settings.SettingHandler;
 
 public class IndexAssigner {
 	
@@ -45,6 +46,9 @@ public class IndexAssigner {
 			ArrayList<String> matches = new ArrayList<String>();
 			for (Iterator<String> ite = results.iterator(); ite.hasNext();) {
 				String result = ite.next();
+				if (result == null) {
+					continue;
+				}
 				if (!result.replaceAll(this.regexes.get(regexID).getKey(), "dummy").equals(result)) {
 					matches.add(result);
 					if (rmMatch) {
@@ -79,7 +83,7 @@ public class IndexAssigner {
 		if (lines.length > 0) {
 			String[] params = lines[0].split(" ");
 			returnVal.put("RequestType", params[0]);
-			returnVal.put("URI", params[1]);
+			returnVal.put("URL", params[1]);
 			returnVal.put("Protocol", params[2]);
 		}
 		for (int i = 1; i < lines.length; i++) {
@@ -170,6 +174,39 @@ public class IndexAssigner {
 
 	public void setRorder(List<String> rorder) {
 		this.rorder = rorder;
+	}
+	
+	public void addRegex(String id, String regex, String[] keys, int defInd) {
+		this.rorder.add(id);
+		this.regexes.put(id, new Pair<String, String[]>(regex, keys));
+		this.defInd.put(id, defInd);
+	}
+	
+	public void addIndex(String id, int position, String key) {
+		this.iorder.add(id);
+		this.indexes.put(id, new Pair<Integer, String>(position, key));
+	}
+	
+	public void changeRegexPosition(String id, int position) {
+		this.rorder.remove(id);
+		this.rorder.add(position, id);
+	}
+	
+	public void changeIndexPosition(String id, int position) {
+		this.iorder.remove(id);
+		this.iorder.add(position, id);
+	}
+	
+	public void removeRegex(String id) {
+		this.rorder.remove(id);
+		this.regexes.remove(id);
+		IndexAssignerHandler.removeRegex(this.id, id);
+	}
+	
+	public void removeIndex(String id) {
+		this.iorder.remove(id);
+		this.indexes.remove(id);
+		IndexAssignerHandler.removeIndex(this.id, id);
 	}
 	
 }

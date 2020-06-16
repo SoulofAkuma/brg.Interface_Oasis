@@ -79,6 +79,13 @@ public class Discard implements Rule {
 		ArrayList<String> discarded = new ArrayList<String>();
 		boolean s = false;
 		for (String element : input) {
+			if (element == null) {
+				if (this.findValue.isEmpty()) {
+					this.log.add("Element Empty, discarding");
+				} else {
+					this.log.add("Element Empty");
+				}
+			}
 			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
 			if (s) {
 				this.log.add("Discarding element due to discard subsequent flag");
@@ -148,10 +155,11 @@ public class Discard implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.findValue);
+		rule.put("find", this.find);
 		rule.put("inverted", String.valueOf(this.inverted));
 		rule.put("regex", String.valueOf(this.regex));
 		rule.put("flags", String.join(",", this.flags));
+		rule.put("useHeader", String.valueOf(this.useHeader));
 		return rule;
 	}
 }

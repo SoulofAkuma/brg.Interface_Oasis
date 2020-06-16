@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
 import gui.Logger;
+import parser.ParserHandler;
 import settings.Setting;
 
 public class GroupHandler {
@@ -98,6 +99,21 @@ public class GroupHandler {
 		responderHandler.init();
 		GroupHandler.groupNames.put(id, name);
 		GroupHandler.groups.put(id, new Pair<ListenerHandler, ResponderHandler>(listenerHandler, responderHandler));
+	}
+	
+	public static void removeGroup(String id) {
+		int sIDmatch = -1;
+		for (Setting groupSetting : GroupHandler.groupHandlerMasterSetting.getSettings(GroupHandler.SETTINGNAME)) {
+			if (groupSetting.isEnabled() && groupSetting.getAttribute(GroupHandler.IDNAME).equals(id)) {
+				sIDmatch = groupSetting.getSID();
+				break;
+			}
+		}
+		if (sIDmatch != -1) {
+			GroupHandler.groups.get(id).getKey().stopListener();
+			GroupHandler.groups.remove(id);
+			GroupHandler.groupHandlerMasterSetting.removeSetting(sIDmatch);
+		}
 	}
 	
 	public static Pair<ListenerHandler, ResponderHandler> getGroup(String key) {

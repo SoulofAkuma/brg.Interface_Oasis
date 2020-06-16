@@ -122,7 +122,29 @@ public class ResponderHandler {
 		this.responders.put(responder.getResponderID(), responder);
 	}
 	
+	public void removeResponder(String id) {
+		int sIDmatch = -1;
+		for (Setting responderSetting : this.responderMasterSetting.getSettings(ResponderHandler.SETTINGNAME)) {
+			if (responderSetting.isEnabled() && responderSetting.getAttribute(ResponderHandler.IDNAME).equals(id)) {
+				sIDmatch = responderSetting.getSID();
+				break;
+			}
+		}
+		if (sIDmatch != -1) {
+			this.responders.remove(id);
+			this.responderMasterSetting.removeSetting(sIDmatch);
+		}
+	}
+	
+	public Responder genResponder(String responderID, String name, boolean log, Header header, Body body) {
+		return new Responder(responderID, name, log, this.groupID, this.groupName, header, body);
+	}
+	
 	public String getGroupName() {
 		return this.groupName;
+	}
+	
+	public Responder getResponder(String id) {
+		return (this.responders.containsKey(id)) ? this.responders.get(id) : null;
 	}
 }

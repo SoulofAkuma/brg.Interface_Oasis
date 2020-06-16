@@ -69,6 +69,10 @@ public class Trace implements Rule {
 	@Override
 	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
 		this.log.clear();
+		if (input.get(0) == null || input.get(0).isBlank()) {
+			this.log.add("Body Empty");
+			return input;
+		}
 		this.log.add("Applying parser on \"" + input.get(0).substring(0, 10) + "...\"");
 		String traceResult = trace(input.get(0));
 		if (traceResult == null) {
@@ -238,6 +242,7 @@ public class Trace implements Rule {
 			nodes = nodes.substring(0, nodes.length() - 1);
 		}
 		rule.put("nodes", nodes);
+		rule.put("defVal", this.defVal);
 		return rule;
 	}
 }

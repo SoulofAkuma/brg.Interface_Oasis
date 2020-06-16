@@ -6,24 +6,24 @@
 			</Listeners>
 			<Responders>
 				<Responder log="true" name="SampleResponder" id="000000012">
-					<Header url="000000050" userAgent="000000042" contentType="000000045" requestType="post"/>
-					<Body constants="000000060,000000063,000000066" separator="&amp;"/>
+					<Header url="000000050" userAgent="000000042" contentType="000000045" requestType="GET"/>
+					<Body constants="" separator="&amp;"/>
 				</Responder>
 			</Responders>
 		</Group>
 	</Groups>
 	<Triggers>
-		<Trigger name="g1LToR" id="000000080" type="Listener" responderIDs="000000030,000000012" triggeredBy="000000011"/>
+		<Trigger name="g1LToR" id="000000080" type="Listener" responderIDs="000000005,000000012" triggeredBy="000000011"/>
 	</Triggers>
 	<Parsers>
-		<Parser name="testParser" id="000000030" order="000000031,000000032,000000033" indexAssigner="000000090">
+		<Parser name="testParser" id="000000030" order="000000031,000000032,000000033" indexAssigners="000000090">
 			<Rules>
 				<Rule type="jsonhandler.Trace" id="000000031" defVal="fail1" path="0,glossary,0,GlossDiv,0,GlossList,0,GlossEntry,0,SortAs"/>
 				<Rule type="jsonhandler.Trace" id="000000032" defVal="fail2" path="0,glossary,0,GlossDiv,0,GlossList,0,GlossEntry,0,GlossDef"/>
 				<Rule type="jsonhandler.Trace" id="000000033" defVal="fail3" path="0,glossary,0,GlossDiv,0,GlossList,0,GlossEntry,0,GlossDef,0,GlossSeeAlso,1,1"/>
 			</Rules>
 		</Parser>
-		<Parser name="testParser1" id="000000034" order="000000035,000000036,000000037" indexAssigner="000000090">
+		<Parser name="testParser1" id="000000034" order="000000035,000000036,000000037" indexAssigners="000000090">
 			<Rules>
 				<Rule type="xmlhandler.Trace" id="000000035" defVal="fail1" nodes="0,catalog,2,1,0,author"/>
 				<Rule type="xmlhandler.Trace" id="000000036" defVal="fail2" nodes="0,catalog,3,book:id=bk103,0,title"/>
@@ -34,7 +34,7 @@
 	<Constants>
 		<Constant name="sampleUserAgent" id="000000042" order="000000043">
 			<Values>
-				<Value isKey="true" backReference="false" useHeader="false" id="000000043">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36</Value>
+				<Value isKey="false" backReference="false" useHeader="false" id="000000043">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36</Value>
 			</Values>
 		</Constant>
 		<Constant name="sampleContentType" id="000000045" order="000000046">
@@ -53,7 +53,7 @@
 		</Constant>
 		<Constant name="sampleHostReference" id="000000040" order="000000041">
 			<Values>
-				<Value isKey="false" backReference="false" useHeader="false" id="000000041">localhost</Value>
+				<Value isKey="true" backReference="false" useHeader="false" id="000000041">hostname</Value>
 			</Values>
 		</Constant>
 		<Constant name="sampleBody1" id="000000060" order="000000061,000000062">

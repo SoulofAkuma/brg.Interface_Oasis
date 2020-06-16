@@ -84,6 +84,10 @@ public class Cut implements Rule {
 		}
 		ArrayList<String> output = new ArrayList<String>();
 		for (int i = 0; i < input.size(); i++) {
+			if (input.get(i) == null || input.get(i).isEmpty()) {
+				this.log.add("Element Empty");
+				continue;
+			}
 			String element = input.get(i);
 			this.log.add("Applying Rule on \"" + element.substring(0, 10) + "...\"");
 			String[] toAdd = (regex) ? regexCut(element) : cut(element);
@@ -175,11 +179,12 @@ public class Cut implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.findValue);
+		rule.put("find", this.find);
 		rule.put("n", String.valueOf(this.n));
 		rule.put("keep", String.valueOf(this.keep));
 		rule.put("regex", String.valueOf(this.regex));
 		rule.put("reEval", String.valueOf(this.reEval));
+		rule.put("useHeader", String.valueOf(this.useHeader));
 		return rule;
 	}
 }

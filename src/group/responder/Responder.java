@@ -51,6 +51,7 @@ public class Responder {
 	//The response here is an http request. However, everything is considered a response here because it happens in response to a trigger
 	public void sendResponse(String host, String url, int port, String requestType, String response) {
 		try {
+			System.out.println(response);
 			Socket responder = new Socket(host, port);
 			PrintWriter out = new PrintWriter(responder.getOutputStream());
 			InputStream in = responder.getInputStream();
@@ -60,7 +61,6 @@ public class Responder {
 				responder.close();
 				return;
 			}
-			
 			out.write(response);
 			out.flush();
 			

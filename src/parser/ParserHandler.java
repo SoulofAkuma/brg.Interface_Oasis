@@ -25,7 +25,7 @@ public class ParserHandler {
 	private static final String IDNAME = "id";
 	private static final String NAMENAME = "name";
 	private static final String ORDERNAME = "order";
-	private static final String INDEXASSIGNERNAME = "indexAssigner";
+	private static final String INDEXASSIGNERNAME = "indexAssigners";
 	private static final String TYPENAME = "type";
 
 	private static final String RULESNAME = "Rules";
@@ -205,6 +205,7 @@ public class ParserHandler {
 				newAttributes.put(ParserHandler.NAMENAME, parser.getName());
 				newAttributes.put(ParserHandler.ORDERNAME, SettingHandler.alts(parser.getOrder()));
 				newAttributes.put(ParserHandler.INDEXASSIGNERNAME, SettingHandler.alts(parser.getIndexAssigners()));
+				parserSetting.addReplaceAttributes(newAttributes);
 				Setting rulesSetting = parserSetting.getSettings(ParserHandler.RULESNAME).get(0);
 				ConcurrentHashMap<String, Rule> rules = parser.getElements();
 				HashMap<String, Boolean> ruleMatches = SettingHandler.getMatchList(rules.keySet(), false);
@@ -241,6 +242,7 @@ public class ParserHandler {
 		attributes.put(ParserHandler.IDNAME, parser.getID());
 		attributes.put(ParserHandler.NAMENAME, parser.getName());
 		attributes.put(ParserHandler.ORDERNAME, SettingHandler.alts(parser.getOrder()));
+		attributes.put(ParserHandler.INDEXASSIGNERNAME, SettingHandler.alts(parser.getIndexAssigners()));
 		Setting parserSetting = ParserHandler.parserMasterSetting.addSetting(ParserHandler.SETTINGNAME, null, attributes);
 		Setting rulesSetting = parserSetting.addSetting(ParserHandler.RULESNAME, null, null);
 		ConcurrentHashMap<String, Rule> rules = parser.getElements();
@@ -250,6 +252,20 @@ public class ParserHandler {
 			ruleAttributes.put(ParserHandler.IDNAME, rule.getKey());
 			ruleAttributes.put(ParserHandler.TYPENAME, rule.getValue().getClass().getName());
 			rulesSetting.addSetting(ParserHandler.RULENAME, null, ruleAttributes);
+		}
+	}
+	
+	public static CustomParser getCustomParser(String id) {
+		return (ParserHandler.parsers.containsKey(id) && ParserHandler.parsers.get(id) instanceof CustomParser) ? (CustomParser) ParserHandler.parsers.get(id) : null;
+	}
+	
+	public static void removeRule(String parserID, String ruleID) {
+		SettingHandler.removeElement(parserID, ruleID, ParserHandler.IDNAME, ParserHandler.SETTINGNAME, ParserHandler.RULESNAME, ParserHandler.RULENAME, ParserHandler.parserMasterSetting);
+	}
+	
+	public static void removeParser(String id) {
+		if (SettingHandler.removeParent(id, ParserHandler.IDNAME, ParserHandler.SETTINGNAME, ParserHandler.parserMasterSetting)) {
+			ParserHandler.parsers.remove(id);
 		}
 	}
 }

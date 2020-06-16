@@ -128,4 +128,18 @@ public class ConstantHandler {
 			valuesSetting.addSetting(ConstantHandler.VALUENAME, valueValue, valueAttributes);
 		}
 	}
+	
+	public static Constant getConstant(String id) {
+		return (ConstantHandler.constants.containsKey(id)) ? ConstantHandler.constants.get(id) : null;
+	}
+	
+	public static void removeValue(String constantID, String valueID) {
+		SettingHandler.removeElement(constantID, valueID, ConstantHandler.IDNAME, ConstantHandler.SETTINGNAME, ConstantHandler.VALUESNAME, ConstantHandler.VALUENAME, ConstantHandler.constantMasterSetting);
+	}
+	
+	public static void removeConstant(String id) {
+		if (SettingHandler.removeParent(id, ConstantHandler.IDNAME, ConstantHandler.SETTINGNAME, ConstantHandler.constantMasterSetting)) {
+			ConstantHandler.constants.remove(id);
+		}
+	}
 }

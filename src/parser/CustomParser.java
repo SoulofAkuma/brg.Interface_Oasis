@@ -30,6 +30,7 @@ public class CustomParser implements Parser {
 		this.elements = elements;
 		this.order = order;
 		this.id = id;
+		this.name = name;
 	}
 	
 	//Apply all rules to the string
@@ -100,6 +101,22 @@ public class CustomParser implements Parser {
 	
 	public String getID() {
 		return this.id;
+	}
+	
+	public void addRule(String id, Rule rule) {
+		this.elements.put(id, rule);
+		this.order.add(id);
+	}
+	
+	public void removeRule(String id) {
+		this.elements.remove(id);
+		this.order.remove(id);
+		ParserHandler.removeRule(this.id, id);
+	}
+	
+	public void changeRulePosition(String id, int position) {
+		this.order.remove(id);
+		this.order.add(position, id);
 	}
  	
 }

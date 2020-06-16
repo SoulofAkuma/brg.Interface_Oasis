@@ -68,6 +68,10 @@ public class Split implements Rule {
 		}
 		ArrayList<String> output = new ArrayList<String>();
 		for (String element : input) {
+			if (element == null || element.isEmpty()) {
+				this.log.add("Element Empty");
+				continue;
+			}
 			this.log.add("Applying Rule on \"" + element.substring(0,  10) + "...\"");
 			if (this.regex) {
 				output.addAll(regexSplit(element));
@@ -152,9 +156,10 @@ public class Split implements Rule {
 	@Override
 	public HashMap<String, String> storeRule() {
 		HashMap<String, String> rule = new HashMap<String, String>();
-		rule.put("find", this.findValue);
+		rule.put("find", this.find);
 		rule.put("n", String.valueOf(this.n));
 		rule.put("regex", String.valueOf(this.regex));
+		rule.put("useHeader", String.valueOf(this.useHeader));
 		return rule;
 	}
 

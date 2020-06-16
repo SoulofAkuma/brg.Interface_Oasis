@@ -16,16 +16,15 @@ import trigger.TriggerHandler;
 
 public class ListenerHandler {
 
-	private HashMap<String, Listener> listeners = new HashMap<String, Listener>(); //Listeners created by this handler stored by listenerID, object
-	private HashMap<String, Thread> listenerThreads = new HashMap<String, Thread>(); //Threads running the listeners stored by listenerID, thread
-	private HashMap<String, Boolean> listenerThreadStatus = new HashMap<String, Boolean>(); //Indicates whether the corresponding listener is running
+	private ConcurrentHashMap<String, Listener> listeners = new ConcurrentHashMap<String, Listener>(); //Listeners created by this handler stored by listenerID, object
+	private ConcurrentHashMap<String, Thread> listenerThreads = new ConcurrentHashMap<String, Thread>(); //Threads running the listeners stored by listenerID, thread
+	private ConcurrentHashMap<String, Boolean> listenerThreadStatus = new ConcurrentHashMap<String, Boolean>(); //Indicates whether the corresponding listener is running
 	private Setting listenerMasterSetting; //Setting in which the listeners of the corresponding group are stored in
 	private String groupID; //The id of the group the handler handles the listeners for
 	private String groupName; //The name of the group the handler handles the listeners for
 	
 	private static ConcurrentHashMap<String, String> activePorts = new ConcurrentHashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
 	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
-	protected static ConcurrentHashMap<String, List<String[]>> inputs = new ConcurrentHashMap<String, List<String[]>>(); //Listener received requests stored by listenerID, {request-head, request-body}
 	
 	private static final String IDNAME = "id";
 	private static final String NAMENAME = "name";
@@ -60,20 +59,25 @@ public class ListenerHandler {
 	public void runListener() {
 		for (Map.Entry<String, Listener> kvp : this.listeners.entrySet()) {
 			if (!this.listenerThreadStatus.get(kvp.getKey())) {
+				this.listeners.get(kvp.getKey()).setActive(true);
+				listenerThreads.put(kvp.getKey(), new Thread(this.listeners.get(kvp.getKey())));			
 				this.listenerThreads.get(kvp.getKey()).start();				
 			}
 		}
 	}
 	
 	public void runListener(String listenerID) {
-		if (this.listenerThreadStatus.get(listenerID)) {
-			listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));			
+		if (!this.listenerThreadStatus.get(listenerID)) {
+			this.listenerThreadStatus.put(listenerID, true);
+			listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
+			this.listenerThreads.get(listenerID).start();
 		}
 	}
 	
 	public void stopListener() {
 		for (Map.Entry<String, Thread> kvp : this.listenerThreads.entrySet()) {
 			this.listeners.get(kvp.getKey()).setActive(false);
+			this.listenerThreadStatus.put(kvp.getKey(), false);
 			try {
 				kvp.getValue().join();
 			} catch (InterruptedException e) {
@@ -84,6 +88,7 @@ public class ListenerHandler {
 	
 	public void stopListener(String listenerID) {
 		this.listeners.get(listenerID).setActive(false);
+		this.listenerThreadStatus.put(listenerID, false);
 		try {
 			this.listenerThreads.get(listenerID).join();
 		} catch (InterruptedException e) {
@@ -122,10 +127,6 @@ public class ListenerHandler {
 		return null;
 	}
 	
-	public static List<String[]> getRequest(String listenerID) {
-		return ListenerHandler.inputs.get(listenerID);
-	}
-	
 	public void close() {
 		for (Setting listenerSetting : this.listenerMasterSetting.getSettings(ListenerHandler.SETTINGNAME)) {
 			if (!listenerSetting.isEnabled()) {
@@ -157,5 +158,30 @@ public class ListenerHandler {
 		ListenerHandler.idToName.put(listener.getListenerID(), listener.getName());
 		TriggerHandler.registerListener(listener.getListenerID());
 		GroupHandler.registerListener(listener.getListenerID(), this.groupID);
+	}
+	
+	public void removeListener(String id) {
+		int sIDmatch = -1;
+		for (Setting listenerSetting : this.listenerMasterSetting.getSettings(ListenerHandler.SETTINGNAME)) {
+			if (listenerSetting.isEnabled() && listenerSetting.getAttribute(ListenerHandler.IDNAME).equals(id)) {
+				sIDmatch = listenerSetting.getSID();
+				break;
+			}
+		}
+		if (sIDmatch != -1) {
+			stopListener(id);
+			this.listeners.remove(id);
+			this.listenerThreads.remove(id);
+			this.listenerThreadStatus.remove(id);
+			this.listenerMasterSetting.removeSetting(sIDmatch);
+		}
+	}
+	
+	public Listener genListener(String portString, String name, String listenerID, boolean log) {
+		return new Listener(portString, name, this.groupID, this.groupName, listenerID, log);
+	}
+	
+	public Listener getListener(String id) {
+		return (this.listeners.containsKey(id)) ? this.listeners.get(id) : null;
 	}
 }

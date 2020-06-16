@@ -25,15 +25,13 @@ public class Trace implements Rule {
 	
 	private List<Pair<Integer, String>> path; //The list of the JSON parameter names to trace stored by name - trace
 	private String defVal; //Default value to add when this rule has failed
-	private String id;
 	private List<String> log = Collections.synchronizedList(new ArrayList<String>()); 
 	
 	public Trace() {}
 
-	public Trace(List<Pair<Integer, String>> path, String defVal, String id) {
+	public Trace(List<Pair<Integer, String>> path, String defVal) {
 		this.path = path;
 		this.defVal = defVal;
-		this.id = id;
 	}
 
 	@Override
@@ -66,7 +64,7 @@ public class Trace implements Rule {
 		if (defVal == null) {
 			ParserHandler.reportGenRuleError("defVal", this.getClass().getName(), id);
 		}
-		return new Trace(Collections.synchronizedList(path), defVal, id);
+		return new Trace(Collections.synchronizedList(path), defVal);
 	}
 
 	//This method will only use the first element of the input list for parsing and will not modify it thus making this parser stackable
@@ -74,6 +72,10 @@ public class Trace implements Rule {
 	public ArrayList<String> apply(ArrayList<String> input, HashMap<String, String> parsedHeader) {
 		this.log.clear();
 		String json = input.get(0);
+		if (json == null || json.isBlank()) {
+			this.log.add("Empty Body");
+			return input;
+		}
 		this.log.add("Applying Rule on \"" + json + "\"");
 		JSONParser parser = new JSONParser();
 		JSONObject jObj = null;

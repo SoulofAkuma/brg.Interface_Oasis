@@ -36,7 +36,7 @@ public class Value {
 				}
 			}
 		} else {
-			return value;
+			return this.value;
 		}
 	}
 

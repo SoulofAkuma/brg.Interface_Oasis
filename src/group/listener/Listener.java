@@ -37,7 +37,6 @@ public class Listener implements Runnable {
 		this.groupName = groupName;
 		this.listenerID = listenerID;
 		this.log = log;
-		ListenerHandler.inputs.put(this.groupID, Collections.synchronizedList(new ArrayList<String[]>()));
 		int tempPort = -1;
 		boolean isValid = false;
 		try {
@@ -93,16 +92,16 @@ public class Listener implements Runnable {
 		while (this.isActive) {
 			try {
 				Socket clientSocket = this.serverSocket.accept();
-				int myID = ListenerHandler.inputs.get(this.listenerID).size();
-				ListenerHandler.inputs.get(this.listenerID).add(null);
 				String timeoutID = GroupHandler.addSocketTimeout(clientSocket, 500);
-				Runnable connectionHandler = new ConnectionHandler(myID, this.listenerID, clientSocket, timeoutID);
+				Runnable connectionHandler = new ConnectionHandler(this.listenerID, clientSocket, timeoutID);
 				this.connections.add(new Thread(connectionHandler));
-				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port + ". Forwarding to handler with responseID " + myID, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
+				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
 				this.connections.get(this.connections.size() - 1).start();
 			} catch (IOException e) {
-				reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
-				Logger.reportException("Listener", "run", e);
+				if (this.isActive) {
+					reportError("Could not accept ServerSocket connection on port " + this.port, e.getMessage());
+					Logger.reportException("Listener", "run", e);
+				}
 			}
 		}
 		GroupHandler.getListenerHandler(this.groupID).changeStatus(this.listenerID, false);
