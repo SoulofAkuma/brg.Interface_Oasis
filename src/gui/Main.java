@@ -107,6 +107,7 @@ public class Main extends JFrame {
 					frame = new Main();
 					frame.setVisible(true);
 				} catch (Exception e) {
+					e.printStackTrace();
 					Logger.reportException("Main", "main", e);
 				}
 			}
@@ -189,9 +190,11 @@ public class Main extends JFrame {
 		GroupHandler.getListenerHandler(GroupHandler.ltgID("000000011")).runListener("000000011");
 		TriggerHandler.runTrigger("000000080");
 		
-		Logger.addMessage(MessageType.Error, MessageOrigin.Parser, "Test", "000000001", null, null, false);
-		Logger.addMessage(MessageType.Information, MessageOrigin.Parser, "Test", "000000001", null, null, false);
-		Logger.addMessage(MessageType.Warning, MessageOrigin.Parser, "Test", "000000001", null, null, false);
+		for (int i = 0; i < 20; i++) {
+			Logger.addMessage(MessageType.Error, MessageOrigin.Parser, "Test", "000000001", null, null, false);
+			Logger.addMessage(MessageType.Information, MessageOrigin.Parser, "Test", "000000001", null, null, false);
+			Logger.addMessage(MessageType.Warning, MessageOrigin.Parser, "Test", "000000001", null, null, false);
+		}
 	}
 	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!
 	/**
@@ -207,6 +210,116 @@ public class Main extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+				
+				//Setting panel
+				JLayeredPane settingPanel = new JLayeredPane();
+				settingPanel.setLayout(null);
+				settingPanel.setFocusCycleRoot(true);
+				settingPanel.setBackground(Color.DARK_GRAY);
+				settingPanel.setBounds(0, 0, 995, 465);
+				contentPane.add(settingPanel);
+				
+				
+				//Header
+				JPanel header = new JPanel();
+				header.setBounds(0, 0, 995, 30);
+				settingPanel.add(header);
+				header.setLayout(null);
+				
+				JButton headerGroupButton = new JButton("Groups");
+				headerGroupButton.setBounds(1, 0, 178, 30);
+				header.add(headerGroupButton);
+				
+				JButton headerTriggerButton = new JButton("Triggers");
+				headerTriggerButton.setBounds(179, 0, 179, 30);
+				header.add(headerTriggerButton);
+				
+				JButton headerParserButton = new JButton("Parsers");
+				headerParserButton.setBounds(358, 0, 179, 30);
+				header.add(headerParserButton);
+				
+				JButton headerConstantsButton = new JButton("Constants");
+				headerConstantsButton.setBounds(537, 0, 179, 30);
+				header.add(headerConstantsButton);
+				
+				JButton headerGeneralButton = new JButton("General");
+				headerGeneralButton.setBounds(716, 0, 179, 30);
+				header.add(headerGeneralButton);
+				
+				JButton headerCloseButton = new JButton("Close");
+				headerCloseButton.setBounds(895, 0, 90, 30);
+				header.add(headerCloseButton);
+				
+				
+				groupsPanel = new JPanel();
+				groupsPanel.setBackground(Color.DARK_GRAY);
+				
+				triggersPanel = new JPanel();
+				triggersPanel.setBackground(Color.DARK_GRAY);
+				
+				parsersPanel = new JPanel();
+				parsersPanel.setBackground(Color.DARK_GRAY);
+				
+				constantsPanel = new JPanel();
+				constantsPanel.setBackground(Color.DARK_GRAY);
+				
+				generalPanel = new JPanel();
+				generalPanel.setBackground(Color.DARK_GRAY);
+				
+				groupsPane = new JScrollPane(groupsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				groupsPane.setBackground(Color.DARK_GRAY);
+				groupsPane.setBounds(0, 30, 986, 435);
+				groupsPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(groupsPane);
+				groupsPane.setLayout(null);
+				
+				triggersPane = new JScrollPane(triggersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				triggersPane.setBackground(Color.GREEN);
+				triggersPane.setBounds(0, 30, 986, 435);
+				triggersPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(triggersPane);
+				
+				parsersPane = new JScrollPane(parsersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				parsersPane.setBackground(Color.DARK_GRAY);
+				parsersPane.setBounds(0, 30, 986, 435);
+				parsersPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(parsersPane);
+				
+				constantsPane = new JScrollPane(constantsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				constantsPane.setBackground(Color.DARK_GRAY);
+				constantsPane.setBounds(0, 30, 986, 435);
+				constantsPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(constantsPane);
+				constantsPane.setLayout(null);
+				
+				generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				generalPane.setBounds(0, 30, 986, 435);
+				generalPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(generalPane);
+				generalPane.setLayout(null);
+				
+				Main.settingPanels.add(groupsPane);
+				groupsPanel.setLayout(null);
+				groupsPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(parsersPane);
+				Main.settingPanels.add(parsersPanel);
+				parsersPanel.setLayout(null);
+				parsersPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(constantsPane);
+				Main.settingPanels.add(constantsPanel);
+				constantsPanel.setLayout(null);
+				constantsPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(generalPane);
+				Main.settingPanels.add(generalPanel);
+				generalPanel.setLayout(null);
+				generalPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(triggersPane);
+				Main.settingPanels.add(triggersPanel);
+				triggersPanel.setLayout(null);
+				triggersPanel.setPreferredSize(new Dimension(986, 435));
+				
+				//Main Button Listeners
+				settingPanel.setVisible(false);
 		
 				
 				//Main components
@@ -239,6 +352,49 @@ public class Main extends JFrame {
 						Logger.showGUI = true;
 					}
 				});
+				headerCloseButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						settingPanel.setVisible(false);
+						mainPanel.setVisible(true);
+					}
+				});
+				headerGroupButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						hideAllSettingPanels();
+						groupsPane.setVisible(true);
+						groupsPanel.setVisible(true);
+					}
+				});
+				headerTriggerButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						hideAllSettingPanels();
+						triggersPane.setVisible(true);
+						triggersPanel.setVisible(true);
+						populateTrigger();
+					}
+				});
+				headerParserButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						hideAllSettingPanels();
+						parsersPane.setVisible(true);
+						parsersPanel.setVisible(true);
+						populateParser();
+					}
+				});
+				headerConstantsButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						hideAllSettingPanels();
+						constantsPane.setVisible(true);
+						constantsPanel.setVisible(true);
+					}
+				});
+				headerGeneralButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						hideAllSettingPanels();
+						generalPane.setVisible(true);
+						generalPanel.setVisible(true);
+					}
+				});
 				startLoggingConsole.setFont(new Font("Times New Roman", Font.PLAIN, 14));
 				startLoggingConsole.setBorder(new EmptyBorder(1, 1, 1, 1));
 				startLoggingConsole.setBackground(Color.LIGHT_GRAY);
@@ -257,118 +413,6 @@ public class Main extends JFrame {
 				});
 				mainPanel.setVisible(true);
 		
-		//Setting panel
-		JLayeredPane settingPanel = new JLayeredPane();
-		settingPanel.setLayout(null);
-		settingPanel.setFocusCycleRoot(true);
-		settingPanel.setBackground(Color.DARK_GRAY);
-		settingPanel.setBounds(0, 0, 995, 465);
-		contentPane.add(settingPanel);
-		
-		
-		//Header
-		JPanel header = new JPanel();
-		header.setBounds(0, 0, 995, 30);
-		settingPanel.add(header);
-		header.setLayout(null);
-		
-		JButton headerGroupButton = new JButton("Groups");
-		headerGroupButton.setBounds(1, 0, 178, 30);
-		header.add(headerGroupButton);
-		
-		JButton headerTriggerButton = new JButton("Triggers");
-		headerTriggerButton.setBounds(179, 0, 179, 30);
-		header.add(headerTriggerButton);
-		
-		JButton headerParserButton = new JButton("Parsers");
-		headerParserButton.setBounds(358, 0, 179, 30);
-		header.add(headerParserButton);
-		
-		JButton headerConstantsButton = new JButton("Constants");
-		headerConstantsButton.setBounds(537, 0, 179, 30);
-		header.add(headerConstantsButton);
-		
-		JButton headerGeneralButton = new JButton("General");
-		headerGeneralButton.setBounds(716, 0, 179, 30);
-		header.add(headerGeneralButton);
-		
-		JButton headerCloseButton = new JButton("Close");
-		headerCloseButton.setBounds(895, 0, 90, 30);
-		header.add(headerCloseButton);
-		
-		
-		groupsPanel = new JPanel();
-		groupsPanel.setBackground(Color.DARK_GRAY);
-		
-		triggersPanel = new JPanel();
-		triggersPanel.setBackground(Color.DARK_GRAY);
-		
-		parsersPanel = new JPanel();
-		parsersPanel.setBackground(Color.DARK_GRAY);
-		
-		constantsPanel = new JPanel();
-		constantsPanel.setBackground(Color.DARK_GRAY);
-		
-		generalPanel = new JPanel();
-		generalPanel.setBackground(Color.DARK_GRAY);
-		
-		groupsPane = new JScrollPane(groupsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		groupsPane.setBackground(Color.DARK_GRAY);
-		groupsPane.setBounds(0, 30, 986, 435);
-		groupsPane.getVerticalScrollBar().setUnitIncrement(10);
-		settingPanel.add(groupsPane);
-		groupsPane.setLayout(null);
-		
-		triggersPane = new JScrollPane(triggersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		triggersPane.setBackground(Color.DARK_GRAY);
-		triggersPane.setBounds(0, 30, 986, 435);
-		triggersPane.getVerticalScrollBar().setUnitIncrement(10);
-		settingPanel.add(triggersPane);
-		
-		parsersPane = new JScrollPane(parsersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		parsersPane.setBackground(Color.DARK_GRAY);
-		parsersPane.setBounds(0, 30, 986, 435);
-		settingPanel.add(parsersPane);
-		parsersPane.getVerticalScrollBar().setUnitIncrement(10);
-		parsersPane.setLayout(null);
-		
-		constantsPane = new JScrollPane(constantsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		constantsPane.setBackground(Color.DARK_GRAY);
-		constantsPane.setBounds(0, 30, 986, 435);
-		constantsPane.getVerticalScrollBar().setUnitIncrement(10);
-		settingPanel.add(constantsPane);
-		constantsPane.setLayout(null);
-		
-		generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		generalPane.setBounds(0, 30, 986, 435);
-		generalPane.getVerticalScrollBar().setUnitIncrement(10);
-		settingPanel.add(generalPane);
-		generalPane.setLayout(null);
-		
-		Main.settingPanels.add(groupsPane);
-		groupsPanel.setLayout(null);
-		groupsPanel.setPreferredSize(new Dimension(986, 435));
-		Main.settingPanels.add(parsersPane);
-		parsersPanel.setLayout(null);
-		parsersPanel.setPreferredSize(new Dimension(986, 435));
-		Main.settingPanels.add(constantsPane);
-		constantsPanel.setLayout(null);
-		constantsPanel.setPreferredSize(new Dimension(986, 435));
-		Main.settingPanels.add(generalPane);
-		generalPanel.setLayout(null);
-		generalPanel.setPreferredSize(new Dimension(986, 435));
-		Main.settingPanels.add(triggersPane);
-		triggersPanel.setLayout(null);
-		triggersPanel.setPreferredSize(new Dimension(986, 435));
-		
-		//Main Button Listeners
-		headerCloseButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				settingPanel.setVisible(false);
-				mainPanel.setVisible(true);
-			}
-		});
-		
 		//Setting header button Listeners
 		btnSetup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -377,43 +421,7 @@ public class Main extends JFrame {
 				mainPanel.setVisible(false);
 			}
 		});
-		headerGroupButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideAllSettingPanels();
-				groupsPane.setVisible(true);
-				groupsPanel.setVisible(true);
-			}
-		});
-		headerTriggerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideAllSettingPanels();
-				triggersPane.setVisible(true);
-				triggersPanel.setVisible(true);
-				populateTrigger();
-			}
-		});
-		headerParserButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideAllSettingPanels();
-				parsersPane.setVisible(true);
-				parsersPanel.setVisible(true);
-			}
-		});
-		headerConstantsButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideAllSettingPanels();
-				constantsPane.setVisible(true);
-				constantsPanel.setVisible(true);
-			}
-		});
-		headerGeneralButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideAllSettingPanels();
-				generalPane.setVisible(true);
-				generalPanel.setVisible(true);
-			}
-		});
-		settingPanel.setVisible(false);
+		
 	}
 	
 	public static void hideAllSettingPanels() {
@@ -477,12 +485,38 @@ public class Main extends JFrame {
 		revalidate();
 	}
 	
+	private void populateParser() {
+		while (parsersPanel.getComponentCount() > 0) {
+			parsersPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<ParserGUIPanel> panels = ParserHandler.getParserPanels();
+		for (ParserGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			parsersPanel.add(panel);
+			y += 110;
+		}
+		parsersPanel.setPreferredSize(new Dimension(986, y));
+		revalidate();
+	}
+	
 	public static void deleteTrigger(String id) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				TriggerHandler.removeTrigger(id);
 				Main.frame.populateTrigger();
+			}
+		});
+	}
+	
+	public static void deleteParser(String id) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				ParserHandler.removeParser(id);
+				Main.frame.populateParser();
 			}
 		});
 	}

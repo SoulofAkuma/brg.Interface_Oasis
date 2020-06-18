@@ -19,6 +19,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -34,6 +35,13 @@ public class Logger extends JFrame implements Runnable{
 	private static JTextPane consoleText;
 	
 	public Logger() {
+		
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		} catch (Exception e) {
+			Logger.reportException(Main.class.getName(), "main", e);			
+		}
+		
 		setBounds(new Rectangle(0, 0, 600, 300));
 		getContentPane().setBounds(new Rectangle(0, 0, 600, 300));
 		getContentPane().setLayout(null);

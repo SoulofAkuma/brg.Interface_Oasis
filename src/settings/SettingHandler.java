@@ -1421,7 +1421,7 @@ public class SettingHandler {
 							case "requestType":
 								updateMissing("requestType");
 								if (!matchesRegex("(POST|GET|HEAD|auto)", attribute.getValue())) {
-									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid requestType value \"" + attribute.getValue() + "\" (Not post,get,head or auto)", false, responderID, inner);
+									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid requestType value \"" + attribute.getValue() + "\" (Not POST,GET,HEAD or auto)", false, responderID, inner);
 									next = true;
 								}
 							break;

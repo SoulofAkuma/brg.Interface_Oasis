@@ -15,6 +15,7 @@ import gui.ListElement;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
+import gui.ParserGUIPanel;
 import settings.Setting;
 import settings.SettingHandler;
 
@@ -280,5 +281,17 @@ public class ParserHandler {
 			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName(), kvp.getValue()));
 		}
 		return elements.toArray(new ListElement[elements.size()]);
+	}
+
+	public static List<ParserGUIPanel> getParserPanels() {
+		ArrayList<ParserGUIPanel> panels = new ArrayList<ParserGUIPanel>();
+		for (Entry<String, Parser> parsers : ParserHandler.parsers.entrySet()) {
+			if (parsers.getValue() instanceof CustomParser) {
+				ParserGUIPanel panel = new ParserGUIPanel();
+				panel.init((CustomParser) parsers.getValue());
+				panels.add(panel);
+			}
+		}
+		return panels;
 	}
 }

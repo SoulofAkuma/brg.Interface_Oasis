@@ -176,6 +176,11 @@ public class TriggerGUIPanel extends JPanel {
 		
 		saveType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (trigger.getType() == TriggerType.Responder && TriggerType.valueOf((String) typeValue.getSelectedItem()) == TriggerType.Listener) {
+					trigger.getTriggeredBy().clear();
+				} else if (trigger.getType() == TriggerType.Listener && TriggerType.valueOf((String) typeValue.getSelectedItem()) == TriggerType.Responder) {
+					trigger.getTriggeredBy().clear();
+				}
 				trigger.setType(TriggerType.valueOf((String) typeValue.getSelectedItem()));
 				listenerPopulate();
 			}

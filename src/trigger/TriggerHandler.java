@@ -164,6 +164,7 @@ public class TriggerHandler {
 			}
 		} else if (TriggerHandler.triggers.get(triggerID).getType() == TriggerType.Responder) {
 			for (String responderID : subject) {
+				System.out.println(responderID);
 				resultMap.put(responderID, GroupHandler.getResponderHandler(GroupHandler.rtgID(responderID)).getResponder(responderID).getName());
 			}
 		}
