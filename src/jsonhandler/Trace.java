@@ -33,6 +33,25 @@ public class Trace implements Rule {
 		this.path = path;
 		this.defVal = defVal;
 	}
+	
+	public String cToStr(int queryConstant) {
+		String rString = "";
+		switch(queryConstant) {
+			case 0:
+				rString ="ObjectIndex";
+			break;
+			case 1:
+				rString = "ArrayIndex";
+			break;
+			case 2:
+				rString = "ArrayQuery";
+			break;
+			case 3:
+				rString = "ArrayQueryRegex";
+			break;
+		}
+		return rString;
+	}
 
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
@@ -294,6 +313,16 @@ public class Trace implements Rule {
 		rule.put("path", pathString);
 		rule.put("defVal", this.defVal);
 		return rule;
+	}
+	
+	@Override
+	public String printRuleLRP() {
+		String traceString = "";
+		for (Pair<Integer, String> pathElement : this.path) {
+			traceString += cToStr(pathElement.getKey()) + " " + pathElement.getValue() + ", ";
+		}
+		traceString = (traceString.length() > 0) ? traceString.substring(0, traceString.length() - 1) : traceString;
+		return "JSONTrace; " + this.defVal + "; " + traceString;
 	}
 
 }

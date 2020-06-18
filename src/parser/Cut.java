@@ -187,4 +187,13 @@ public class Cut implements Rule {
 		rule.put("useHeader", String.valueOf(this.useHeader));
 		return rule;
 	}
+	
+	@Override
+	public String printRuleLRP() {
+		String useHeader = (this.useHeader) ? "useHeader; " : "";
+		String reEval = (this.reEval) ? "reEval; " : "";
+		String regex = (this.regex) ? "regex; " : "";
+		String keep = (this.keep) ? "keep; " : "";
+		return "Cut; " + useHeader + reEval + keep + regex + this.find + "; " + String.valueOf(this.n);
+	}
 }

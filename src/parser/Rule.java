@@ -16,4 +16,7 @@ public interface Rule {
 	
 	//Returns all stored attributes to store them in an xml attribute (use xml attribute valid signs only)
 	public HashMap<String, String> storeRule();
+	
+	//Print a String which describes the rule in the GUI
+	public String printRuleLRP();
 }

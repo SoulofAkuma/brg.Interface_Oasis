@@ -162,4 +162,13 @@ public class Discard implements Rule {
 		rule.put("useHeader", String.valueOf(this.useHeader));
 		return rule;
 	}
+	
+	@Override
+	public String printRuleLRP() {
+		String useHeader = (this.useHeader) ? "useHeader; " : "";
+		String inverted = (this.inverted) ? "reEval; " : "";
+		String regex = (this.regex) ? "regex; " : "";
+		String flags = (this.flags.length > 0) ? String.join(",", this.flags) + "; " : "";
+		return "Cut; " + useHeader + inverted + regex + flags + this.find;
+	}
 }

@@ -89,4 +89,10 @@ public class Isolate implements Rule {
 		rule.put("useHeader", String.valueOf(this.useHeader));
 		return rule;
 	}
+	
+	@Override
+	public String printRuleLRP() {
+		String useHeader = (this.useHeader) ? "useHeader; " : "";
+		return "Cut; " + useHeader + this.find;
+	}
 }

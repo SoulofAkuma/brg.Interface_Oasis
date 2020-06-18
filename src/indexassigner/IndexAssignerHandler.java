@@ -197,4 +197,8 @@ public class IndexAssignerHandler {
 	public static void removeIndex(String indexAssignerID, String indexID) {
 		SettingHandler.removeElement(indexAssignerID, indexID, IndexAssignerHandler.IDNAME, IndexAssignerHandler.SETTINGNAME, IndexAssignerHandler.INDEXESNAME, IndexAssignerHandler.INDEXNAME, IndexAssignerHandler.indexAssingerMastserSetting);
 	}
+	
+	public static String getAssignerName(String id) {
+		return IndexAssignerHandler.indexAssigners.get(id).getName();
+	}
 }

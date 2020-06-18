@@ -31,6 +31,25 @@ public class Trace implements Rule {
 		this.defVal = defVal;
 	}
 	
+	private String cToStr(short constant) {
+		String rString = "";
+		switch (constant) {
+			case 0:
+				rString = "Element";
+			break;
+			case 1:
+				rString = "Attribute";
+			break;
+			case 2:
+				rString = "ElementIndex";
+			break;
+			case 3:
+				rString = "Combine";
+			break;
+		}
+		return rString;
+	}
+	
 	//Required parameters: nodes, getName, 
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
@@ -244,5 +263,15 @@ public class Trace implements Rule {
 		rule.put("nodes", nodes);
 		rule.put("defVal", this.defVal);
 		return rule;
+	}
+	
+	@Override
+	public String printRuleLRP() {
+		String traceString = "";
+		for (Pair<Short, String> pathElement : this.nodes) {
+			traceString += cToStr(pathElement.getKey()) + " " + pathElement.getValue() + ", ";
+		}
+		traceString = (traceString.length() > 0) ? traceString.substring(0, traceString.length() - 1) : traceString;
+		return "XMLTrace; " + this.defVal + "; " + traceString;
 	}
 }

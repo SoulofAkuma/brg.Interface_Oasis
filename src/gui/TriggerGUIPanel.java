@@ -115,7 +115,7 @@ public class TriggerGUIPanel extends JPanel {
 		add(responderScroll);
 		
 		responderList = new JList();
-		responderList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		responderList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		responderList.setForeground(Color.WHITE);
 		responderList.setBackground(Color.GRAY);
 		responderList.setModel(new DefaultListModel<ListArrayElement>());
@@ -133,7 +133,7 @@ public class TriggerGUIPanel extends JPanel {
 		add(triggeredByScroll);
 		
 		triggeredByList = new JList();
-		triggeredByList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		triggeredByList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		triggeredByList.setForeground(Color.WHITE);
 		triggeredByList.setBackground(Color.GRAY);
 		triggeredByList.setModel(new DefaultListModel<ListElement>());
@@ -307,20 +307,6 @@ public class TriggerGUIPanel extends JPanel {
 		cooldownValue.setEnabled(false);
 	}
 	
-	private void clearResponderElements() {
-		DefaultListModel model = (DefaultListModel) responderList.getModel();
-		while (model.size() > 0) {
-			model.remove(0);
-		}
-	}
-	
-	private void clearTriggeredByElements() {
-		DefaultListModel model = (DefaultListModel) triggeredByList.getModel();
-		while (model.size() > 0) {
-			model.remove(0);
-		}
-	}
-	
 	private void listenerPopulate() {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -333,8 +319,6 @@ public class TriggerGUIPanel extends JPanel {
 	private void populate() {
 		setAll(true);
 		this.typeValue.removeAllItems();
-		clearTriggeredByElements();
-		clearResponderElements();
 		this.typeValue.addItem("Manual");
 		this.typeValue.addItem("Listener");
 		this.typeValue.addItem("Responder");
@@ -352,6 +336,7 @@ public class TriggerGUIPanel extends JPanel {
 			triggeredByList.clearSelection();
 			List<String> listenerIDs = trigger.getTriggeredBy();
 			DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) triggeredByList.getModel();
+			model.clear();
 			HashMap<String, String> triggeredByNames = TriggerHandler.getTriggeredByNameList(trigger.getTriggerID());
 			for (String elementID : listenerIDs) {
 				model.addElement(new ListElement(elementID, triggeredByNames.get(elementID)));
@@ -362,6 +347,7 @@ public class TriggerGUIPanel extends JPanel {
 		typeValue.setSelectedItem(type);
 		List<Pair<Pair<String, String>, Pair<String, String>>> responderIDsList = TriggerHandler.getRespondersByList(trigger.getTriggerID());
 		DefaultListModel<ListArrayElement> model = (DefaultListModel<ListArrayElement>) responderList.getModel();
+		model.clear();
 		for (Pair<Pair<String, String>, Pair<String, String>> kvp : responderIDsList) {
 			model.addElement(new ListArrayElement(new String[] {kvp.getKey().getKey(), kvp.getValue().getKey()}, new String[] {kvp.getKey().getValue(), kvp.getValue().getValue()}));
 		}

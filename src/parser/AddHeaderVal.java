@@ -50,6 +50,9 @@ public class AddHeaderVal implements Rule {
 		return attributes;
 	}
 	
-	
+	@Override
+	public String printRuleLRP() {
+		return "AddHeaderVal; " + this.find;
+	}
 	
 }

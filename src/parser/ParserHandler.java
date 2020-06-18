@@ -16,6 +16,7 @@ import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
 import gui.ParserGUIPanel;
+import indexassigner.IndexAssignerHandler;
 import settings.Setting;
 import settings.SettingHandler;
 
@@ -293,5 +294,16 @@ public class ParserHandler {
 			}
 		}
 		return panels;
+	}
+
+	public static HashMap<String, String> getAssignerNameList(String id) {
+		Parser parser = ParserHandler.parsers.get(id);
+		HashMap<String, String> assignerNames = new HashMap<String, String>();
+		if (parser instanceof CustomParser) {
+			for (String assignerID : ((CustomParser) parser).getIndexAssigners()) {
+				assignerNames.put(assignerID, IndexAssignerHandler.getAssignerName(assignerID));
+			}
+		}
+		return assignerNames;
 	}
 }

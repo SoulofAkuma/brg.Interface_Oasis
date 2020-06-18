@@ -70,11 +70,21 @@ public class Main extends JFrame {
 	private JScrollPane parsersPane;
 	private JScrollPane constantsPane;
 	private JScrollPane generalPane;
+	private JScrollPane listenersPane;
+	private JScrollPane respondersPane;
+	private JScrollPane indexAssignersPane;
+	private JScrollPane rulesPane;
+	private JScrollPane valuesPane;
 	private JPanel groupsPanel;
 	private JPanel triggersPanel;
 	private JPanel parsersPanel;
 	private JPanel constantsPanel;
 	private JPanel generalPanel;
+	private JPanel listenersPanel;
+	private JPanel respondersPanel;
+	private JPanel indexAssignersPanel;
+	private JPanel rulesPanel;
+	private JPanel valuesPanel;
 	
 	public static Main frame;
 	
@@ -266,15 +276,30 @@ public class Main extends JFrame {
 				generalPanel = new JPanel();
 				generalPanel.setBackground(Color.DARK_GRAY);
 				
+				listenersPanel = new JPanel();
+				listenersPanel.setBackground(Color.DARK_GRAY);
+				
+				respondersPanel = new JPanel();
+				respondersPanel.setBackground(Color.DARK_GRAY);
+				
+				indexAssignersPanel = new JPanel();
+				indexAssignersPanel.setBackground(Color.DARK_GRAY);
+				
+				rulesPanel = new JPanel();
+				rulesPanel.setBackground(Color.DARK_GRAY);
+				
+				valuesPanel = new JPanel();
+				valuesPanel.setBackground(Color.DARK_GRAY);
+				
+				
 				groupsPane = new JScrollPane(groupsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				groupsPane.setBackground(Color.DARK_GRAY);
 				groupsPane.setBounds(0, 30, 986, 435);
 				groupsPane.getVerticalScrollBar().setUnitIncrement(10);
 				settingPanel.add(groupsPane);
-				groupsPane.setLayout(null);
 				
 				triggersPane = new JScrollPane(triggersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				triggersPane.setBackground(Color.GREEN);
+				triggersPane.setBackground(Color.DARK_GRAY);
 				triggersPane.setBounds(0, 30, 986, 435);
 				triggersPane.getVerticalScrollBar().setUnitIncrement(10);
 				settingPanel.add(triggersPane);
@@ -290,15 +315,45 @@ public class Main extends JFrame {
 				constantsPane.setBounds(0, 30, 986, 435);
 				constantsPane.getVerticalScrollBar().setUnitIncrement(10);
 				settingPanel.add(constantsPane);
-				constantsPane.setLayout(null);
 				
 				generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				generalPane.setBackground(Color.DARK_GRAY);
 				generalPane.setBounds(0, 30, 986, 435);
 				generalPane.getVerticalScrollBar().setUnitIncrement(10);
 				settingPanel.add(generalPane);
-				generalPane.setLayout(null);
+				
+				listenersPane = new JScrollPane(listenersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				listenersPane.setBackground(Color.DARK_GRAY);
+				listenersPane.setBounds(0, 30, 986, 435);
+				listenersPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(listenersPane);
+
+				respondersPane = new JScrollPane(respondersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				respondersPane.setBackground(Color.DARK_GRAY);
+				respondersPane.setBounds(0, 30, 986, 435);
+				respondersPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(respondersPane);
+
+				indexAssignersPane = new JScrollPane(indexAssignersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				indexAssignersPane.setBackground(Color.DARK_GRAY);
+				indexAssignersPane.setBounds(0, 30, 986, 435);
+				indexAssignersPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(indexAssignersPane);
+				
+				rulesPane = new JScrollPane(rulesPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				rulesPane.setBackground(Color.DARK_GRAY);
+				rulesPane.setBounds(0, 30, 986, 435);
+				rulesPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(rulesPane);
+
+				valuesPane = new JScrollPane(valuesPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				valuesPane.setBackground(Color.DARK_GRAY);
+				valuesPane.setBounds(0, 30, 986, 435);
+				valuesPane.getVerticalScrollBar().setUnitIncrement(10);
+				settingPanel.add(valuesPane);
 				
 				Main.settingPanels.add(groupsPane);
+				Main.settingPanels.add(groupsPanel);
 				groupsPanel.setLayout(null);
 				groupsPanel.setPreferredSize(new Dimension(986, 435));
 				Main.settingPanels.add(parsersPane);
@@ -317,6 +372,26 @@ public class Main extends JFrame {
 				Main.settingPanels.add(triggersPanel);
 				triggersPanel.setLayout(null);
 				triggersPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(listenersPane);
+				Main.settingPanels.add(listenersPanel);
+				listenersPanel.setLayout(null);
+				listenersPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(respondersPane);
+				Main.settingPanels.add(respondersPanel);
+				respondersPanel.setLayout(null);
+				respondersPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(indexAssignersPane);
+				Main.settingPanels.add(indexAssignersPanel);
+				indexAssignersPanel.setLayout(null);
+				indexAssignersPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(rulesPane);
+				Main.settingPanels.add(rulesPanel);
+				rulesPanel.setLayout(null);
+				rulesPanel.setPreferredSize(new Dimension(986, 435));
+				Main.settingPanels.add(valuesPane);
+				Main.settingPanels.add(valuesPanel);
+				valuesPanel.setLayout(null);
+				valuesPanel.setPreferredSize(new Dimension(986, 435));
 				
 				//Main Button Listeners
 				settingPanel.setVisible(false);
@@ -495,7 +570,7 @@ public class Main extends JFrame {
 		for (ParserGUIPanel panel : panels) {
 			assignPos(panel, x, y);
 			parsersPanel.add(panel);
-			y += 110;
+			y += 140;
 		}
 		parsersPanel.setPreferredSize(new Dimension(986, y));
 		revalidate();
@@ -517,6 +592,14 @@ public class Main extends JFrame {
 			public void run() {
 				ParserHandler.removeParser(id);
 				Main.frame.populateParser();
+			}
+		});
+	}
+	
+	public static void ruleMode() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
 			}
 		});
 	}

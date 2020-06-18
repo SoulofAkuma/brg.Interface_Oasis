@@ -118,5 +118,11 @@ public class CustomParser implements Parser {
 		this.order.remove(id);
 		this.order.add(position, id);
 	}
+	
+	public void changeAssignerPosition(int oldPos, int newPos) {
+		String val = this.indexAssigners.get(oldPos);
+		this.indexAssigners.remove(oldPos);
+		this.indexAssigners.add(newPos, val);
+	}
  	
 }

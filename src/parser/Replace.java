@@ -129,4 +129,10 @@ public class Replace implements Rule {
 		return rule;
 	}
 	
+	@Override
+	public String printRuleLRP() {
+		String useHeader = (this.useHeader) ? "useHeader; " : "";
+		String regex = (this.regex) ? "regex; " : "";
+		return "Cut; " + useHeader + regex + this.find + "; " + this.replace;
+	}
 }

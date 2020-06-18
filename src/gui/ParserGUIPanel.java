@@ -7,20 +7,28 @@ import parser.Parser;
 import parser.ParserHandler;
 import parser.Rule;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+//This class does only support Parser Rules and xmlhandler/jsonhanlder trace. To create an own Rule GUI implementation create a new panel inside of RuleGUIPanels main Panel and add a the proper printList method to your rule class
 public class ParserGUIPanel extends JPanel {
 	
 	private JTextField nameValue;
 	private JButton resetName;
 	private JButton saveName;
 	private JList rulesList;
-	private JButton upRule;
-	private JButton downRule;
+	private JButton ruleUp;
+	private JButton ruleDown;
 	private JButton manageRules;
 	private JList assignersList;
 	private JButton addAssigner;
@@ -32,7 +40,7 @@ public class ParserGUIPanel extends JPanel {
 	
 	public ParserGUIPanel() {
 		setBackground(Color.DARK_GRAY);
-		setBounds(new Rectangle(0, 0, 945, 100));
+		setBounds(new Rectangle(0, 0, 945, 130));
 		setLayout(null);	
 		
 		nameValue = new JTextField();
@@ -57,67 +65,67 @@ public class ParserGUIPanel extends JPanel {
 		add(label);
 		
 		rulesList = new JList();
-		rulesList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		rulesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		rulesList.setForeground(Color.WHITE);
 		rulesList.setBackground(Color.GRAY);
-		rulesList.setModel(new DefaultListModel<ListArrayElement>());
+		rulesList.setModel(new DefaultListModel<ListElement>());
 		
-		JScrollPane rulesPane = new JScrollPane(rulesList);
-		rulesPane.setBounds(220, 10, 400, 50);
+		JScrollPane rulesPane = new JScrollPane();
+		rulesPane.setBounds(220, 10, 400, 80);
 		rulesPane.setBorder(null);
-		rulesList.setPreferredSize(new Dimension(400,50));
+		rulesPane.setViewportView(rulesList);
 		add(rulesPane);
 		
-		upRule = new JButton("Move Up");
-		upRule.setMargin(new Insets(2, 2, 2, 2));
-		upRule.setBounds(220, 70, 127, 20);
-		add(upRule);
+		ruleUp = new JButton("Move Up");
+		ruleUp.setMargin(new Insets(2, 2, 2, 2));
+		ruleUp.setBounds(220, 98, 127, 20);
+		add(ruleUp);
 		
-		downRule = new JButton("Move Down");
-		downRule.setMargin(new Insets(2, 2, 2, 2));
-		downRule.setBounds(357, 70, 127, 20);
-		add(downRule);
+		ruleDown = new JButton("Move Down");
+		ruleDown.setMargin(new Insets(2, 2, 2, 2));
+		ruleDown.setBounds(357, 98, 127, 20);
+		add(ruleDown);
 		
 		manageRules = new JButton("Manage Rules");
 		manageRules.setMargin(new Insets(2, 2, 2, 2));
-		manageRules.setBounds(493, 70, 127, 20);
+		manageRules.setBounds(493, 98, 127, 20);
 		add(manageRules);
 		
 		
 		assignersList = new JList();
-		assignersList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		assignersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		assignersList.setForeground(Color.WHITE);
 		assignersList.setBackground(Color.GRAY);
 		assignersList.setModel(new DefaultListModel<ListElement>());
 		
-		JScrollPane assignersPane = new JScrollPane(assignersList);
-		assignersPane.setBounds(630, 10, 305, 50);
+		JScrollPane assignersPane = new JScrollPane();
+		assignersPane.setBounds(630, 10, 305, 80);
 		assignersPane.setBorder(null);
-		assignersList.setPreferredSize(new Dimension(305, 50));
+		assignersPane.setViewportView(assignersList);
 		add(assignersPane);
 		
 		addAssigner = new JButton("Add");
 		addAssigner.setMargin(new Insets(2, 2, 2, 2));
-		addAssigner.setBounds(630, 70, 70, 20);
+		addAssigner.setBounds(630, 98, 70, 20);
 		add(addAssigner);
 		
 		removeAssigner = new JButton("Remove");
 		removeAssigner.setMargin(new Insets(2, 2, 2, 2));
-		removeAssigner.setBounds(710, 70, 75, 20);
+		removeAssigner.setBounds(710, 98, 75, 20);
 		add(removeAssigner);
 		
 		assignerUp = new JButton("Move Up");
 		assignerUp.setMargin(new Insets(2, 2, 2, 2));
-		assignerUp.setBounds(795, 70, 65, 20);
+		assignerUp.setBounds(795, 98, 65, 20);
 		add(assignerUp);
 		
 		assignerDown = new JButton("Move Up");
 		assignerDown.setMargin(new Insets(2, 2, 2, 2));
-		assignerDown.setBounds(870, 70, 65, 20);
+		assignerDown.setBounds(870, 98, 65, 20);
 		add(assignerDown);
 		
 		deleteParser = new JButton("Delete Parser");
-		deleteParser.setBounds(77, 11, 133, 21);
+		deleteParser.setBounds(10, 98, 200, 21);
 		add(deleteParser);
 		
 		saveName.addActionListener(new ActionListener() {
@@ -138,6 +146,44 @@ public class ParserGUIPanel extends JPanel {
 			}
 		});
 		
+		ruleUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) rulesList.getModel();
+				if (rulesList.getSelectedIndex() != 0) {
+					parser.changeRulePosition(model.get(rulesList.getSelectedIndex()).getID(), rulesList.getSelectedIndex() - 1);
+					populate();
+				}
+			}
+		});
+		
+		ruleDown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) rulesList.getModel();
+				if (rulesList.getSelectedIndex() < model.size() - 1) {
+					parser.changeRulePosition(model.get(rulesList.getSelectedIndex()).getID(), rulesList.getSelectedIndex() + 1);
+					populate();
+				}
+			}
+		});
+		
+		assignerUp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (assignersList.getSelectedIndex() != 0) {
+					parser.changeAssignerPosition(assignersList.getSelectedIndex(), assignersList.getSelectedIndex() - 1);
+					populate();
+				}
+			}
+		});
+		
+		assignerDown.addActionListener(new ActionListener() {
+			DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) assignersList.getModel();
+			public void actionPerformed(ActionEvent e) {
+				if (assignersList.getSelectedIndex() < model.size() - 1) {
+					parser.changeAssignerPosition(assignersList.getSelectedIndex(), assignersList.getSelectedIndex() + 1);
+					populate();
+				}
+			}
+		});
 	}
 	
 	public void init(CustomParser parser) {
@@ -147,9 +193,21 @@ public class ParserGUIPanel extends JPanel {
 	
 	public void populate() {
 		nameValue.setText(parser.getName());
+		
 		ConcurrentHashMap<String, Rule> rules = parser.getElements();
-		for (Entry<String, Rule> rule : rules.entrySet()) {
-			HashMap<String, String> ruleAtt = 
+		List<String> ruleOrder = parser.getOrder();
+		DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) rulesList.getModel();
+		model.clear();
+		for (String ruleID : ruleOrder) {
+			model.addElement(new ListElement(ruleID, rules.get(ruleID).printRuleLRP()));
+		}
+		
+		List<String> assigners = parser.getIndexAssigners();
+		HashMap<String, String> assignerNames = ParserHandler.getAssignerNameList(parser.getID());
+		DefaultListModel<ListElement> model1 = (DefaultListModel<ListElement>) assignersList.getModel();
+		model1.clear();
+		for (String assignerID : assigners) {
+			model1.addElement(new ListElement(assignerID, assignerNames.get(assignerID)));
 		}
 	}
 	
