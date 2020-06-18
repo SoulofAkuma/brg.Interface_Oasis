@@ -15,8 +15,17 @@ public class StdGetParser implements Parser {
 	private ArrayList<String> log = new ArrayList<String>();
 	
 	@Override
+	public String getName() {
+		return "StdGetParser";
+	}
+	
+	@Override
 	public HashMap<String, String> parse(String input, HashMap<String, String> parsedHeader) {
 		this.log.clear();
+		if (!parsedHeader.containsKey("ULR")) {
+			this.log.add("Error - the header is not a request header and hence contains no url");
+			return new HashMap<String, String>();
+		}
 		String url = parsedHeader.get("URL");
 		this.log.add("Applying GET Parser on url \"" + url + "\"");
 		String query = url.substring(url.indexOf("?") + 1, url.length());

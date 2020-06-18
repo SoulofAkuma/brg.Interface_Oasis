@@ -6,16 +6,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
+import group.GroupHandler;
 import group.listener.Listener;
+import gui.TriggerGUIPanel;
+import parser.ParserHandler;
 import settings.Setting;
 import settings.SettingHandler;
 
 public class TriggerHandler {
 	
-	public static ConcurrentHashMap<String, Trigger> triggers = new ConcurrentHashMap<String, Trigger>(); //List of all the triggers which will be swept through if their group is active
+	private static ConcurrentHashMap<String, Trigger> triggers = new ConcurrentHashMap<String, Trigger>(); //List of all the triggers which will be swept through if their group is active
 	private static ConcurrentHashMap<String, Thread> triggerThreads = new ConcurrentHashMap<String, Thread>(); //List of all the trigger threads
 	private static ConcurrentHashMap<String, Boolean> triggerThreadStates = new ConcurrentHashMap<String, Boolean>(); //List of all trigger thread states (running or not running)
 	protected static ConcurrentHashMap<String, List<Pair<String, String>>> listenerReports = new ConcurrentHashMap<String, List<Pair<String, String>>>();
@@ -83,16 +87,13 @@ public class TriggerHandler {
 			if (TriggerHandler.triggers.containsKey(id)) {
 				HashMap<String, String> newAttributes = new HashMap<String, String>();
 				Trigger trigger = TriggerHandler.triggers.get(id);
-				TriggerType type = trigger.getType();
-				String name = triggerSetting.getAttribute(TriggerHandler.NAMENAME);
-				String responderIDs = responderIDsToString(trigger.getResponderIDs());
-				newAttributes.put(TriggerHandler.NAMENAME, name);
+				newAttributes.put(TriggerHandler.NAMENAME, trigger.getTriggerName());
 				newAttributes.put(TriggerHandler.IDNAME, id);
-				newAttributes.put(TriggerHandler.RESPONDERIDSNAME, responderIDs);
-				newAttributes.put(TriggerHandler.TYPENAME, type.name());
-				if (type == TriggerType.Timer) {
+				newAttributes.put(TriggerHandler.RESPONDERIDSNAME, responderIDsToString(trigger.getResponderIDs()));
+				newAttributes.put(TriggerHandler.TYPENAME, trigger.getType().name());
+				if (trigger.getType() == TriggerType.Timer) {
 					newAttributes.put(TriggerHandler.COOLDOWNNAME, String.valueOf(trigger.getCooldown()));
-				} else if (type == TriggerType.Listener || type == TriggerType.Responder) {
+				} else if (trigger.getType() == TriggerType.Listener || trigger.getType() == TriggerType.Responder) {
 					newAttributes.put(TriggerHandler.TRIGGEREDBYNAME, SettingHandler.alts(trigger.getTriggeredBy()));
 				}
 				triggerSetting.addReplaceAttributes(newAttributes);
@@ -149,4 +150,49 @@ public class TriggerHandler {
 	public static void registerResponder(String id) {
 		TriggerHandler.responderReports.put(id, Collections.synchronizedList(new ArrayList<Pair<String,String>>()));
 	}
+	
+	public static String getTriggerName(String triggerID) {
+		return TriggerHandler.triggers.get(triggerID).getTriggerName();
+	}
+	
+	public static HashMap<String, String> getTriggeredByNameList(String triggerID) {
+		ArrayList<String> subject = TriggerHandler.triggers.get(triggerID).getTriggeredBy();
+		HashMap<String, String> resultMap = new HashMap<String, String>();
+		if (TriggerHandler.triggers.get(triggerID).getType() == TriggerType.Listener) {
+			for (String listenerID : subject) {
+				resultMap.put(listenerID, GroupHandler.getListenerHandler(GroupHandler.ltgID(listenerID)).getListenerName(listenerID));
+			}
+		} else if (TriggerHandler.triggers.get(triggerID).getType() == TriggerType.Responder) {
+			for (String responderID : subject) {
+				resultMap.put(responderID, GroupHandler.getResponderHandler(GroupHandler.rtgID(responderID)).getResponder(responderID).getName());
+			}
+		}
+		return resultMap;
+	}
+	
+	public static List<Pair<Pair<String, String>, Pair<String, String>>> getRespondersByList(String triggerID) {
+		ArrayList<Pair<String, String>> subject = TriggerHandler.triggers.get(triggerID).getResponderIDs();
+		List<Pair<Pair<String, String>, Pair<String, String>>> resultList = new ArrayList<Pair<Pair<String,String>,Pair<String,String>>>();
+		for (Pair<String, String> kvp : subject) {
+			Pair<String, String> parserKVP = new Pair<String, String>(null, null);
+			Pair<String, String> responderKVP = new Pair<String, String>(null, null);
+			parserKVP.setKey(kvp.getKey());
+			parserKVP.setValue(ParserHandler.getParserName(kvp.getKey()));
+			responderKVP.setKey(kvp.getValue());
+			responderKVP.setValue(GroupHandler.getResponderHandler(GroupHandler.rtgID(kvp.getValue())).getResponder(kvp.getValue()).getName());
+			resultList.add(new Pair<Pair<String, String>, Pair<String, String>>(parserKVP, responderKVP));
+		}
+		return resultList;
+	}
+	
+	public static List<TriggerGUIPanel> getTriggerPanels() {
+		List<TriggerGUIPanel> panels = Collections.synchronizedList(new ArrayList<TriggerGUIPanel>());
+		for (Entry<String, Trigger> kvp : TriggerHandler.triggers.entrySet()) {
+			TriggerGUIPanel panel = new TriggerGUIPanel();
+			panel.init(kvp.getValue(), TriggerHandler.triggerThreadStates.get(kvp.getKey()));
+			panels.add(panel);
+		}
+		return panels;
+	}
 }
+

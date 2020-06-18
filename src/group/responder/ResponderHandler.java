@@ -2,12 +2,15 @@ package group.responder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import constant.Constant;
 import group.GroupHandler;
+import gui.ListElement;
 import settings.Setting;
 import settings.SettingHandler;
 import trigger.TriggerHandler;
@@ -146,5 +149,13 @@ public class ResponderHandler {
 	
 	public Responder getResponder(String id) {
 		return (this.responders.containsKey(id)) ? this.responders.get(id) : null;
+	}
+
+	public ArrayList<ListElement> getResponderElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Responder> kvp : this.responders.entrySet()) {
+			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName()));
+		}
+		return elements;
 	}
 }

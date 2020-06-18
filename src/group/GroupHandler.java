@@ -3,12 +3,15 @@ package group;
 import cc.Pair;
 
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
+import gui.ListElement;
 import gui.Logger;
 import parser.ParserHandler;
 import settings.Setting;
@@ -142,5 +145,23 @@ public class GroupHandler {
 	
 	public static String rtgID(String responderID) {
 		return GroupHandler.rtg.get(responderID);
+	}
+	
+	public static ListElement[] getResponderElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Pair<ListenerHandler, ResponderHandler>> kvp : GroupHandler.groups.entrySet()) {
+			ResponderHandler rh = kvp.getValue().getValue();
+			elements.addAll(rh.getResponderElements());
+		}
+		return elements.toArray(new ListElement[elements.size()]);
+	}
+	
+	public static ListElement[] getListenerElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Pair<ListenerHandler, ResponderHandler>> kvp : GroupHandler.groups.entrySet()) {
+			ListenerHandler lh = kvp.getValue().getKey();
+			elements.addAll(lh.getListenerElements());
+		}
+		return elements.toArray(new ListElement[elements.size()]);
 	}
 }

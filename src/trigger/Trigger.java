@@ -182,5 +182,9 @@ public class Trigger implements Runnable {
 	public void setCooldown(int cooldown) {
 		this.cooldown = cooldown;
 	}
+	
+	public void setTrigger() {
+		this.trigger = true;
+	}
 
 }

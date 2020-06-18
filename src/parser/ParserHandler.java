@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import gui.ListElement;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
@@ -267,5 +268,17 @@ public class ParserHandler {
 		if (SettingHandler.removeParent(id, ParserHandler.IDNAME, ParserHandler.SETTINGNAME, ParserHandler.parserMasterSetting)) {
 			ParserHandler.parsers.remove(id);
 		}
+	}
+	
+	public static String getParserName(String parserID) {
+		return ParserHandler.parsers.get(parserID).getName();
+	}
+	
+	public static ListElement[] getParserElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Parser> kvp : ParserHandler.parsers.entrySet()) {
+			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName(), kvp.getValue()));
+		}
+		return elements.toArray(new ListElement[elements.size()]);
 	}
 }

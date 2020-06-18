@@ -11,6 +11,8 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,8 +22,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-
+import javax.swing.JLayeredPane;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.JScrollPane;
 import javax.swing.border.LineBorder;
+import javax.swing.UIManager;
 
 import cc.Pair;
 import cc.Shell;
@@ -41,23 +47,36 @@ import parser.Discard;
 import parser.ParserHandler;
 import parser.Rule;
 
-import javax.swing.UIManager;
 
 import settings.*;
 import trigger.Trigger;
 import trigger.TriggerHandler;
 import trigger.TriggerType;
-import javax.swing.JLayeredPane;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import java.awt.Rectangle;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
 	
+	//All GUI classes which extend the JFrame (including the main) cannot be re initialized. To re initialize the GUI restart the program
+	
 	public static final String SESSIONTIME = DateTimeFormatter.ofPattern("HH_mm_ss").format(LocalDateTime.now());
-	private static List<JPanel> settingPanels = Collections.synchronizedList(new ArrayList<JPanel>());
+	private static List<Component> settingPanels = Collections.synchronizedList(new ArrayList<Component>());
 
 	private JPanel contentPane;
+	private JScrollPane groupsPane;
+	private JScrollPane triggersPane;
+	private JScrollPane parsersPane;
+	private JScrollPane constantsPane;
+	private JScrollPane generalPane;
+	private JPanel groupsPanel;
+	private JPanel triggersPanel;
+	private JPanel parsersPanel;
+	private JPanel constantsPanel;
+	private JPanel generalPanel;
+	
+	public static Main frame;
 	
 	/**
 	 * Launch the application.
@@ -85,7 +104,7 @@ public class Main extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Main frame = new Main();
+					frame = new Main();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					Logger.reportException("Main", "main", e);
@@ -169,41 +188,99 @@ public class Main extends JFrame {
 		
 		GroupHandler.getListenerHandler(GroupHandler.ltgID("000000011")).runListener("000000011");
 		TriggerHandler.runTrigger("000000080");
+		
+		Logger.addMessage(MessageType.Error, MessageOrigin.Parser, "Test", "000000001", null, null, false);
+		Logger.addMessage(MessageType.Information, MessageOrigin.Parser, "Test", "000000001", null, null, false);
+		Logger.addMessage(MessageType.Warning, MessageOrigin.Parser, "Test", "000000001", null, null, false);
 	}
 	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!
 	/**
 	 * Create the frame.
 	 */
 	public Main() {
+		//Main
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 500);
 		contentPane = new JPanel();
+		contentPane.setBackground(Color.DARK_GRAY);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JPanel settingPanel = new JPanel();
+				
+				//Main components
+				JPanel mainPanel = new JPanel();
+				mainPanel.setFocusCycleRoot(true);
+				mainPanel.setBackground(Color.DARK_GRAY);
+				mainPanel.setBounds(0, 0, 995, 465);
+				contentPane.add(mainPanel);
+				mainPanel.setLayout(null);
+				
+				JButton StartButton = new JButton("Launch Oasis");
+				StartButton.setBorder(new LineBorder(Color.BLACK));
+				StartButton.setBackground(new Color(169, 169, 169));
+				StartButton.setForeground(new Color(0, 128, 128));
+				StartButton.setBounds(397, 197, 200, 50);
+				StartButton.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+				StartButton.setMargin(new Insets(5, 5, 5, 5));
+				mainPanel.add(StartButton);
+				
+				JButton btnSetup = new JButton("Setup");
+				btnSetup.setBorder(new EmptyBorder(1, 1, 1, 1));
+				btnSetup.setBackground(Color.LIGHT_GRAY);
+				btnSetup.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+				btnSetup.setBounds(875, 424, 100, 30);
+				mainPanel.add(btnSetup);
+				
+				JButton startLoggingConsole = new JButton("Open Console");
+				startLoggingConsole.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Logger.showGUI = true;
+					}
+				});
+				startLoggingConsole.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+				startLoggingConsole.setBorder(new EmptyBorder(1, 1, 1, 1));
+				startLoggingConsole.setBackground(Color.LIGHT_GRAY);
+				startLoggingConsole.setBounds(706, 424, 159, 30);
+				mainPanel.add(startLoggingConsole);
+				StartButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						if (LaunchIDS.isRunning()) {
+							LaunchIDS.stopAll();
+							StartButton.setText("Launch Oasis");
+						} else {
+							LaunchIDS.startAll();
+							StartButton.setText("Stop Oasis");
+						}
+					}
+				});
+				mainPanel.setVisible(true);
+		
+		//Setting panel
+		JLayeredPane settingPanel = new JLayeredPane();
 		settingPanel.setLayout(null);
 		settingPanel.setFocusCycleRoot(true);
 		settingPanel.setBackground(Color.DARK_GRAY);
 		settingPanel.setBounds(0, 0, 995, 465);
 		contentPane.add(settingPanel);
 		
+		
+		//Header
 		JPanel header = new JPanel();
 		header.setBounds(0, 0, 995, 30);
 		settingPanel.add(header);
 		header.setLayout(null);
 		
 		JButton headerGroupButton = new JButton("Groups");
-		headerGroupButton.setBounds(0, 0, 179, 30);
+		headerGroupButton.setBounds(1, 0, 178, 30);
 		header.add(headerGroupButton);
 		
 		JButton headerTriggerButton = new JButton("Triggers");
 		headerTriggerButton.setBounds(179, 0, 179, 30);
 		header.add(headerTriggerButton);
 		
-		JButton headerParserButton = new JButton("IndexAssigners");
+		JButton headerParserButton = new JButton("Parsers");
 		headerParserButton.setBounds(358, 0, 179, 30);
 		header.add(headerParserButton);
 		
@@ -216,96 +293,137 @@ public class Main extends JFrame {
 		header.add(headerGeneralButton);
 		
 		JButton headerCloseButton = new JButton("Close");
-		headerCloseButton.setBounds(895, 0, 100, 30);
+		headerCloseButton.setBounds(895, 0, 90, 30);
 		header.add(headerCloseButton);
 		
-		JPanel groupsPanel = new JPanel();
+		
+		groupsPanel = new JPanel();
 		groupsPanel.setBackground(Color.DARK_GRAY);
-		groupsPanel.setBounds(0, 30, 995, 435);
-		settingPanel.add(groupsPanel);
-		groupsPanel.setLayout(null);
 		
-		JPanel triggersPanel = new JPanel();
+		triggersPanel = new JPanel();
 		triggersPanel.setBackground(Color.DARK_GRAY);
-		triggersPanel.setBounds(0, 30, 995, 435);
-		settingPanel.add(triggersPanel);
-		triggersPanel.setLayout(null);
 		
-		JPanel indexAssignersPanel = new JPanel();
-		indexAssignersPanel.setBackground(Color.DARK_GRAY);
-		indexAssignersPanel.setBounds(0, 30, 995, 435);
-		settingPanel.add(indexAssignersPanel);
-		indexAssignersPanel.setLayout(null);
+		parsersPanel = new JPanel();
+		parsersPanel.setBackground(Color.DARK_GRAY);
 		
-		JPanel constantsPanel = new JPanel();
+		constantsPanel = new JPanel();
 		constantsPanel.setBackground(Color.DARK_GRAY);
-		constantsPanel.setBounds(0, 30, 995, 435);
-		settingPanel.add(constantsPanel);
+		
+		generalPanel = new JPanel();
+		generalPanel.setBackground(Color.DARK_GRAY);
+		
+		groupsPane = new JScrollPane(groupsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		groupsPane.setBackground(Color.DARK_GRAY);
+		groupsPane.setBounds(0, 30, 986, 435);
+		groupsPane.getVerticalScrollBar().setUnitIncrement(10);
+		settingPanel.add(groupsPane);
+		groupsPane.setLayout(null);
+		
+		triggersPane = new JScrollPane(triggersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		triggersPane.setBackground(Color.DARK_GRAY);
+		triggersPane.setBounds(0, 30, 986, 435);
+		triggersPane.getVerticalScrollBar().setUnitIncrement(10);
+		settingPanel.add(triggersPane);
+		
+		parsersPane = new JScrollPane(parsersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		parsersPane.setBackground(Color.DARK_GRAY);
+		parsersPane.setBounds(0, 30, 986, 435);
+		settingPanel.add(parsersPane);
+		parsersPane.getVerticalScrollBar().setUnitIncrement(10);
+		parsersPane.setLayout(null);
+		
+		constantsPane = new JScrollPane(constantsPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		constantsPane.setBackground(Color.DARK_GRAY);
+		constantsPane.setBounds(0, 30, 986, 435);
+		constantsPane.getVerticalScrollBar().setUnitIncrement(10);
+		settingPanel.add(constantsPane);
+		constantsPane.setLayout(null);
+		
+		generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		generalPane.setBounds(0, 30, 986, 435);
+		generalPane.getVerticalScrollBar().setUnitIncrement(10);
+		settingPanel.add(generalPane);
+		generalPane.setLayout(null);
+		
+		Main.settingPanels.add(groupsPane);
+		groupsPanel.setLayout(null);
+		groupsPanel.setPreferredSize(new Dimension(986, 435));
+		Main.settingPanels.add(parsersPane);
+		parsersPanel.setLayout(null);
+		parsersPanel.setPreferredSize(new Dimension(986, 435));
+		Main.settingPanels.add(constantsPane);
 		constantsPanel.setLayout(null);
+		constantsPanel.setPreferredSize(new Dimension(986, 435));
+		Main.settingPanels.add(generalPane);
+		generalPanel.setLayout(null);
+		generalPanel.setPreferredSize(new Dimension(986, 435));
+		Main.settingPanels.add(triggersPane);
+		triggersPanel.setLayout(null);
+		triggersPanel.setPreferredSize(new Dimension(986, 435));
 		
-		JPanel generalPanel = new JPanel();
-		generalPanel.setBounds(0, 30, 995, 435);
-		settingPanel.add(generalPanel);
-		
-		Main.settingPanels.add(groupsPanel);
-		Main.settingPanels.add(triggersPanel);
-		Main.settingPanels.add(indexAssignersPanel);
-		Main.settingPanels.add(constantsPanel);
-		Main.settingPanels.add(generalPanel);
-		
-		settingPanel.setVisible(false);
-		
-		JPanel mainPanel = new JPanel();
-		mainPanel.setFocusCycleRoot(true);
-		mainPanel.setBackground(Color.DARK_GRAY);
-		mainPanel.setBounds(0, 0, 995, 465);
-		contentPane.add(mainPanel);
-		mainPanel.setLayout(null);
-		
-		JButton StartButton = new JButton("Launch Oasis");
-		StartButton.setBorder(new LineBorder(Color.BLACK));
-		StartButton.setBackground(new Color(169, 169, 169));
-		StartButton.setForeground(new Color(0, 128, 128));
-		StartButton.setBounds(397, 197, 200, 50);
-		StartButton.setFont(new Font("Times New Roman", Font.PLAIN, 30));
-		StartButton.setMargin(new Insets(5, 5, 5, 5));
-		mainPanel.add(StartButton);
-		
-		JButton btnSetup = new JButton("Setup");
-		btnSetup.setBorder(new EmptyBorder(1, 1, 1, 1));
-		btnSetup.setBackground(Color.LIGHT_GRAY);
-		btnSetup.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-		btnSetup.setBounds(875, 424, 100, 30);
-		mainPanel.add(btnSetup);
-		
-		
+		//Main Button Listeners
 		headerCloseButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				settingPanel.setVisible(false);
 				mainPanel.setVisible(true);
 			}
 		});
-		StartButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if (LaunchIDS.isRunning()) {
-					LaunchIDS.stopAll();
-					StartButton.setText("Launch Oasis");
-				} else {
-					LaunchIDS.startAll();
-					StartButton.setText("Stop Oasis");
-				}
-			}
-		});
+		
+		//Setting header button Listeners
 		btnSetup.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				hideAllSettingPanels();
 				settingPanel.setVisible(true);
 				mainPanel.setVisible(false);
 			}
 		});
+		headerGroupButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hideAllSettingPanels();
+				groupsPane.setVisible(true);
+				groupsPanel.setVisible(true);
+			}
+		});
+		headerTriggerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hideAllSettingPanels();
+				triggersPane.setVisible(true);
+				triggersPanel.setVisible(true);
+				populateTrigger();
+			}
+		});
+		headerParserButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hideAllSettingPanels();
+				parsersPane.setVisible(true);
+				parsersPanel.setVisible(true);
+			}
+		});
+		headerConstantsButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hideAllSettingPanels();
+				constantsPane.setVisible(true);
+				constantsPanel.setVisible(true);
+			}
+		});
+		headerGeneralButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				hideAllSettingPanels();
+				generalPane.setVisible(true);
+				generalPanel.setVisible(true);
+			}
+		});
+		settingPanel.setVisible(false);
+	}
+	
+	public static void hideAllSettingPanels() {
+		for (Component panel : Main.settingPanels) {
+			panel.setVisible(false);
+		}
 	}
 	
 	public static void hideSettingPanels() {
-		for (JPanel panel : Main.settingPanels) {
+		for (Component panel : Main.settingPanels) {
 			panel.setVisible(false);
 		}
 	}
@@ -337,5 +455,35 @@ public class Main extends JFrame {
 			Logger.reportException("Main", "askMessage", e);
 		}
 		return returnVal.getValue();
+	}
+	
+	private void assignPos(Component component, int x, int y) {
+		component.setBounds(x, y, component.getWidth(), component.getHeight());
+	}
+	
+	private void populateTrigger() {
+		while (triggersPanel.getComponentCount() > 0) {
+			triggersPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<TriggerGUIPanel> panels = TriggerHandler.getTriggerPanels();
+		for (TriggerGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			triggersPanel.add(panel);
+			y += 110;
+		}
+		triggersPanel.setPreferredSize(new Dimension(986, y));
+		revalidate();
+	}
+	
+	public static void deleteTrigger(String id) {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				TriggerHandler.removeTrigger(id);
+				Main.frame.populateTrigger();
+			}
+		});
 	}
 }

@@ -1,6 +1,7 @@
 package group.listener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cc.Pair;
 import group.GroupHandler;
 import group.TimeoutController;
+import gui.ListElement;
 import settings.Setting;
 import trigger.TriggerHandler;
 
@@ -24,7 +26,6 @@ public class ListenerHandler {
 	private String groupName; //The name of the group the handler handles the listeners for
 	
 	private static ConcurrentHashMap<String, String> activePorts = new ConcurrentHashMap<String, String>(); //Ports which are currently actively listened to stored by id, port
-	private static ConcurrentHashMap<String, String> idToName = new ConcurrentHashMap<String, String>(); //Names of all listeners stored by id, name
 	
 	private static final String IDNAME = "id";
 	private static final String NAMENAME = "name";
@@ -50,7 +51,6 @@ public class ListenerHandler {
 			this.listeners.put(listenerID, new Listener(port, name, groupID, this.groupName, listenerID, log));
 			this.listenerThreads.put(listenerID, new Thread(this.listeners.get(listenerID)));
 			this.listenerThreadStatus.put(listenerID, false);
-			ListenerHandler.idToName.put(listenerID, name);
 			TriggerHandler.registerListener(listenerID);
 			GroupHandler.registerListener(listenerID, this.groupID);
 		}
@@ -94,10 +94,6 @@ public class ListenerHandler {
 		} catch (InterruptedException e) {
 			//Thread is already interrupted if the exception has been thrown
 		}
-	}
-	
-	public static String getListenerName(String listenerID) {
-		return ListenerHandler.idToName.get(listenerID);
 	}
 	
 	public void changeStatus(String listenerID, boolean status) {
@@ -155,7 +151,6 @@ public class ListenerHandler {
 		this.listeners.put(listener.getListenerID(), listener);
 		this.listenerThreads.put(listener.getListenerID(), new Thread(listener));
 		this.listenerThreadStatus.put(listener.getListenerID(), false);
-		ListenerHandler.idToName.put(listener.getListenerID(), listener.getName());
 		TriggerHandler.registerListener(listener.getListenerID());
 		GroupHandler.registerListener(listener.getListenerID(), this.groupID);
 	}
@@ -183,5 +178,17 @@ public class ListenerHandler {
 	
 	public Listener getListener(String id) {
 		return (this.listeners.containsKey(id)) ? this.listeners.get(id) : null;
+	}
+	
+	public String getListenerName(String listenerID) {
+		return this.listeners.get(listenerID).getName();
+	}
+
+	public ArrayList<ListElement> getListenerElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Listener> kvp : this.listeners.entrySet()) {
+			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName()));
+		}
+		return elements;
 	}
 }

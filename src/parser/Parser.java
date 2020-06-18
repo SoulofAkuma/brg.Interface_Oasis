@@ -8,6 +8,8 @@ public interface Parser {
 	
 	public HashMap<String, String> parse(String input, HashMap<String, String> parsedHeader);
 	
+	public String getName();
+	
 	public List<String> printLog();
 
 }

@@ -9,9 +9,53 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import filehandler.Manager;
+import javax.swing.JFrame;
 
-public class Logger implements Runnable {
+import filehandler.Manager;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+import javax.swing.JScrollPane;
+import java.awt.BorderLayout;
+import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+
+public class Logger extends JFrame implements Runnable{
+	
+	private static Logger console;
+	private static JTextPane consoleText;
+	
+	public Logger() {
+		setBounds(new Rectangle(0, 0, 600, 300));
+		getContentPane().setBounds(new Rectangle(0, 0, 600, 300));
+		getContentPane().setLayout(null);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		
+		
+		consoleText = new JTextPane();
+		consoleText.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		consoleText.setBackground(Color.DARK_GRAY);
+		consoleText.setBorder(null);
+		
+		JScrollPane scrollPane = new JScrollPane(consoleText);
+		consoleText.setPreferredSize(new Dimension(586, 263));
+		scrollPane.setBounds(0, 0, 586, 263);
+		getContentPane().add(scrollPane);
+		addWindowListener(new WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent windowEvent) {
+		        Logger.showGUI = false;
+		    }
+		});
+	}
 	
 	private static ArrayList<MessageObject> messages = new ArrayList<MessageObject>(); //Messages to be viewable in log
 	private static ArrayList<String> errorElements = new ArrayList<String>();
@@ -22,6 +66,8 @@ public class Logger implements Runnable {
 	private static final String EXCEPTIONLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ExceptionLog_Session" + Main.SESSIONTIME + ".xml";
 	private static int fileID;
 	private static int exceptionFileID;
+	
+	public static boolean showGUI = false;
 	
 	public static boolean runMe = false;
 	
@@ -93,6 +139,7 @@ public class Logger implements Runnable {
 		Logger.myThread = new Thread(new Logger());
 		Logger.runMe = true;
 		Logger.myThread.start();
+		Logger.console = new Logger();
 	}
 	
 	@Override
@@ -102,17 +149,46 @@ public class Logger implements Runnable {
 			if (messages.size() > size) {
 				for (int i = size; i < messages.size(); i++) {
 					System.out.println(messages.get(i).print());
-					//TODO: Show in GUI
+					switch(messages.get(i).type) {
+						case Information:
+							colorAppend(messages.get(i).print(), Color.WHITE);
+						break;
+						case Error:
+							colorAppend(messages.get(i).print(), Color.RED);
+						break;
+						case Warning:
+							colorAppend(messages.get(i).print(), Color.YELLOW);
+						break;
+					}
+					colorAppend("\n\r", Color.WHITE);
 				}
 				size = messages.size();
 			}
+			
 			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				break;
+				Thread.sleep(100);
+			} catch (InterruptedException e) {}
+			
+			if (Logger.showGUI) {
+				Logger.console.setVisible(true);
+			} else {
+				Logger.console.setVisible(false);
 			}
 		}
+		Logger.console.dispose();
+	}
+	
+	private static void colorAppend(String text, Color color) {
+		
+        StyleContext sc = StyleContext.getDefaultStyleContext();
+        AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color);
+
+        aset = sc.addAttribute(aset, StyleConstants.Alignment, StyleConstants.ALIGN_JUSTIFIED);
+
+        int len = Logger.consoleText.getDocument().getLength();
+        Logger.consoleText.setCaretPosition(len);
+        Logger.consoleText.setCharacterAttributes(aset, false);
+        Logger.consoleText.replaceSelection(text);
 	}
 
 }

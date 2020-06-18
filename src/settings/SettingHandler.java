@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -269,6 +270,18 @@ public class SettingHandler {
 		IndexAssignerHandler.init(SettingHandler.indexAssignerMasterSetting);
 		LaunchIDS.init(SettingHandler.launchIDSMasterSetting);
 		GroupHandler.init(SettingHandler.groupMasterSetting);
+	}
+	
+	public static String getNewID(IDType type) {
+		String newID = "";
+		Random random = new Random();
+		do {
+			for (int i = 0; i < 9; i++) {
+				newID += random.nextInt(10);
+			}
+		} while(SettingHandler.IDS.containsKey(newID));
+		SettingHandler.IDS.put(newID, type);
+		return newID;
 	}
 	
 	public static boolean removeElement(String parentID, String elementID, String idname, String settingname, String collectionsettingname, String elementsettingname, Setting masterSetting) {
