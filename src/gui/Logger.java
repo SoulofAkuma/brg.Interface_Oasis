@@ -52,6 +52,7 @@ public class Logger extends JFrame implements Runnable{
 		consoleText.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		consoleText.setBackground(Color.DARK_GRAY);
 		consoleText.setBorder(null);
+		consoleText.setEditable(false);
 		
 		JScrollPane scrollPane = new JScrollPane(consoleText);
 		consoleText.setPreferredSize(new Dimension(586, 263));
@@ -157,6 +158,7 @@ public class Logger extends JFrame implements Runnable{
 			if (messages.size() > size) {
 				for (int i = size; i < messages.size(); i++) {
 					System.out.println(messages.get(i).print());
+					Logger.consoleText.setEditable(true);
 					switch(messages.get(i).type) {
 						case Information:
 							colorAppend(messages.get(i).print(), Color.WHITE);
@@ -169,6 +171,7 @@ public class Logger extends JFrame implements Runnable{
 						break;
 					}
 					colorAppend("\n\r", Color.WHITE);
+					Logger.consoleText.setEditable(false);
 				}
 				size = messages.size();
 			}

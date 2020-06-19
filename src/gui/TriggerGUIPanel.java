@@ -258,7 +258,7 @@ public class TriggerGUIPanel extends JPanel {
 				trigger.setCooldown((Integer)cooldownValue.getValue());
 			}
 		});
-				
+		
 		this.subComponents.add(this.nameValue);
 		this.subComponents.add(this.typeValue);
 		this.subComponents.add(saveName);
