@@ -7,16 +7,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import cc.Pair;
-import group.RequestType;
+import constant.ConstantHandler;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
-import constant.Constant;
-import constant.ConstantHandler;
 
 public class Header {
 	//TODO: Returns a dynamic header string. Header values may consist of constants
@@ -56,11 +52,11 @@ public class Header {
 			this.requestTypeValue = this.requestType;
 		}
 		this.urlVal = ConstantHandler.getConstant(this.url, parsedHeader, parsedBody);
-		String contentType = (this.contentType == null) ? "Content-Type: text/plain" : "Content-Type: " + ConstantHandler.getConstant(this.contentType, parsedHeader, parsedBody) + "\r\n";
+		String contentType = (this.contentType == null || this.contentType.isEmpty()) ? "Content-Type: text/plain" : "Content-Type: " + ConstantHandler.getConstant(this.contentType, parsedHeader, parsedBody) + "\r\n";
 		if (!this.requestTypeValue.equals("POST")) {
 			contentType = "";
 		}
-		String userAgent = (this.userAgent == null) ? "" : "User-Agent: " + ConstantHandler.getConstant(this.userAgent, parsedHeader, parsedBody) + "\r\n";
+		String userAgent = (this.userAgent == null || this.userAgent.isEmpty()) ? "" : "User-Agent: " + ConstantHandler.getConstant(this.userAgent, parsedHeader, parsedBody) + "\r\n";
 		if (isIPSyntax(this.urlVal)) {
 			if (!isValidIP(this.urlVal)) {
 				String[] elements = {"URL", "ContentType", "UserAgent", "ResponderName"};
@@ -98,14 +94,7 @@ public class Header {
 				+ "Content-Length: " + contentLength + "\r\n";
 		for (String customArg : this.customArgs) {
 			String val = ConstantHandler.getConstant(customArg, parsedHeader, parsedBody);
-			if (val.indexOf(":") == -1) {
-				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + ConstantHandler.identification(customArg) + " is in an invalid format \"" + val + "\". Skipping Constant", this.responderID, null, null, false);
-			} else if (this.reserved.contains(val.substring(0, val.indexOf(":")))) {
-				Logger.addMessage(MessageType.Warning, MessageOrigin.Responder, "The constant for the header " + ConstantHandler.identification(customArg) + " contains a reserved attribute \"" + val.substring(0, val.indexOf(":")) + "\". Skipping Constant", this.responderID, null, null, false);
-				
-			} else {
-				header += val + "\r\n";
-			}
+			header += val + "\r\n";
 		}
 		return header;
 	}

@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import cc.Pair;
-
 public class Constant {
 	
 	private String id;

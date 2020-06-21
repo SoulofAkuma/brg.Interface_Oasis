@@ -1,12 +1,12 @@
 package parser;
 
-import java.util.List;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -47,7 +47,7 @@ public class ParserHandler {
 			if (!parser.isEnabled()) {
 				continue;
 			}
-			boolean success = false;
+			boolean success = true;
 			String id = parser.getAttribute(ParserHandler.IDNAME);
 			String name = parser.getAttribute(ParserHandler.NAMENAME);
 			ArrayList<String> indexAssigners = (parser.getAttribute(ParserHandler.INDEXASSIGNERNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(parser.getAttribute(ParserHandler.INDEXASSIGNERNAME).split(",")));

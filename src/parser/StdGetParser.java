@@ -1,14 +1,7 @@
 package parser;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import gui.Logger;
-import gui.MessageOrigin;
-import gui.MessageType;
-import settings.SettingHandler;
 
 public class StdGetParser implements Parser {
 	
@@ -42,6 +35,9 @@ public class StdGetParser implements Parser {
 			}
 			String key = params[0];
 			String value = (res.containsKey(key)) ? res.get(key) + params[1] : params[1];
+			if (res.containsKey(key)) {
+				res.put(key, res.get(key) + "," + value);
+			}
 			res.put(key, value);
 		}
 		return res;

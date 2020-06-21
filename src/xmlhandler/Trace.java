@@ -1,18 +1,25 @@
 package xmlhandler;
 
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import cc.Pair;
 import gui.ListElement;
 import gui.Logger;
 import parser.ParserHandler;
 import parser.Rule;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.io.*;
-import javax.xml.parsers.*;
-import org.w3c.dom.*;
 
 public class Trace implements Rule {
 	

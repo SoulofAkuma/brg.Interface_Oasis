@@ -1,30 +1,25 @@
 package gui;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import cc.Pair;
 import group.GroupHandler;
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
 import settings.SettingHandler;
-
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Component;
-
-import javax.swing.JLabel;
-import javax.swing.JList;
-
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 
 public class GroupGUIPanel extends JPanel {
 	

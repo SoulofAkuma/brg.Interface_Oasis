@@ -1,7 +1,30 @@
 package gui;
 
-import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import cc.Pair;
 import parser.AddHeaderVal;
 import parser.Cut;
 import parser.Discard;
@@ -9,33 +32,7 @@ import parser.Isolate;
 import parser.Replace;
 import parser.Rule;
 import parser.Split;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import javax.swing.JLabel;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JSpinner;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JScrollPane;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
-import cc.Pair;
+import settings.SettingHandler;
 
 public class RuleGUIPanel extends JPanel {
 	
@@ -299,8 +296,27 @@ public class RuleGUIPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				xmlhandler.Trace xmltrace = (xmlhandler.Trace) rule;
 				ListElement typeReturn = ParamSelector.getSelection(Main.frame, xmlhandler.Trace.getNodeTypes(), "Node Type");
-				String value = StringInput.getSelection(Main.frame, "Query String");
+				String selecting = "";
+				boolean checkNum = false;
+				if (typeReturn != null) {
+					if (typeReturn.getID().equals("0")) {
+						selecting = "ElementName";
+					} else if (typeReturn.getID().equals("1")) {
+						selecting = "AttributeName";
+					} else if (typeReturn.getID().equals("2")) {
+						selecting = "ElementIndex";
+						checkNum = true;
+					} else if (typeReturn.getID().equals("3")) {
+						selecting = "ElementName:AttributeName:AttributeValue";
+					}
+				} else {
+					return;
+				}
+				String value = StringInput.getSelection(Main.frame, selecting);
 				if (typeReturn == null || value == null) {
+					return;
+				} else if (!SettingHandler.matchesRegex("[0-9]+", value) && checkNum) {
+					Main.popupMessage("Error - The index must be a number");
 					return;
 				}
 				xmltrace.getNodes().add(new Pair<Short, String>(Short.parseShort(typeReturn.getID()), value));
@@ -460,6 +476,7 @@ public class RuleGUIPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				Discard discard = (Discard) rule;
 				discard.changeFlagState("s");
+				populate();
 			}
 		});
 		
@@ -467,6 +484,7 @@ public class RuleGUIPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				Discard discard = (Discard) rule;
 				discard.changeFlagState("p");
+				populate();
 			}
 		});
 		
@@ -474,6 +492,7 @@ public class RuleGUIPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				Discard discard = (Discard) rule;
 				discard.changeFlagState("z");
+				populate();
 			}
 		});
 		
@@ -481,6 +500,7 @@ public class RuleGUIPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				Discard discard = (Discard) rule;
 				discard.changeFlagState("a");
+				populate();
 			}
 		});
 		
@@ -934,8 +954,27 @@ public class RuleGUIPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				jsonhandler.Trace jsontrace = (jsonhandler.Trace) rule;
 				ListElement typeReturn = ParamSelector.getSelection(Main.frame, jsonhandler.Trace.getElementTypes(), "Node Type");
-				String value = StringInput.getSelection(Main.frame, "Query String");
+				String selecting = "";
+				boolean checkNum = false;
+				if (typeReturn != null) {
+					if (typeReturn.getID().equals("2")) {
+						selecting = "ElementName=ElementValue";
+					} else if (typeReturn.getID().equals("3")) {
+						selecting = "ElementName=ElementValueRegex";
+					} else if (typeReturn.getID().equals("1")) {
+						checkNum = true;
+						selecting = "ArrayIndex";
+					} else if (typeReturn.getID().equals("0")) {
+						selecting = "ElementName";
+					}
+				} else {
+					return;
+				}
+				String value = StringInput.getSelection(Main.frame, selecting);
 				if (typeReturn == null || value == null) {
+					return;
+				} else if (!SettingHandler.matchesRegex("[0-9]+", value) && checkNum) {
+					Main.popupMessage("Error - The index must be a number");
 					return;
 				}
 				jsontrace.getPath().add(new Pair<Integer, String>(Integer.parseInt(typeReturn.getID()), value));
@@ -1042,6 +1081,26 @@ public class RuleGUIPanel extends JPanel {
 			discardP.setSelected(discard.getFlags().contains("p"));
 			discardZ.setSelected(discard.getFlags().contains("z"));
 			discardA.setSelected(discard.getFlags().contains("a"));
+			if (discardS.isSelected()) {
+				discardP.setEnabled(false);
+				discardS.setEnabled(true);
+			} else if (discardP.isSelected()) {
+				discardP.setEnabled(true);
+				discardS.setEnabled(false);
+			} else {
+				discardP.setEnabled(true);
+				discardS.setEnabled(true);
+			}
+			if (discardZ.isSelected()) {
+				discardZ.setEnabled(true);
+				discardA.setEnabled(false);
+			} else if (discardA.isSelected()) {
+				discardZ.setEnabled(false);
+				discardA.setEnabled(true);
+			} else {
+				discardZ.setEnabled(true);
+				discardA.setEnabled(true);
+			}
 			if (this.height == 0) {
 				setHeight(34);
 			}

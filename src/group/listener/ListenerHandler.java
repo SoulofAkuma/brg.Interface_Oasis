@@ -1,7 +1,6 @@
 package group.listener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -9,9 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import cc.Pair;
 import group.GroupHandler;
-import group.TimeoutController;
 import gui.ListElement;
 import gui.ListenerGUIPanel;
 import settings.Setting;

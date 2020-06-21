@@ -1,14 +1,15 @@
 package settings;
 
-import cc.Pair;
-import xmlhandler.SettingFunctions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import xmlhandler.SettingFunctions;
 
 public class Setting {
 	

@@ -1,26 +1,23 @@
 package gui;
 
-import javax.swing.JPanel;
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import group.GroupHandler;
 import group.listener.Listener;
 import settings.SettingHandler;
-
-import javax.swing.JButton;
-import javax.swing.JSpinner;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
 
 public class ListenerGUIPanel extends JPanel {
 	

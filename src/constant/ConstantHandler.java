@@ -58,6 +58,8 @@ public class ConstantHandler {
 	}
 	
 	public static String getConstant(String id, HashMap<String, String>  parsedHeader, HashMap<String, String> parsedBody) {
+		System.out.println(id);
+		System.out.println(ConstantHandler.constants.get(id).getConstant(parsedHeader, parsedBody));
 		return ConstantHandler.constants.get(id).getConstant(parsedHeader, parsedBody);
 	}
 

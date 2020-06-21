@@ -1,19 +1,21 @@
 package gui;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.awt.Color;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-
-import java.awt.Font;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
@@ -22,11 +24,6 @@ import indexassigner.IndexAssigner;
 import indexassigner.IndexAssignerHandler;
 import settings.IDType;
 import settings.SettingHandler;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import java.awt.Insets;
 
 public class IndexAssignerGUIPanel extends JPanel {
 	

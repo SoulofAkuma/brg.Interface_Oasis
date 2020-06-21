@@ -39,7 +39,7 @@ public class Trace implements Rule {
 		String rString = "";
 		switch(queryConstant) {
 			case 0:
-				rString ="ObjectIndex";
+				rString ="ObjectKey";
 			break;
 			case 1:
 				rString = "ArrayIndex";
@@ -56,7 +56,7 @@ public class Trace implements Rule {
 	
 	public static ListElement[] getElementTypes() {
 		ListElement[] vals = new ListElement[4];
-		vals[0] = new ListElement("0", "ObjectIndex");
+		vals[0] = new ListElement("0", "ObjectKey");
 		vals[1] = new ListElement("1", "ArrayIndex");
 		vals[2] = new ListElement("2", "ArrayQuery");
 		vals[3] = new ListElement("3", "ArrayQueryRegex");

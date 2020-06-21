@@ -1,24 +1,20 @@
 package gui;
 
-import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.awt.Color;
-import java.awt.Component;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import java.awt.Font;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import constant.ConstantHandler;
 import constant.Value;
-
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
 
 public class ValueGUIPanel extends JPanel {
 	
@@ -117,9 +113,18 @@ public class ValueGUIPanel extends JPanel {
 		isBackReference.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				value.setValue("");
-				value.setBackReference(isBackReference.isSelected());
-				populate();
+				if (ConstantHandler.getRConstant() == null) {
+					Main.popupMessage("Error - You need at least one constant to reference to");
+					return;
+				} else {
+					if (!isBackReference.isSelected()) {
+						value.setValue("");
+					} else {
+						value.setValue(ConstantHandler.getRConstant());
+					}
+					value.setBackReference(isBackReference.isSelected());
+					populate();
+				}
 			}
 		});
 		

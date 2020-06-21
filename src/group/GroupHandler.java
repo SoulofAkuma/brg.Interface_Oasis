@@ -1,7 +1,5 @@
 package group;
 
-import cc.Pair;
-
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +8,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cc.Pair;
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
 import gui.GroupGUIPanel;
 import gui.ListElement;
 import gui.Logger;
-import parser.ParserHandler;
 import settings.Setting;
 
 public class GroupHandler {

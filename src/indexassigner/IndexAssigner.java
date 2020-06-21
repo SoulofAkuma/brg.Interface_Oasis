@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
-import settings.SettingHandler;
 
 public class IndexAssigner {
 	
@@ -44,9 +42,11 @@ public class IndexAssigner {
 				continue;
 			}
 			ArrayList<String> matches = new ArrayList<String>();
+			boolean isFirst = true;
 			for (Iterator<String> ite = results.iterator(); ite.hasNext();) {
 				String result = ite.next();
-				if (result == null) {
+				if (result == null || isFirst) {
+					isFirst = false;
 					continue;
 				}
 				if (!result.replaceAll(this.regexes.get(regexID).getKey(), "dummy").equals(result)) {

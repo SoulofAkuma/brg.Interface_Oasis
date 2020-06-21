@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
 import gui.IndexAssignerGUIPanel;
+import gui.ListElement;
 import settings.Setting;
 import settings.SettingHandler;
 
@@ -222,6 +223,14 @@ public class IndexAssignerHandler {
 			panels.add(panel);
 		}
 		return panels;
+	}
+	
+	public static ListElement[] getAssignerElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, IndexAssigner> entry : IndexAssignerHandler.indexAssigners.entrySet()) {
+			elements.add(new ListElement(entry.getKey(), entry.getValue().getName()));
+		}
+		return elements.toArray(new ListElement[elements.size()]);
 	}
 
 }

@@ -2,8 +2,6 @@ package group.responder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import group.GroupHandler;
-import group.RequestType;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;

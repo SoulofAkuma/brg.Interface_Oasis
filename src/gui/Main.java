@@ -1,20 +1,13 @@
 package gui;
 
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import java.awt.Font;
-import java.awt.Insets;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.lang.reflect.InvocationTargetException;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,17 +15,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.LineBorder;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import cc.Pair;
 import cc.Shell;
@@ -49,18 +47,13 @@ import group.responder.ResponderHandler;
 import indexassigner.IndexAssigner;
 import indexassigner.IndexAssignerHandler;
 import parser.CustomParser;
-import parser.Discard;
 import parser.ParserHandler;
 import parser.Rule;
-
-
-import settings.*;
+import settings.IDType;
+import settings.SettingHandler;
 import trigger.Trigger;
 import trigger.TriggerHandler;
 import trigger.TriggerType;
-import java.awt.Rectangle;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
@@ -251,14 +244,6 @@ public class Main extends JFrame {
 				listenersPane.setBounds(0, 30, 986, 435);
 				listenersPane.getVerticalScrollBar().setUnitIncrement(10);
 				
-				generalPanel = new JPanel();
-				generalPanel.setBackground(Color.DARK_GRAY);
-				
-				generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				generalPane.setBackground(Color.DARK_GRAY);
-				generalPane.setBounds(0, 30, 986, 435);
-				generalPane.getVerticalScrollBar().setUnitIncrement(10);
-				
 				respondersPanel = new JPanel();
 				respondersPanel.setBackground(Color.DARK_GRAY);
 				
@@ -266,118 +251,126 @@ public class Main extends JFrame {
 								respondersPane.setBackground(Color.DARK_GRAY);
 								respondersPane.setBounds(0, 30, 986, 435);
 								respondersPane.getVerticalScrollBar().setUnitIncrement(10);
+								
+								generalPanel = new JPanel();
+								generalPanel.setBackground(Color.DARK_GRAY);
+								
+								generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+								generalPane.setBackground(Color.DARK_GRAY);
+								generalPane.setBounds(0, 30, 986, 435);
+								generalPane.getVerticalScrollBar().setUnitIncrement(10);
+								settingPanel.add(generalPane);
+								Main.settingPanels.add(generalPane);
+								Main.settingPanels.add(generalPanel);
+								generalPanel.setLayout(null);
+								generalPanel.setPreferredSize(new Dimension(986, 435));
+								
+								lblNewLabel = new JLabel("Listeners");
+								lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+								lblNewLabel.setForeground(Color.WHITE);
+								lblNewLabel.setBounds(10, 10, 83, 21);
+								generalPanel.add(lblNewLabel);
+								
+								label = new JLabel("Triggers");
+								label.setForeground(Color.WHITE);
+								label.setFont(new Font("Tahoma", Font.PLAIN, 14));
+								label.setBounds(478, 10, 83, 21);
+								generalPanel.add(label);
+								
+								JScrollPane listenersScroll = new JScrollPane();
+								listenersScroll.setBorder(null);
+								listenersScroll.setBounds(10, 33, 450, 361);
+								generalPanel.add(listenersScroll);
+								
+												listenersList = new JList();
+												listenersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+												listenersList.setForeground(Color.WHITE);
+												listenersList.setBackground(Color.GRAY);
+												listenersList.setModel(new DefaultListModel<ListElement>());
+												listenersScroll.setViewportView(listenersList);
+												
+												JScrollPane triggersScroll = new JScrollPane();
+												triggersScroll.setBorder(null);
+												triggersScroll.setBounds(478, 33, 450, 361);
+												generalPanel.add(triggersScroll);
+												
+																triggersList = new JList();
+																triggersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+																triggersList.setForeground(Color.WHITE);
+																triggersList.setBackground(Color.GRAY);
+																triggersList.setModel(new DefaultListModel<ListElement>());
+																triggersScroll.setViewportView(triggersList);
+																
+																addListener = new JButton("Add Listener");
+																addListener.setBounds(10, 404, 130, 21);
+																generalPanel.add(addListener);
+																
+																removeListener = new JButton("Remove Listener");
+																removeListener.setBounds(150, 404, 130, 21);
+																generalPanel.add(removeListener);
+																
+																addTrigger = new JButton("Add Trigger");
+																addTrigger.setBounds(478, 404, 130, 21);
+																generalPanel.add(addTrigger);
+																
+																removeTrigger = new JButton("Remove Trigger");
+																removeTrigger.setBounds(618, 404, 130, 21);
+																generalPanel.add(removeTrigger);
+																
+																addListener.addActionListener(new ActionListener() {
+																	@Override
+																	public void actionPerformed(ActionEvent e) {
+																		ListElement selection = ParamSelector.getSelection(Main.frame, GroupHandler.getListenerElements(), "Listener");
+																		if (selection != null) {
+																			if (LaunchIDS.getListenerIDs().contains(selection.getID())) {
+																				Main.popupMessage("Error - Duplicate LaunchIDs are forbidden");
+																				return;
+																			}
+																			LaunchIDS.getListenerIDs().add(selection.getID());
+																			populateGeneral();
+																		}
+																	}
+																});
+																
+																addTrigger.addActionListener(new ActionListener() {
+																	@Override
+																	public void actionPerformed(ActionEvent e) {
+																		ListElement selection = ParamSelector.getSelection(Main.frame, TriggerHandler.getTriggerElements(), "Trigger");
+																		if (selection != null) {
+																			if (LaunchIDS.getTriggerIDs().contains(selection.getID())) {
+																				Main.popupMessage("Error - Duplicate LaunchIDs are forbidden");
+																				return;
+																			}
+																			LaunchIDS.getTriggerIDs().add(selection.getID());
+																			populateGeneral();
+																		}
+																	}
+																});
+																
+																removeListener.addActionListener(new ActionListener() {
+																	@Override
+																	public void actionPerformed(ActionEvent e) {
+																		if (listenersList.getSelectedIndex() != -1) {
+																			LaunchIDS.getListenerIDs().remove(listenersList.getSelectedIndex());
+																			populateGeneral();
+																		}
+																	}
+																});
+																
+																removeTrigger.addActionListener(new ActionListener() {
+																	@Override
+																	public void actionPerformed(ActionEvent e) {
+																		if (triggersList.getSelectedIndex() != -1) {
+																			LaunchIDS.getTriggerIDs().remove(triggersList.getSelectedIndex());
+																			populateGeneral();
+																		}
+																	}
+																});
 								settingPanel.add(respondersPane);
 								Main.settingPanels.add(respondersPane);
 								Main.settingPanels.add(respondersPanel);
 								respondersPanel.setLayout(null);
 								respondersPanel.setPreferredSize(new Dimension(986, 435));
-				settingPanel.add(generalPane);
-				Main.settingPanels.add(generalPane);
-				Main.settingPanels.add(generalPanel);
-				generalPanel.setLayout(null);
-				generalPanel.setPreferredSize(new Dimension(986, 435));
-				
-				lblNewLabel = new JLabel("Listeners");
-				lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-				lblNewLabel.setForeground(Color.WHITE);
-				lblNewLabel.setBounds(10, 10, 83, 13);
-				generalPanel.add(lblNewLabel);
-				
-				label = new JLabel("Triggers");
-				label.setForeground(Color.WHITE);
-				label.setFont(new Font("Tahoma", Font.PLAIN, 14));
-				label.setBounds(478, 10, 83, 13);
-				generalPanel.add(label);
-				
-				JScrollPane listenersScroll = new JScrollPane();
-				listenersScroll.setBorder(null);
-				listenersScroll.setBounds(10, 33, 450, 361);
-				generalPanel.add(listenersScroll);
-
-				listenersList = new JList();
-				listenersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				listenersList.setForeground(Color.WHITE);
-				listenersList.setBackground(Color.GRAY);
-				listenersList.setModel(new DefaultListModel<ListElement>());
-				listenersScroll.setViewportView(listenersList);
-				
-				JScrollPane triggersScroll = new JScrollPane();
-				triggersScroll.setBorder(null);
-				triggersScroll.setBounds(478, 33, 450, 361);
-				generalPanel.add(triggersScroll);
-
-				triggersList = new JList();
-				triggersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				triggersList.setForeground(Color.WHITE);
-				triggersList.setBackground(Color.GRAY);
-				triggersList.setModel(new DefaultListModel<ListElement>());
-				triggersScroll.setViewportView(triggersList);
-				
-				addListener = new JButton("Add Listener");
-				addListener.setBounds(10, 404, 130, 21);
-				generalPanel.add(addListener);
-				
-				removeListener = new JButton("Remove Listener");
-				removeListener.setBounds(150, 404, 130, 21);
-				generalPanel.add(removeListener);
-				
-				addTrigger = new JButton("Add Trigger");
-				addTrigger.setBounds(478, 404, 130, 21);
-				generalPanel.add(addTrigger);
-				
-				removeTrigger = new JButton("Remove Trigger");
-				removeTrigger.setBounds(618, 404, 130, 21);
-				generalPanel.add(removeTrigger);
-				
-				addListener.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						ListElement selection = ParamSelector.getSelection(Main.frame, GroupHandler.getListenerElements(), "Listener");
-						if (selection != null) {
-							if (LaunchIDS.getListenerIDs().contains(selection.getID())) {
-								Main.popupMessage("Error - Duplicate LaunchIDs are forbidden");
-								return;
-							}
-							LaunchIDS.getListenerIDs().add(selection.getID());
-							populateGeneral();
-						}
-					}
-				});
-				
-				addTrigger.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						ListElement selection = ParamSelector.getSelection(Main.frame, TriggerHandler.getTriggerElements(), "Trigger");
-						if (selection != null) {
-							if (LaunchIDS.getTriggerIDs().contains(selection.getID())) {
-								Main.popupMessage("Error - Duplicate LaunchIDs are forbidden");
-								return;
-							}
-							LaunchIDS.getTriggerIDs().add(selection.getID());
-							populateGeneral();
-						}
-					}
-				});
-				
-				removeListener.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (listenersList.getSelectedIndex() != -1) {
-							LaunchIDS.getListenerIDs().remove(listenersList.getSelectedIndex());
-							populateGeneral();
-						}
-					}
-				});
-				
-				removeTrigger.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (triggersList.getSelectedIndex() != -1) {
-							LaunchIDS.getTriggerIDs().remove(triggersList.getSelectedIndex());
-							populateGeneral();
-						}
-					}
-				});
 				
 				settingPanel.add(listenersPane);
 				Main.settingPanels.add(listenersPane);
@@ -838,6 +831,18 @@ public class Main extends JFrame {
 		
 		for (String triggerID : LaunchIDS.getTriggerIDs()) {
 			triggersModel.addElement(new ListElement(triggerID, triggerNames.get(triggerID)));
+		}
+		
+		if (LaunchIDS.isRunning()) {
+			addTrigger.setEnabled(false);
+			addListener.setEnabled(false);
+			removeTrigger.setEnabled(false);
+			removeListener.setEnabled(false);
+		} else {
+			addTrigger.setEnabled(true);
+			addListener.setEnabled(true);
+			removeTrigger.setEnabled(true);
+			removeListener.setEnabled(true);
 		}
 	}
 	

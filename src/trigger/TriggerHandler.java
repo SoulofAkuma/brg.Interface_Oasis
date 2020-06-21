@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
 import group.GroupHandler;
-import group.listener.Listener;
 import gui.ListElement;
 import gui.TriggerGUIPanel;
 import parser.ParserHandler;

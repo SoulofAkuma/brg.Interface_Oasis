@@ -1,23 +1,6 @@
 package gui;
 
-import javax.swing.*;
-
-import jsonhandler.Trace;
-import parser.AddHeaderVal;
-import parser.CustomParser;
-import parser.Cut;
-import parser.Discard;
-import parser.Isolate;
-import parser.Parser;
-import parser.ParserHandler;
-import parser.Replace;
-import parser.Rule;
-import parser.Split;
-import settings.IDType;
-import settings.SettingHandler;
-
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -25,8 +8,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+
+import indexassigner.IndexAssignerHandler;
+import parser.AddHeaderVal;
+import parser.CustomParser;
+import parser.Cut;
+import parser.Discard;
+import parser.Isolate;
+import parser.ParserHandler;
+import parser.Replace;
+import parser.Rule;
+import parser.Split;
+import settings.IDType;
+import settings.SettingHandler;
 
 
 //This class does only support Parser Rules and xmlhandler/jsonhanlder trace. To create an own Rule GUI implementation create a new panel inside of RuleGUIPanels main Panel and add a the proper printList method to your rule class
@@ -203,6 +207,30 @@ public class ParserGUIPanel extends JPanel {
 		manageRules.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Main.frame.ruleMode(parser.getElements(), parser.getOrder(), main);
+			}
+		});
+		
+		addAssigner.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListElement selection = ParamSelector.getSelection(Main.frame, IndexAssignerHandler.getAssignerElements(), "IndexAssigner");
+				if (selection != null) {
+					parser.getIndexAssigners().add(selection.getID());
+					populate();
+				}
+			}
+		});
+		
+		removeAssigner.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) assignersList.getModel();
+				if (assignersList.getSelectedIndex() == -1) {
+					return;
+				} else if (model.size() == 1) {
+					Main.popupMessage("Error - A parser needs at least one IndexAssigner");
+				} else {
+					parser.getIndexAssigners().remove(assignersList.getSelectedIndex());
+					populate();
+				}
 			}
 		});
 	}

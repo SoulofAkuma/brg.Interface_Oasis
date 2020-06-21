@@ -1,23 +1,18 @@
 package gui;
 
-import java.io.PrintStream;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.JFrame;
-
-import filehandler.Manager;
-import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
@@ -25,9 +20,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
+import filehandler.Manager;
 
 public class Logger extends JFrame implements Runnable{
 	

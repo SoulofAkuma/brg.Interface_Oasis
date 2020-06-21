@@ -1,14 +1,11 @@
 package parser;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import indexassigner.IndexAssigner;
 import indexassigner.IndexAssignerHandler;
 
 /* This class can apply one or multiple different 

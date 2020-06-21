@@ -1,23 +1,15 @@
 package group.responder;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import cc.Pair;
-import constant.Constant;
 import group.GroupHandler;
-import group.RequestType;
-import group.TimeoutController;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;
-import parser.ParserHandler;
 
 public class Responder {
 	

@@ -1,16 +1,12 @@
 package group.listener;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -81,7 +77,7 @@ public class ConnectionHandler implements Runnable {
 							out.flush();
 							break;
 						}
-						if (!(protocol.equals("HTTP/1.1") || protocol.equals("HTTP"))) {
+						if (!(protocol.equals("HTTP/1.1") || !protocol.equals("HTTP"))) {
 							response = getResponse(400, "Bad Request");
 							reportInformation(getResponse(400, "Bad Request"), true);
 							out.write(getResponse(400, "Bad Request"));
@@ -89,6 +85,7 @@ public class ConnectionHandler implements Runnable {
 							break;
 						}
 					} else {
+						String.join(", ", requestBaseInformation);
 						response = getResponse(400, "Bad Request");
 						reportInformation(getResponse(400, "Bad Request"), true);
 						out.write(getResponse(400, "Bad Request"));
@@ -97,11 +94,11 @@ public class ConnectionHandler implements Runnable {
 					}
 				}
 				if (watchForContentLength) {
-					Pattern pattern = Pattern.compile("(?<=Content-Length: )[0-9]+");
+					Pattern pattern = Pattern.compile("(?<=Content-(L|l)ength: )[0-9]+");
 					Matcher matcher = pattern.matcher(inputLine);
 					if (matcher.find()) {
 						try {
-							contentLength = Integer.parseInt(matcher.group());					
+							contentLength = Integer.parseInt(matcher.group());		
 						} catch (Exception e) {
 							response = getResponse(400, "Bad Request");
 							reportInformation(getResponse(400, "Bad Request"), true);
@@ -115,7 +112,7 @@ public class ConnectionHandler implements Runnable {
 				if (inputLine.isBlank()) {
 					if (hasBody) {
 						if (contentLength != -1) {
-							Pattern pattern = Pattern.compile("(?<=Content-Type: [a-z]+\\/[a-z0-9.-]+; *charset=)[a-zA-Z0-9-]+");
+							Pattern pattern = Pattern.compile("(?<=Content-(T|t)ype: [a-z]+\\/[a-z0-9.-]+; *charset=)[a-zA-Z0-9-]+");
 							Matcher matcher = pattern.matcher(request);
 							String charset = "UTF-8";
 							if (matcher.find()) {

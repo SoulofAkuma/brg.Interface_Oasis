@@ -2,14 +2,11 @@ package trigger;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 import cc.Pair;
 import group.GroupHandler;
-import group.listener.ListenerHandler;
-import group.responder.ResponderHandler;
 import gui.Logger;
 import gui.MessageOrigin;
 import gui.MessageType;

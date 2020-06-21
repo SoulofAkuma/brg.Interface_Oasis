@@ -6,12 +6,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 import gui.Logger;
-import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
 import settings.SettingHandler;

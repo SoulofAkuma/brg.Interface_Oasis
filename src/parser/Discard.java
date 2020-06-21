@@ -1,12 +1,12 @@
 package parser;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Discard implements Rule {
 	
@@ -52,6 +52,9 @@ public class Discard implements Rule {
 			return null;
 		} else if (flags == null) {
 			ParserHandler.reportGenRuleError("flags", this.getClass().getName(), id);
+			return null;
+		} else if ((Arrays.asList(flags).contains("s") && Arrays.asList(flags).contains("p")) || (Arrays.asList(flags).contains("a") && Arrays.asList(flags).contains("z"))) {
+			ParserHandler.reportGenRuleError("flags (a && z || p && s is not allowed)", this.getClass().getName(), id);
 			return null;
 		} else if (useHeader == null) {
 			ParserHandler.reportGenRuleError("useHeader", this.getClass().getName(), id);

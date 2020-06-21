@@ -1,38 +1,33 @@
 package gui;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import java.awt.Color;
-import java.awt.Component;
+import java.awt.Font;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
-
-import java.awt.Font;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.text.JTextComponent;
 
 import constant.ConstantHandler;
 import group.GroupHandler;
 import group.responder.Responder;
 import settings.SettingHandler;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import java.awt.Insets;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-
 public class ResponderGUIPanel extends JPanel {
 	
 	private Responder responder;
+	private boolean ignore = false;
 	
 	private JTextField nameValue;
 	private JList customArgsList;
@@ -264,7 +259,9 @@ public class ResponderGUIPanel extends JPanel {
 		requestType.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				responder.getHeader().setRequestType((String)requestType.getSelectedItem());
+				if (!ignore) {
+					responder.getHeader().setRequestType((String)requestType.getSelectedItem());
+				}
 			}
 		});
 		
@@ -413,12 +410,14 @@ public class ResponderGUIPanel extends JPanel {
 			contentType.setText(ConstantHandler.getConstantNames().get(responder.getHeader().getContentType()));
 		}
 		
+		ignore = true;
 		requestType.removeAllItems();
 		requestType.addItem("auto");
 		requestType.addItem("GET");
-		requestType.addItem("GET");
+		requestType.addItem("POST");
 		requestType.addItem("HEAD");
 		requestType.setSelectedItem(responder.getHeader().getRequestType());
+		ignore = false;
 		
 		separator.setText(responder.getBody().getSeparator());
 		
