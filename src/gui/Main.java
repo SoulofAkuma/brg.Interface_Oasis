@@ -86,7 +86,7 @@ public class Main extends JFrame {
 	private JPanel valuesPanel;
 	
 	public static Main frame;
-	public static final String versionNumber = "1.0";
+	public static final String versionNumber = "1.2";
 	private JLabel lblNewLabel;
 	private JLabel label;
 	private JList listenersList;
@@ -888,7 +888,7 @@ public class Main extends JFrame {
 			y += 34;
 		}
 		JButton addValue = new JButton("Add Value");
-		addValue.setBounds(x + 5, y + 10, 80, 20);
+		addValue.setBounds(x + 5, y + 10, 120, 20);
 		valuesPanel.add(addValue);
 		y += 40;
 		addValue.addActionListener(new ActionListener() {

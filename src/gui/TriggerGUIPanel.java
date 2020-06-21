@@ -183,7 +183,7 @@ public class TriggerGUIPanel extends JPanel {
 					trigger.getTriggeredBy().clear();
 				}
 				trigger.setType(TriggerType.valueOf((String) typeValue.getSelectedItem()));
-				listenerPopulate();
+				populate();
 			}
 		});
 		
@@ -210,7 +210,7 @@ public class TriggerGUIPanel extends JPanel {
 					return;
 				}
 				trigger.getResponderIDs().add(new Pair<String, String>(parser.getID(), responder.getID()));
-				listenerPopulate();
+				populate();
 			}
 		});
 		removeResponder.addActionListener(new ActionListener() {
@@ -218,6 +218,7 @@ public class TriggerGUIPanel extends JPanel {
 				int index = responderList.getSelectedIndex();
 				if (index != -1) {
 					trigger.getResponderIDs().remove(index);
+					populate();
 				}
 			}
 		});
@@ -226,6 +227,7 @@ public class TriggerGUIPanel extends JPanel {
 				int index = triggeredByList.getSelectedIndex();
 				if (index != -1) {
 					trigger.getTriggeredBy().remove(index);
+					populate();
 				}
 			}
 		});
@@ -235,14 +237,14 @@ public class TriggerGUIPanel extends JPanel {
 					ListElement responder = ParamSelector.getSelection(Main.frame, GroupHandler.getResponderElements(), "Responder");
 					if (responder != null) {
 						trigger.getTriggeredBy().add(responder.getID());
-						listenerPopulate();
+						populate();
 					}
 				} else if (trigger.getType() == TriggerType.Listener) {
 					ListElement listener = ParamSelector.getSelection(Main.frame, GroupHandler.getListenerElements(), "Listener");
 					
 					if (listener != null) {
 						trigger.getTriggeredBy().add(listener.getID());
-						listenerPopulate();
+						populate();
 					}
 				}
 			}
@@ -256,7 +258,7 @@ public class TriggerGUIPanel extends JPanel {
 					TriggerHandler.runTrigger(trigger.getTriggerID());
 					threadStatus = true;
 				}
-				listenerPopulate();
+				populate();
 			}
 		});
 		triggerTrigger.addActionListener(new ActionListener() {
@@ -316,15 +318,6 @@ public class TriggerGUIPanel extends JPanel {
 	private void triggeredByState() {
 		triggerTrigger.setEnabled(false);
 		cooldownValue.setEnabled(false);
-	}
-	
-	private void listenerPopulate() {
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				populate();
-			}
-		});
 	}
 	
 	private void populate() {
