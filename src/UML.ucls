@@ -1,1562 +1,678 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <class-diagram version="1.2.4" icons="true" automaticImage="PNG" always-add-relationships="true" generalizations="true" 
   realizations="true" associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
-  <class id="1" language="java" name="group.listener.Listener" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/listener/Listener.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="7985" y="1049"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="2" language="java" name="constant.Value" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/constant/Value.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1678" y="2225"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="3" language="java" name="indexassigner.IndexAssigner" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/indexassigner/IndexAssigner.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="11044" y="999"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="4" language="java" name="parser.Split" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Split.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="4032" y="1059"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="5" language="java" name="constant.Constant" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/constant/Constant.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1994" y="979"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="6" language="java" name="constant.ConstantHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/constant/ConstantHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="2274" y="-337"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="7" language="java" name="group.responder.ResponderHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/responder/ResponderHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="2850" y="-317"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="8" language="java" name="parser.Discard" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Discard.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="4566" y="1069"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <interface id="9" language="java" name="parser.Rule" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Rule.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="6393" y="2205"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </interface>  
-  <class id="10" language="java" name="settings.Setting" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/settings/Setting.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="3442" y="1469"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="11" language="java" name="group.responder.ConnectionHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/responder/ConnectionHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="109" y="-287"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="12" language="java" name="parser.CustomParser" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/CustomParser.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="8575" y="-287"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="13" language="java" name="trigger.TriggerHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/trigger/TriggerHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="7721" y="-247"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="14" language="java" name="gui.Main" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/gui/Main.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="708" y="-307"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="15" language="java" name="gui.MessageType" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/gui/MessageType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="10036" y="2205"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <class id="16" language="java" name="trigger.Trigger" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/trigger/Trigger.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="8550" y="1039"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="17" language="java" name="settings.SettingHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/settings/SettingHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="3731" y="203"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="18" language="java" name="gui.Logger" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/gui/Logger.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="10588" y="-217"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="19" language="java" name="parser.Cut" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Cut.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="5325" y="1099"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="20" language="java" name="group.listener.ListenerHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/listener/ListenerHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="5721" y="-187"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="21" language="java" name="xmlhandler.SettingFunctions" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/xmlhandler/SettingFunctions.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="3779" y="2485"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="22" language="java" name="group.TimeoutController" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/TimeoutController.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="9523" y="959"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="23" language="java" name="trigger.TriggerType" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/trigger/TriggerType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="8337" y="2215"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <enumeration id="24" language="java" name="settings.IDType" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/settings/IDType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="4945" y="1039"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <class id="25" language="java" name="group.listener.ConnectionHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/listener/ConnectionHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="12005" y="-277"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="26" language="java" name="parser.Isolate" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Isolate.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="5859" y="1009"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="27" language="java" name="group.RequestType" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/RequestType.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="11708" y="939"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <class id="28" language="java" name="parser.StdGetParser" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/StdGetParser.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="9133" y="-337"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="29" language="java" name="parser.ParserHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/ParserHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="6421" y="-237"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="30" language="java" name="xmlhandler.Trace" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/xmlhandler/Trace.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="6948" y="1049"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="31" language="java" name="cc.Pair" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/cc/Pair.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="8545" y="2215"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="32" language="java" name="parser.Replace" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Replace.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="6393" y="1049"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <enumeration id="33" language="java" name="gui.MessageOrigin" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/gui/MessageOrigin.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="10302" y="2265"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </enumeration>  
-  <interface id="34" language="java" name="parser.Parser" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/parser/Parser.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="9133" y="919"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </interface>  
-  <class id="35" language="java" name="jsonhandler.Trace" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/jsonhandler/Trace.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="7482" y="1059"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="36" language="java" name="group.GroupHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/GroupHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="9711" y="-237"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="37" language="java" name="cc.Shell" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/cc/Shell.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1172" y="-337"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="38" language="java" name="filehandler.Manager" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/filehandler/Manager.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="1618" y="-207"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="39" language="java" name="group.responder.Responder" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/responder/Responder.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="291" y="880"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="40" language="java" name="indexassigner.IndexAssignerHandler" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/indexassigner/IndexAssignerHandler.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="11371" y="-347"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="41" language="java" name="group.responder.Header" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/responder/Header.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="2494" y="2375"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="42" language="java" name="gui.MessageObject" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/gui/MessageObject.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="10278" y="949"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <class id="43" language="java" name="group.responder.Body" project="brg.Interface_Oasis" 
-    file="/brg.Interface_Oasis/src/group/responder/Body.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="3307" y="2205"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
-      sort-features="false" accessors="true" visibility="true">      
-      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
-      <operations public="true" package="true" protected="true" private="true" static="true"/>    
-    </display>  
-  </class>  
-  <association id="44">    
-    <end type="SOURCE" refId="35" navigable="false">      
-      <attribute id="45" name="path">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="46" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="31" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="47">    
-    <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="29"/>  
+  <package id="1" language="java" name="filehandler" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/filehandler" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="452" y="1025"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="2" language="java" name="gui" project="brg.Interface_Oasis" file="/brg.Interface_Oasis/src/gui" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1630" y="522"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="3" language="java" name="indexassigner" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/indexassigner" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="469" y="145"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="4" language="java" name="settings" project="brg.Interface_Oasis" file="/brg.Interface_Oasis/src/settings" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="886" y="983"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="5" language="java" name="cc" project="brg.Interface_Oasis" file="/brg.Interface_Oasis/src/cc" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1665" y="992"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="6" language="java" name="group" project="brg.Interface_Oasis" file="/brg.Interface_Oasis/src/group" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1039" y="118"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="7" language="java" name="xmlhandler" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/xmlhandler" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2533" y="210"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="8" language="java" name="group.listener" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/group/listener" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1598" y="146"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="9" language="java" name="jsonhandler" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/jsonhandler" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2492" y="992"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="10" language="java" name="constant" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/constant" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="368" y="628"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="11" language="java" name="trigger" project="brg.Interface_Oasis" file="/brg.Interface_Oasis/src/trigger" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="1046" y="572"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="12" language="java" name="group.responder" project="brg.Interface_Oasis" 
+    file="/brg.Interface_Oasis/src/group/responder" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2054" y="146"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <package id="13" language="java" name="parser" project="brg.Interface_Oasis" file="/brg.Interface_Oasis/src/parser" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="2764" y="569"/>    
+    <display autosize="true" stereotype="true" sort-features="false" accessors="true"/>  
+  </package>  
+  <dependency id="14">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
-  <dependency id="48">    
-    <end type="SOURCE" refId="14"/>    
+  <dependency id="15">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="16">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="17">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="18">    
+    <end type="SOURCE" refId="9"/>    
     <end type="TARGET" refId="13"/>  
   </dependency>  
-  <dependency id="49">    
-    <end type="SOURCE" refId="39"/>    
+  <dependency id="19">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="20">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="21">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="22">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="23">    
+    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="11"/>  
   </dependency>  
-  <dependency id="50">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="20"/>  
+  <dependency id="24">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="6"/>  
   </dependency>  
-  <dependency id="51">    
-    <end type="SOURCE" refId="16"/>    
+  <dependency id="25">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="26">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="27">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="12"/>  
+  </dependency>  
+  <dependency id="28">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="29">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="30">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="31">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="32">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="33">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="34">    
+    <end type="SOURCE" refId="9"/>    
     <end type="TARGET" refId="13"/>  
   </dependency>  
-  <realization id="52">    
-    <end type="SOURCE" refId="32"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <dependency id="53">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="33"/>  
+  <dependency id="35">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="13"/>  
   </dependency>  
-  <dependency id="54">    
-    <end type="SOURCE" refId="32"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="55">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="56">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="38"/>  
-  </dependency>  
-  <realization id="57">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <dependency id="58">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="43"/>  
-  </dependency>  
-  <dependency id="59">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="60">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="61">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="20"/>  
-  </dependency>  
-  <dependency id="62">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="63">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="64">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="65">    
-    <end type="SOURCE" refId="6"/>    
+  <dependency id="36">    
+    <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="10"/>  
   </dependency>  
+  <dependency id="37">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="38">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="39">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="40">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="41">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="42">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="43">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="44">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="45">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="46">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="47">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="48">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="49">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="50">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="51">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="52">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="12"/>  
+  </dependency>  
+  <dependency id="53">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="54">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="55">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="56">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="57">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="58">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="59">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="60">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="61">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="62">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="63">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="64">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="65">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
   <dependency id="66">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="33"/>  
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="8"/>  
   </dependency>  
   <dependency id="67">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="15"/>  
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
   <dependency id="68">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="15"/>  
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="10"/>  
   </dependency>  
-  <association id="69">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="70" name="controllerObj">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="71" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="22" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
+  <dependency id="69">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="70">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="71">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
   <dependency id="72">    
-    <end type="SOURCE" refId="6"/>    
+    <end type="SOURCE" refId="13"/>    
     <end type="TARGET" refId="2"/>  
   </dependency>  
   <dependency id="73">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="15"/>  
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
   <dependency id="74">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="13"/>  
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="2"/>  
   </dependency>  
   <dependency id="75">    
-    <end type="SOURCE" refId="30"/>    
-    <end type="TARGET" refId="18"/>  
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="13"/>  
   </dependency>  
   <dependency id="76">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="77">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <association id="78">    
-    <end type="SOURCE" refId="39" navigable="false">      
-      <attribute id="79" name="body">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="80" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="43" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="81">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="82">    
-    <end type="SOURCE" refId="43"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <dependency id="83">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <dependency id="84">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="23"/>  
-  </dependency>  
-  <dependency id="85">    
-    <end type="SOURCE" refId="26"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <association id="86">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="87" name="listenerMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="88" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="89">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="90" name="constantMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="91" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="92">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="93">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="38"/>  
-  </dependency>  
-  <dependency id="94">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="95">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="96">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="97">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <dependency id="98">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="14"/>  
-  </dependency>  
-  <dependency id="99">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <realization id="100">    
-    <end type="SOURCE" refId="26"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <dependency id="101">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="102">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="103">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="104">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="105">    
-    <end type="SOURCE" refId="6"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <association id="106">    
-    <end type="SOURCE" refId="30" navigable="false">      
-      <attribute id="107" name="nodes">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="108" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="31" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="109">    
-    <end type="SOURCE" refId="39"/>    
+    <end type="SOURCE" refId="8"/>    
     <end type="TARGET" refId="11"/>  
   </dependency>  
-  <association id="110">    
-    <end type="SOURCE" refId="29" navigable="false">      
-      <attribute id="111" name="parsers">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="112" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="34" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="113">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="114" name="responderIDs">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="115" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="31" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="116">    
-    <end type="SOURCE" refId="25" navigable="false">      
-      <attribute id="117" name="requestType">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="118" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="27" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="119">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="15"/>  
+  <dependency id="77">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="8"/>  
   </dependency>  
-  <dependency id="120">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="33"/>  
+  <dependency id="78">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="12"/>  
   </dependency>  
-  <dependency id="121">    
+  <dependency id="79">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="80">    
     <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="29"/>  
+    <end type="TARGET" refId="2"/>  
   </dependency>  
-  <dependency id="122">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="18"/>  
+  <dependency id="81">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="123">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="31"/>  
-  </dependency>  
-  <dependency id="124">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="125">    
-    <end type="SOURCE" refId="38"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="126">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="3"/>  
-  </dependency>  
-  <dependency id="127">    
-    <end type="SOURCE" refId="30"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="128">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="23"/>  
-  </dependency>  
-  <dependency id="129">    
+  <dependency id="82">    
     <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="41"/>  
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="130">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <realization id="131">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <dependency id="132">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="133">    
-    <end type="SOURCE" refId="35"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="134">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <dependency id="135">    
-    <end type="SOURCE" refId="38"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <association id="136">    
-    <end type="SOURCE" refId="16" navigable="false">      
-      <attribute id="137" name="type">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="138" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="23" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="139">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="140">    
-    <end type="SOURCE" refId="26"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="141">    
-    <end type="SOURCE" refId="40"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <dependency id="142">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <dependency id="143">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="144">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="31"/>  
-  </dependency>  
-  <dependency id="145">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <association id="146">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="147" name="constants">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="148" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="5" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="149">    
-    <end type="SOURCE" refId="20" navigable="false">      
-      <attribute id="150" name="listeners">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="151" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="152">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="153">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="154">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <realization id="155">    
-    <end type="SOURCE" refId="28"/>    
-    <end type="TARGET" refId="34"/>  
-  </realization>  
-  <dependency id="156">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="7"/>  
-  </dependency>  
-  <dependency id="157">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="158">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <association id="159">    
-    <end type="SOURCE" refId="14" navigable="false">      
-      <attribute id="160" name="frame"/>      
-      <multiplicity id="161" minimum="0" maximum="1"/>    
-    </end>    
-    <end type="TARGET" refId="14" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="162">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="20"/>  
-  </dependency>  
-  <dependency id="163">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <association id="164">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="165" name="parserMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="166" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="167">    
-    <end type="SOURCE" refId="40" navigable="false">      
-      <attribute id="168" name="indexAssigners">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="169" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="170">    
-    <end type="SOURCE" refId="40"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <dependency id="171">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="172">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="173">    
-    <end type="SOURCE" refId="35"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="174">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="175">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="7"/>  
-  </dependency>  
-  <association id="176">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="177" name="groupMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="178" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="179">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <association id="180">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="181" name="functions">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="182" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="21" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="183">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="23"/>  
-  </dependency>  
-  <dependency id="184">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="185">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="31"/>  
-  </dependency>  
-  <association id="186">    
-    <end type="SOURCE" refId="10" navigable="false">      
-      <attribute id="187" name="subsettings">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="188" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="189">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="190" name="triggerMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="191" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="192">    
-    <end type="SOURCE" refId="30"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <realization id="193">    
-    <end type="SOURCE" refId="30"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <dependency id="194">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="31"/>  
-  </dependency>  
-  <dependency id="195">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <realization id="196">    
-    <end type="SOURCE" refId="12"/>    
-    <end type="TARGET" refId="34"/>  
-  </realization>  
-  <dependency id="197">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="198">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="199">    
-    <end type="SOURCE" refId="21"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <association id="200">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="201" name="IDS">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="202" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="24" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="203">    
-    <end type="SOURCE" refId="20"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <association id="204">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="205" name="backupSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="206" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="207">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="208">    
+  <dependency id="83">    
     <end type="SOURCE" refId="6"/>    
     <end type="TARGET" refId="2"/>  
   </dependency>  
-  <dependency id="209">    
-    <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <dependency id="210">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <association id="211">    
-    <end type="SOURCE" refId="39" navigable="false">      
-      <attribute id="212" name="header">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="213" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="41" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="214">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="215">    
-    <end type="SOURCE" refId="20"/>    
+  <dependency id="84">    
+    <end type="SOURCE" refId="9"/>    
     <end type="TARGET" refId="13"/>  
   </dependency>  
-  <association id="216">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="217" name="responderMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="218" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="219">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="29"/>  
+  <dependency id="85">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="220">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <association id="221">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="222" name="constantMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="223" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="224">    
-    <end type="SOURCE" refId="38"/>    
-    <end type="TARGET" refId="17"/>  
-  </dependency>  
-  <dependency id="225">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="226">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <dependency id="227">    
-    <end type="SOURCE" refId="19"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <association id="228">    
-    <bendpoint x="9669" y="861"/>    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="229" name="groups">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="230" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="31" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="231">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="37"/>  
-  </dependency>  
-  <dependency id="232">    
-    <end type="SOURCE" refId="38"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="233">    
-    <end type="SOURCE" refId="32"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="234">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="10"/>  
-  </dependency>  
-  <association id="235">    
-    <end type="SOURCE" refId="42" navigable="false">      
-      <attribute id="236" name="type">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="237" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="15" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="238">    
-    <end type="SOURCE" refId="36" navigable="false">      
-      <attribute id="239" name="groupHandlerMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="240" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="241">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="20"/>  
-  </dependency>  
-  <dependency id="242">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <association id="243">    
-    <end type="SOURCE" refId="22" navigable="false">      
-      <attribute id="244" name="timeoutSockets">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="245" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="31" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="246">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="247">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="248">    
-    <end type="SOURCE" refId="36"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <association id="249">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="250" name="masterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="251" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="252">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="253" name="indexAssignerMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="254" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <association id="255">    
-    <end type="SOURCE" refId="13" navigable="false">      
-      <attribute id="256" name="triggers">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="257" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="16" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="258">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="259">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="31"/>  
-  </dependency>  
-  <dependency id="260">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="261">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="262">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="263">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="264">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <association id="265">    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="266" name="values">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="267" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="2" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="268">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="269">    
-    <end type="SOURCE" refId="3"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="270">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <association id="271">    
-    <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="272" name="responders">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="273" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="39" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="274">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="41"/>  
-  </dependency>  
-  <association id="275">    
-    <end type="SOURCE" refId="29" navigable="false">      
-      <attribute id="276" name="parserMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="277" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="278">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <realization id="279">    
-    <end type="SOURCE" refId="35"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <association id="280">    
-    <bendpoint x="6670" y="861"/>    
-    <end type="SOURCE" refId="12" navigable="false">      
-      <attribute id="281" name="elements">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="282" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="9" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="283">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <dependency id="284">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="285">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="13"/>  
-  </dependency>  
-  <dependency id="286">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="17"/>  
-  </dependency>  
-  <dependency id="287">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="288">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="289">    
-    <end type="SOURCE" refId="38"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <dependency id="290">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="291">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="20"/>  
-  </dependency>  
-  <dependency id="292">    
-    <end type="SOURCE" refId="4"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <realization id="293">    
+  <dependency id="86">    
     <end type="SOURCE" refId="8"/>    
-    <end type="TARGET" refId="9"/>  
-  </realization>  
-  <dependency id="294">    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="87">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="88">    
     <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="36"/>  
+    <end type="TARGET" refId="2"/>  
   </dependency>  
-  <dependency id="295">    
-    <end type="SOURCE" refId="30"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="296">    
-    <end type="SOURCE" refId="17"/>    
+  <dependency id="89">    
+    <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="6"/>  
   </dependency>  
-  <dependency id="297">    
-    <end type="SOURCE" refId="16"/>    
+  <dependency id="90">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="91">    
+    <end type="SOURCE" refId="11"/>    
     <end type="TARGET" refId="3"/>  
   </dependency>  
-  <dependency id="298">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="25"/>  
+  <dependency id="92">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
-  <dependency id="299">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="7"/>  
+  <dependency id="93">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="300">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="36"/>  
+  <dependency id="94">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="6"/>  
   </dependency>  
-  <dependency id="301">    
-    <end type="SOURCE" refId="13"/>    
+  <dependency id="95">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="96">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <dependency id="97">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="98">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="99">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <dependency id="100">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="101">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="102">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="103">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="104">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="105">    
+    <end type="SOURCE" refId="12"/>    
     <end type="TARGET" refId="10"/>  
   </dependency>  
-  <dependency id="302">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="303">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="23"/>  
-  </dependency>  
-  <association id="304">    
-    <end type="SOURCE" refId="18" navigable="false">      
-      <attribute id="305" name="messages">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="306" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="42" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="307">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <association id="308">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="309" name="launchIDSMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="310" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="311">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <association id="312">    
-    <end type="SOURCE" refId="17" navigable="false">      
-      <attribute id="313" name="triggerMasterSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="314" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="315">    
-    <end type="SOURCE" refId="11"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <dependency id="316">    
-    <end type="SOURCE" refId="41"/>    
-    <end type="TARGET" refId="18"/>  
-  </dependency>  
-  <association id="317">    
-    <end type="SOURCE" refId="40" navigable="false">      
-      <attribute id="318" name="indexAssingerMastserSetting">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="319" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="10" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="320">    
-    <end type="SOURCE" refId="43"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <dependency id="321">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="15"/>  
-  </dependency>  
-  <dependency id="322">    
-    <end type="SOURCE" refId="7"/>    
-    <end type="TARGET" refId="43"/>  
-  </dependency>  
-  <dependency id="323">    
-    <end type="SOURCE" refId="18"/>    
-    <end type="TARGET" refId="14"/>  
-  </dependency>  
-  <dependency id="324">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="36"/>  
-  </dependency>  
-  <dependency id="325">    
-    <end type="SOURCE" refId="16"/>    
-    <end type="TARGET" refId="29"/>  
-  </dependency>  
-  <dependency id="326">    
-    <end type="SOURCE" refId="17"/>    
-    <end type="TARGET" refId="6"/>  
-  </dependency>  
-  <dependency id="327">    
-    <end type="SOURCE" refId="25"/>    
-    <end type="TARGET" refId="33"/>  
-  </dependency>  
-  <association id="328">    
-    <end type="SOURCE" refId="42" navigable="false">      
-      <attribute id="329" name="origin">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </attribute>      
-      <multiplicity id="330" minimum="0" maximum="1">        
-        <position height="0" width="0" x="0" y="0"/>      
-      </multiplicity>    
-    </end>    
-    <end type="TARGET" refId="33" navigable="true"/>    
-    <display labels="true" multiplicity="true"/>  
-  </association>  
-  <dependency id="331">    
+  <dependency id="106">    
     <end type="SOURCE" refId="13"/>    
-    <end type="TARGET" refId="31"/>  
+    <end type="TARGET" refId="3"/>  
   </dependency>  
-  <dependency id="332">    
-    <end type="SOURCE" refId="39"/>    
-    <end type="TARGET" refId="18"/>  
+  <dependency id="107">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="333">    
-    <end type="SOURCE" refId="29"/>    
-    <end type="TARGET" refId="17"/>  
+  <dependency id="108">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="5"/>  
   </dependency>  
-  <dependency id="334">    
-    <end type="SOURCE" refId="38"/>    
-    <end type="TARGET" refId="15"/>  
+  <dependency id="109">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="6"/>  
   </dependency>  
-  <dependency id="335">    
-    <end type="SOURCE" refId="1"/>    
-    <end type="TARGET" refId="25"/>  
+  <dependency id="110">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="1"/>  
   </dependency>  
-  <dependency id="336">    
-    <end type="SOURCE" refId="14"/>    
-    <end type="TARGET" refId="37"/>  
+  <dependency id="111">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="112">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="113">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="114">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="115">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="116">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="117">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="7"/>  
+  </dependency>  
+  <dependency id="118">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="119">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="120">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="121">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="122">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="123">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="124">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="125">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="126">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="127">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="128">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="129">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="130">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="131">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="132">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="133">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="134">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="8"/>  
+  </dependency>  
+  <dependency id="135">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="136">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="137">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="138">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="12"/>  
+  </dependency>  
+  <dependency id="139">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="140">    
+    <end type="SOURCE" refId="12"/>    
+    <end type="TARGET" refId="10"/>  
+  </dependency>  
+  <dependency id="141">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="142">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="143">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="144">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="145">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="146">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="147">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="6"/>  
+  </dependency>  
+  <dependency id="148">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="149">    
+    <end type="SOURCE" refId="11"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="150">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="151">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="152">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="153">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="154">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="155">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="156">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="13"/>  
+  </dependency>  
+  <dependency id="157">    
+    <end type="SOURCE" refId="6"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="158">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="159">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="3"/>  
+  </dependency>  
+  <dependency id="160">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="1"/>  
+  </dependency>  
+  <dependency id="161">    
+    <end type="SOURCE" refId="2"/>    
+    <end type="TARGET" refId="11"/>  
+  </dependency>  
+  <dependency id="162">    
+    <end type="SOURCE" refId="4"/>    
+    <end type="TARGET" refId="5"/>  
+  </dependency>  
+  <dependency id="163">    
+    <end type="SOURCE" refId="8"/>    
+    <end type="TARGET" refId="4"/>  
+  </dependency>  
+  <dependency id="164">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="2"/>  
+  </dependency>  
+  <dependency id="165">    
+    <end type="SOURCE" refId="3"/>    
+    <end type="TARGET" refId="4"/>  
   </dependency>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="true" signature="true" 
     sort-features="false" accessors="true" visibility="true">    
