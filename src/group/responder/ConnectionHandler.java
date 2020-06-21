@@ -25,14 +25,18 @@ public class ConnectionHandler implements Runnable {
 	private final int port;
 	private final String requestType;
 	private final String timeoutID;
+	private String parentName;
+	private boolean log;
 	
-	public ConnectionHandler(String parentID, InputStream is, String url, String requestType, int port, String timeoutID) {
+	public ConnectionHandler(String parentID, String parentName, boolean log, InputStream is, String url, String requestType, int port, String timeoutID) {
 		this.parentID = parentID;
 		this.is = is;
 		this.url = url;
 		this.port = port;
 		this.requestType = requestType;
 		this.timeoutID = timeoutID;
+		this.parentName = parentName;
+		this.log = log;
 	}
 	
 	@Override
@@ -91,6 +95,9 @@ public class ConnectionHandler implements Runnable {
 		if (success) {
 			Logger.addMessage(MessageType.Information, MessageOrigin.Responder, "Responder successfully parsed received response - Reporting to trigger", this.parentID, null, null, false);
 			TriggerHandler.reportResponder(this.parentID, response, body);
+			if (this.log) {
+				Logger.logResponderResponse(response + body, this.parentID, this.parentName);
+			}
 		} else {
 			Logger.addMessage(MessageType.Information, MessageOrigin.Responder, "Responder parsing of received response failed - Aborting trigger report", this.parentID, null, null, false);
 		}

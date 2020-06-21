@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.Pair;
+import gui.IndexAssignerGUIPanel;
 import settings.Setting;
 import settings.SettingHandler;
 
@@ -151,6 +153,7 @@ public class IndexAssignerHandler {
 	}
 	
 	public static void addIndexAssigner(IndexAssigner indexAssigner) {
+		IndexAssignerHandler.indexAssigners.put(indexAssigner.getId(), indexAssigner);
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put(IndexAssignerHandler.IDNAME, indexAssigner.getId());
 		attributes.put(IndexAssignerHandler.NAMENAME, indexAssigner.getName());
@@ -201,4 +204,24 @@ public class IndexAssignerHandler {
 	public static String getAssignerName(String id) {
 		return IndexAssignerHandler.indexAssigners.get(id).getName();
 	}
+	
+	public static String getRIDIfExists() {
+		if (IndexAssignerHandler.indexAssigners.size() > 0 ) {
+			for (Entry<String, IndexAssigner> val : IndexAssignerHandler.indexAssigners.entrySet()) {
+				return val.getKey();
+			}
+		}
+		return null;
+	}
+	
+	public static List<IndexAssignerGUIPanel> getAssignerPanels() {
+		ArrayList<IndexAssignerGUIPanel> panels = new ArrayList<IndexAssignerGUIPanel>();
+		for (Entry<String, IndexAssigner> assigners : IndexAssignerHandler.indexAssigners.entrySet()) {
+			IndexAssignerGUIPanel panel = new IndexAssignerGUIPanel();
+			panel.init(assigners.getValue());
+			panels.add(panel);
+		}
+		return panels;
+	}
+
 }

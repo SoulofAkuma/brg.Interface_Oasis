@@ -13,6 +13,7 @@ import cc.Pair;
 import group.GroupHandler;
 import group.TimeoutController;
 import gui.ListElement;
+import gui.ListenerGUIPanel;
 import settings.Setting;
 import trigger.TriggerHandler;
 
@@ -169,6 +170,7 @@ public class ListenerHandler {
 			this.listenerThreads.remove(id);
 			this.listenerThreadStatus.remove(id);
 			this.listenerMasterSetting.removeSetting(sIDmatch);
+			TriggerHandler.removeListenerReferences(id);
 		}
 	}
 	
@@ -190,5 +192,40 @@ public class ListenerHandler {
 			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName()));
 		}
 		return elements;
+	}
+	
+	public ArrayList<ListElement> getListenerElementsDetail() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Listener> kvp : this.listeners.entrySet()) {
+			String log = (kvp.getValue().getLog()) ? ", log" : "";
+			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName() + " - " + kvp.getValue().getPort() + log));
+		}
+		return elements;
+	}
+	
+	public HashMap<String, String> getListenerNames() {
+		HashMap<String, String> listeners = new HashMap<String, String>();
+		for (Entry<String, Listener> listener : this.listeners.entrySet()) {
+			listeners.put(listener.getKey(), listener.getValue().getName());
+		}
+		return listeners;
+	}
+	
+	public List<ListenerGUIPanel> getListenerPanels() {
+		ArrayList<ListenerGUIPanel> panels = new ArrayList<ListenerGUIPanel>();
+		for (Entry<String, Listener> listener : this.listeners.entrySet()) {
+			ListenerGUIPanel panel = new ListenerGUIPanel();
+			panel.init(listener.getValue());
+			panels.add(panel);
+		}
+		return panels;
+	}
+	
+	public String getGroupID() {
+		return this.groupID;
+	}
+	
+	public String getGroupName() {
+		return this.groupName;
 	}
 }

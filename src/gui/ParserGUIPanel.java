@@ -2,10 +2,19 @@ package gui;
 
 import javax.swing.*;
 
+import jsonhandler.Trace;
+import parser.AddHeaderVal;
 import parser.CustomParser;
+import parser.Cut;
+import parser.Discard;
+import parser.Isolate;
 import parser.Parser;
 import parser.ParserHandler;
+import parser.Replace;
 import parser.Rule;
+import parser.Split;
+import settings.IDType;
+import settings.SettingHandler;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,6 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 //This class does only support Parser Rules and xmlhandler/jsonhanlder trace. To create an own Rule GUI implementation create a new panel inside of RuleGUIPanels main Panel and add a the proper printList method to your rule class
 public class ParserGUIPanel extends JPanel {
+	
+	private ParserGUIPanel main;
 	
 	private JTextField nameValue;
 	private JButton resetName;
@@ -130,7 +141,11 @@ public class ParserGUIPanel extends JPanel {
 		
 		saveName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				parser.setName(nameValue.getText());
+				if (SettingHandler.matchesRegex(SettingHandler.REGEXNAME, nameValue.getText())) {
+					parser.setName(nameValue.getText());
+				} else {
+					Main.popupMessage("Error - The name does not match the Regex " + SettingHandler.REGEXNAME);
+				}
 			}
 		});
 		
@@ -176,12 +191,18 @@ public class ParserGUIPanel extends JPanel {
 		});
 		
 		assignerDown.addActionListener(new ActionListener() {
-			DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) assignersList.getModel();
 			public void actionPerformed(ActionEvent e) {
+				DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) assignersList.getModel();
 				if (assignersList.getSelectedIndex() < model.size() - 1) {
 					parser.changeAssignerPosition(assignersList.getSelectedIndex(), assignersList.getSelectedIndex() + 1);
 					populate();
 				}
+			}
+		});
+		
+		manageRules.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Main.frame.ruleMode(parser.getElements(), parser.getOrder(), main);
 			}
 		});
 	}
@@ -189,6 +210,74 @@ public class ParserGUIPanel extends JPanel {
 	public void init(CustomParser parser) {
 		this.parser = parser;
 		populate();
+		main = this;
+	}
+	
+	public void removeRule(String ruleID) {
+		parser.removeRule(ruleID);
+		Main.frame.ruleMode(parser.getElements(), parser.getOrder(), main);
+	}
+	
+	public void addRule(String ruleType) {
+		Rule rule = null;
+		String id = SettingHandler.getNewID(IDType.Rule);
+		HashMap<String, String> genRule = new HashMap<String, String>();
+		genRule.put("id", id);
+		genRule.put("type", ruleType);
+		switch (ruleType) {
+			case "parser.AddHeaderVal":
+				genRule.put("find", "");
+				rule = new AddHeaderVal().genRule(genRule);
+			break;
+			case "parser.Cut":
+				genRule.put("find", "");
+				genRule.put("n", "1");
+				genRule.put("keep", "false");
+				genRule.put("regex", "false");
+				genRule.put("reEval", "false");
+				genRule.put("useHeader", "false");
+				rule = new Cut().genRule(genRule);
+			break;
+			case "parser.Discard":
+				genRule.put("find", "");
+				genRule.put("inverted", "false");
+				genRule.put("regex", "false");
+				genRule.put("flags", "");
+				genRule.put("useHeader", "false");
+				rule = new Discard().genRule(genRule);
+			break;
+			case "parser.Isolate":
+				genRule.put("find", "");
+				genRule.put("useHeader", "false");
+				rule = new Isolate().genRule(genRule);
+			break;
+			case "parser.Replace":
+				genRule.put("find", "");
+				genRule.put("replace", "");
+				genRule.put("regex", "false");
+				genRule.put("useHeader", "false");
+				rule = new Replace().genRule(genRule);
+			break;
+			case "parser.Split":
+				genRule.put("find", "");
+				genRule.put("n", "1");
+				genRule.put("regex", "false");
+				genRule.put("useHeader", "false");
+				rule = new Split().genRule(genRule);
+			break;
+			case "xmlhandler.Trace":
+				genRule.put("defVal", "");
+				genRule.put("nodes", "");
+				rule = new xmlhandler.Trace().genRule(genRule);
+			break;
+			case "jsonhandler.Trace":
+				genRule.put("defVal", "");
+				genRule.put("path", "");
+				rule = new jsonhandler.Trace().genRule(genRule);
+			break;
+		}
+		parser.addRule(id, rule);
+		Main.frame.ruleMode(parser.getElements(), parser.getOrder(), main);
 	}
 	
 	public void populate() {

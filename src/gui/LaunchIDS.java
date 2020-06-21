@@ -65,4 +65,12 @@ public class LaunchIDS {
 	public static boolean isRunning() {
 		return LaunchIDS.isRunning;
 	}
+
+	public static List<String> getListenerIDs() {
+		return listenerIDs;
+	}
+
+	public static List<String> getTriggerIDs() {
+		return triggerIDs;
+	}
 }

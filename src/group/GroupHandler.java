@@ -5,12 +5,14 @@ import cc.Pair;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import group.listener.ListenerHandler;
 import group.responder.ResponderHandler;
+import gui.GroupGUIPanel;
 import gui.ListElement;
 import gui.Logger;
 import parser.ParserHandler;
@@ -163,5 +165,41 @@ public class GroupHandler {
 			elements.addAll(lh.getListenerElements());
 		}
 		return elements.toArray(new ListElement[elements.size()]);
+	}
+	
+	public static HashMap<String, String> getListenerNames() {
+		HashMap<String, String> listeners = new HashMap<String, String>();
+		for (Entry<String, Pair<ListenerHandler, ResponderHandler>> kvp : GroupHandler.groups.entrySet()) {
+			ListenerHandler lh = kvp.getValue().getKey();
+			listeners.putAll(lh.getListenerNames());
+		}
+		return listeners;
+	}
+	
+	public static HashMap<String, String> getResponderNames() {
+		HashMap<String, String> responders = new HashMap<String, String>();
+		for (Entry<String, Pair<ListenerHandler, ResponderHandler>> kvp : GroupHandler.groups.entrySet()) {
+			ResponderHandler rh = kvp.getValue().getValue();
+			responders.putAll(rh.getResponderNames());
+		}
+		return responders;
+	}
+	
+	public static void changeGroupName(String groupID, String name) {
+		GroupHandler.groupNames.put(groupID, name);
+	}
+	
+	public static String getGroupName(String groupID) {
+		return GroupHandler.groupNames.get(groupID);
+	}
+
+	public static List<GroupGUIPanel> getGroupPanels() {
+		ArrayList<GroupGUIPanel> panels = new ArrayList<GroupGUIPanel>();
+		for (Entry<String, Pair<ListenerHandler, ResponderHandler>> group : GroupHandler.groups.entrySet()) {
+			GroupGUIPanel panel = new GroupGUIPanel();
+			panel.init(group.getValue(), group.getKey());
+			panels.add(panel);
+		}
+		return panels;
 	}
 }

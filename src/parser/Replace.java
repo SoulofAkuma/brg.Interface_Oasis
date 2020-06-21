@@ -133,6 +133,39 @@ public class Replace implements Rule {
 	public String printRuleLRP() {
 		String useHeader = (this.useHeader) ? "useHeader; " : "";
 		String regex = (this.regex) ? "regex; " : "";
-		return "Cut; " + useHeader + regex + this.find + "; " + this.replace;
+		return "Replace; " + useHeader + regex + this.find + "; " + this.replace;
 	}
+
+	public String getFind() {
+		return find;
+	}
+
+	public void setFind(String find) {
+		this.find = find;
+	}
+
+	public String getReplace() {
+		return replace;
+	}
+
+	public void setReplace(String replace) {
+		this.replace = replace;
+	}
+
+	public boolean isRegex() {
+		return regex;
+	}
+
+	public void setRegex(boolean regex) {
+		this.regex = regex;
+	}
+
+	public boolean isUseHeader() {
+		return useHeader;
+	}
+
+	public void setUseHeader(boolean useHeader) {
+		this.useHeader = useHeader;
+	}
+	
 }

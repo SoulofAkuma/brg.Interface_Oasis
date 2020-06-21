@@ -196,4 +196,52 @@ public class Cut implements Rule {
 		String keep = (this.keep) ? "keep; " : "";
 		return "Cut; " + useHeader + reEval + keep + regex + this.find + "; " + String.valueOf(this.n);
 	}
+
+	public String getFind() {
+		return find;
+	}
+
+	public void setFind(String find) {
+		this.find = find;
+	}
+
+	public int getN() {
+		return n;
+	}
+
+	public void setN(int n) {
+		this.n = n;
+	}
+
+	public boolean isKeep() {
+		return keep;
+	}
+
+	public void setKeep(boolean keep) {
+		this.keep = keep;
+	}
+
+	public boolean isRegex() {
+		return regex;
+	}
+
+	public void setRegex(boolean regex) {
+		this.regex = regex;
+	}
+
+	public boolean isReEval() {
+		return reEval;
+	}
+
+	public void setReEval(boolean reEval) {
+		this.reEval = reEval;
+	}
+
+	public boolean isUseHeader() {
+		return useHeader;
+	}
+
+	public void setUseHeader(boolean useHeader) {
+		this.useHeader = useHeader;
+	}
 }

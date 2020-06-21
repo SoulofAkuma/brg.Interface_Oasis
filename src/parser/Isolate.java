@@ -93,6 +93,23 @@ public class Isolate implements Rule {
 	@Override
 	public String printRuleLRP() {
 		String useHeader = (this.useHeader) ? "useHeader; " : "";
-		return "Cut; " + useHeader + this.find;
+		return "Isolate; " + useHeader + this.find;
 	}
+
+	public String getFind() {
+		return find;
+	}
+
+	public void setFind(String find) {
+		this.find = find;
+	}
+
+	public boolean isUseHeader() {
+		return useHeader;
+	}
+
+	public void setUseHeader(boolean useHeader) {
+		this.useHeader = useHeader;
+	}
+	
 }

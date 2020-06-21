@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import cc.Pair;
+import gui.ListElement;
 import parser.ParserHandler;
 import parser.Rule;
 
@@ -34,7 +35,7 @@ public class Trace implements Rule {
 		this.defVal = defVal;
 	}
 	
-	public String cToStr(int queryConstant) {
+	public static String cToStr(int queryConstant) {
 		String rString = "";
 		switch(queryConstant) {
 			case 0:
@@ -52,6 +53,16 @@ public class Trace implements Rule {
 		}
 		return rString;
 	}
+	
+	public static ListElement[] getElementTypes() {
+		ListElement[] vals = new ListElement[4];
+		vals[0] = new ListElement("0", "ObjectIndex");
+		vals[1] = new ListElement("1", "ArrayIndex");
+		vals[2] = new ListElement("2", "ArrayQuery");
+		vals[3] = new ListElement("3", "ArrayQueryRegex");
+		return vals;
+	}
+
 
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
@@ -325,4 +336,21 @@ public class Trace implements Rule {
 		return "JSONTrace; " + this.defVal + "; " + traceString;
 	}
 
+	public List<Pair<Integer, String>> getPath() {
+		return path;
+	}
+
+	public void setPath(List<Pair<Integer, String>> path) {
+		this.path = path;
+	}
+
+	public String getDefVal() {
+		return defVal;
+	}
+
+	public void setDefVal(String defVal) {
+		this.defVal = defVal;
+	}
+
+	
 }

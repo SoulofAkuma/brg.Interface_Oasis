@@ -7,9 +7,6 @@ import java.awt.event.ActionEvent;
 
 public class ParamSelector extends JDialog {
 
-	private JFrame frame;
-	private ListElement[] values;
-	private String selecting;
 	private ListElement selected;
 	private static ParamSelector dialog;
 	
@@ -25,8 +22,6 @@ public class ParamSelector extends JDialog {
 		super(parent, "Select " + selecting, true);
 		getContentPane().setBackground(Color.DARK_GRAY);
 		
-		this.selecting = selecting;
-		this.values = values;
 		getContentPane().setLayout(null);
 		
 		JList list = new JList();
@@ -47,6 +42,9 @@ public class ParamSelector extends JDialog {
 		JButton select = new JButton("Select");
 		select.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (list.getSelectedIndex() == -1) {
+					return;
+				}
 				DefaultListModel<ListElement> model = (DefaultListModel<ListElement>) list.getModel();
 				selected = model.get(list.getSelectedIndex());
 				dialog.setVisible(false);

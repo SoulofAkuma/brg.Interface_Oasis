@@ -1,6 +1,7 @@
 package xmlhandler;
 
 import cc.Pair;
+import gui.ListElement;
 import gui.Logger;
 import parser.ParserHandler;
 import parser.Rule;
@@ -31,7 +32,7 @@ public class Trace implements Rule {
 		this.defVal = defVal;
 	}
 	
-	private String cToStr(short constant) {
+	public static String cToStr(short constant) {
 		String rString = "";
 		switch (constant) {
 			case 0:
@@ -48,6 +49,15 @@ public class Trace implements Rule {
 			break;
 		}
 		return rString;
+	}
+	
+	public static ListElement[] getNodeTypes() {
+		ListElement[] vals = new ListElement[4];
+		vals[0] = new ListElement("0", "Element");
+		vals[1] = new ListElement("1", "Attribute");
+		vals[2] = new ListElement("2", "ElementIndex");
+		vals[3] = new ListElement("3", "Combine");
+		return vals;
 	}
 	
 	//Required parameters: nodes, getName, 
@@ -274,4 +284,21 @@ public class Trace implements Rule {
 		traceString = (traceString.length() > 0) ? traceString.substring(0, traceString.length() - 1) : traceString;
 		return "XMLTrace; " + this.defVal + "; " + traceString;
 	}
+
+	public List<Pair<Short, String>> getNodes() {
+		return nodes;
+	}
+
+	public void setNodes(List<Pair<Short, String>> nodes) {
+		this.nodes = nodes;
+	}
+
+	public String getDefVal() {
+		return defVal;
+	}
+
+	public void setDefVal(String defVal) {
+		this.defVal = defVal;
+	}
+	
 }

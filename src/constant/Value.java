@@ -4,15 +4,15 @@ import java.util.HashMap;
 
 public class Value {
 
-	public String id;
-	public String value;
-	public boolean isKey;
-	public boolean useHeader;
-	public boolean backReference;
+	private String id;
+	private String value;
+	private boolean isKey;
+	private boolean useHeader;
+	private boolean backReference;
 	
 	public Value(String id, String value, boolean isKey, boolean useHeader, boolean backReference) {
 		this.id = id;
-		this.value = value;
+		this.value = (value == null) ? "" : value;
 		this.isKey = isKey;
 		this.useHeader = useHeader;
 		this.backReference = backReference;
@@ -74,6 +74,14 @@ public class Value {
 
 	public String getId() {
 		return id;
+	}
+	
+	public String getValueString() {
+		String key = (this.isKey) ? "isKey" : "raw";
+		String header = (this.useHeader) ? ", useHeader" : "";
+		String backReference = (this.backReference) ? ", backReference" : "";
+		String valueString = (this.backReference) ? ConstantHandler.getConstantNames().get(this.value) : this.value;
+		return valueString + " - " + key + header + backReference;
 	}
 	
 	

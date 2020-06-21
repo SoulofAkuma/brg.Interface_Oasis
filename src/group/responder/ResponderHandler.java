@@ -5,12 +5,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import constant.Constant;
+import constant.ConstantHandler;
 import group.GroupHandler;
 import gui.ListElement;
+import gui.ResponderGUIPanel;
 import settings.Setting;
 import settings.SettingHandler;
 import trigger.TriggerHandler;
@@ -136,6 +139,7 @@ public class ResponderHandler {
 		if (sIDmatch != -1) {
 			this.responders.remove(id);
 			this.responderMasterSetting.removeSetting(sIDmatch);
+			TriggerHandler.removeResponderReferences(id);
 		}
 	}
 	
@@ -157,5 +161,40 @@ public class ResponderHandler {
 			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName()));
 		}
 		return elements;
+	}
+	
+	public HashMap<String, String> getResponderNames() {
+		HashMap<String, String> responders = new HashMap<String, String>();
+		for (Entry<String, Responder> responder : this.responders.entrySet()) {
+			responders.put(responder.getKey(), responder.getValue().getName());
+		}
+		return responders;
+	}
+	
+	public ArrayList<ListElement> getResponderElementsDetail() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Responder> kvp : this.responders.entrySet()) {
+			String bodyConst = "";
+			for (String constant : kvp.getValue().getBody().getContent()) {
+				bodyConst += ConstantHandler.getConstantNames().get(constant) + ", ";
+			}
+			bodyConst = (bodyConst.length() > 0) ? bodyConst.substring(0, bodyConst.length() - 1) : "";
+			elements.add(new ListElement(kvp.getKey(), kvp.getValue().getName() + " - " + kvp.getValue().getHeader().getRequestType() + ", " + ConstantHandler.getConstantNames().get(kvp.getValue().getHeader().getUrl()) + "; " + bodyConst));
+		}
+		return elements;
+	}
+
+	public String getGroupID() {
+		return this.groupID;
+	}
+
+	public List<ResponderGUIPanel> getResponderPanels() {
+		ArrayList<ResponderGUIPanel> panels = new ArrayList<ResponderGUIPanel>();
+		for (Entry<String, Responder> responder : this.responders.entrySet()) {
+			ResponderGUIPanel panel = new ResponderGUIPanel();
+			panel.init(responder.getValue());
+			panels.add(panel);
+		}
+		return panels;
 	}
 }

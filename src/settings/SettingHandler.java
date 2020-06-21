@@ -487,6 +487,8 @@ public class SettingHandler {
 				innerIte++;
 				if (!checkIndIndexSetting(index, id, innerIte, indexIDS)) {
 					index.disable();
+				} else {
+					localIDs.put(index.getAttribute("id"), IDType.Index);
 				}
 			}
 			innerIte = 0;
@@ -494,6 +496,8 @@ public class SettingHandler {
 				innerIte++;
 				if (!checkIndRegexSetting(regex, id, innerIte, regexIDS)) {
 					regex.disable();
+				} else {
+					localIDs.put(regex.getAttribute("id"), IDType.Regex);
 				}
 			}
 			
@@ -1401,7 +1405,9 @@ public class SettingHandler {
 								}
 							break;
 							case "userAgent":
-								if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+								if (attribute.getValue().isEmpty()) {
+									break;
+								} else if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
 									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid userAgent value \"" + attribute.getValue() + "\" (Not an id)", false, responderID, inner);
 									next = true;
 								} else if (!SettingHandler.CONSTANTIDS.contains(attribute.getValue())) {
@@ -1410,7 +1416,9 @@ public class SettingHandler {
 								}
 							break;
 							case "contentType":
-								if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
+								if (attribute.getValue().isEmpty()) {
+									break;
+								} else if (!matchesRegex(SettingHandler.REGEXID, attribute.getValue())) {
 									reportSyntaxError("Group Responder Header Attribute Checker", "Invalid contentType value \"" + attribute.getValue() + "\" (Not an id)", false, responderID, inner);
 									next = true;
 								} else if (!SettingHandler.CONSTANTIDS.contains(attribute.getValue())) {

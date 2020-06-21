@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import gui.ConstantGUIPanel;
+import gui.ListElement;
 import settings.Setting;
 import settings.SettingHandler;
 
@@ -111,6 +114,7 @@ public class ConstantHandler {
 	}
 	
 	public static void addConstant(Constant constant) {
+		ConstantHandler.constants.put(constant.getId(), constant);
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put(ConstantHandler.IDNAME, constant.getId());
 		attributes.put(ConstantHandler.NAMENAME, constant.getName());
@@ -141,5 +145,38 @@ public class ConstantHandler {
 		if (SettingHandler.removeParent(id, ConstantHandler.IDNAME, ConstantHandler.SETTINGNAME, ConstantHandler.constantMasterSetting)) {
 			ConstantHandler.constants.remove(id);
 		}
+	}
+	
+	public static ListElement[] getConstantElements() {
+		ArrayList<ListElement> elements = new ArrayList<ListElement>();
+		for (Entry<String, Constant> constant : ConstantHandler.constants.entrySet()) {
+			elements.add(new ListElement(constant.getKey(), constant.getValue().getName()));
+		}
+		return elements.toArray(new ListElement[elements.size()]);
+	}
+	
+	public static HashMap<String, String> getConstantNames() {
+		HashMap<String, String> constants = new HashMap<String, String>();
+		for (Entry<String, Constant> constant : ConstantHandler.constants.entrySet()) {
+			constants.put(constant.getKey(), constant.getValue().getName());
+		}
+		return constants;
+	}
+
+	public static List<ConstantGUIPanel> getConstantPanels() {
+		ArrayList<ConstantGUIPanel> panels = new ArrayList<ConstantGUIPanel>();
+		for (Entry<String, Constant> constant : ConstantHandler.constants.entrySet()) {
+			ConstantGUIPanel panel = new ConstantGUIPanel();
+			panel.init(constant.getValue());
+			panels.add(panel);
+		}
+		return panels;
+	}
+	
+	public static String getRConstant() {
+		for (Entry<String, Constant> entry : ConstantHandler.constants.entrySet()) {
+			return entry.getKey();
+		}
+		return null;
 	}
 }

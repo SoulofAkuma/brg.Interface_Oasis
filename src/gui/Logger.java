@@ -73,8 +73,12 @@ public class Logger extends JFrame implements Runnable{
 	private static final String SESSIONFOLDER = Logger.BASEFOLDER + Manager.SEPARATOR + "Log " + Main.SESSIONTIME;
 	private static final String ERRORLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ErrorLog_Session" + Main.SESSIONTIME + ".xml";
 	private static final String EXCEPTIONLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ExceptionLog_Session" + Main.SESSIONTIME + ".xml";
+	private static final String LISTENERLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ListenerLog" + Main.SESSIONTIME + ".xml";
+	private static final String RESPONDERLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ResponderLog" + Main.SESSIONTIME + ".xml";
 	private static int fileID;
 	private static int exceptionFileID;
+	private static int listenerLogID;
+	private static int responderLogID;
 	
 	public static boolean showGUI = false;
 	
@@ -140,11 +144,62 @@ public class Logger extends JFrame implements Runnable{
 		errorElements.add(errorString);
 	}
 	
+	public static void logListenerRequest(String request, String id, String listenerName) {
+		String logString = "<ListenerRequest>\r\n"
+				+ "\t<ListenerName>" + listenerName + "</ListenerName>\r\n"
+				+ "\t<ListenerID>" + id + "</ListenerID>\r\n"
+				+ "\t<Request>\r\n" + paragraphTab(request, 2) + "\r\n\t</Request>\r\n"
+				+ "</ListenerRequest>\r\n";
+		Manager.writeFile(Logger.listenerLogID, logString, true);
+	}
+	
+	public static void logListenerResponse(String response, String id, String listenerName) {
+		String logString = "<ListenerResponse>\r\n"
+				+ "\t<ListenerName>" + listenerName + "</ListenerName>\r\n"
+								+ "\t<ListenerID>" + id + "</ListenerID>\r\n"
+				+ "\t<Response>\r\n" + paragraphTab(response, 2) + "\r\n\t</Response>\r\n"
+				+ "</ListenerResponse>\r\n";
+		Manager.writeFile(Logger.listenerLogID, logString, true);
+	}
+	
+	public static void logResponderRequest(String request, String id, String responderName) {
+		String logString = "<ResponderRequest>\r\n"
+				+ "\t<ResponderName>" + responderName + "</ResponderName>\r\n"
+				+ "\t<ResponderID>" + id + "</ResponderID>\r\n"
+				+ "\t<Request>\r\n" + paragraphTab(request, 2) + "\r\n\t</Request>\r\n"
+				+ "</ResponderRequest>\r\n";
+		Manager.writeFile(Logger.responderLogID, logString, true);
+	}
+	
+	public static void logResponderResponse(String response, String id, String responderName) {
+		String logString = "<ResponderResponse>\r\n"
+				+ "\t<ResponderName>" + responderName + "</ResponderName>\r\n"
+				+ "\t<ResponderID>" + id + "</ResponderID>\r\n"
+				+ "\t<Response>\r\n" + paragraphTab(response, 2) + "\r\n\t</Response>\r\n"
+				+ "</ResponderResponse>\r\n";
+		Manager.writeFile(Logger.responderLogID, logString, true);
+	}
+	
+	public static String paragraphTab(String paragraph, int tabCount) {
+		String[] lines = paragraph.split("\r\n");
+		String tabString = "";
+		for (int i = 0; i < tabCount; i++) {
+			tabString += "\t";
+		}
+		String newParagraph = "";
+		for (String line : lines) {
+			newParagraph += tabString + line + "\r\n";
+		}
+		return newParagraph;
+	}
+	
 	public static void init() {
 		Manager.checkPath(Logger.BASEFOLDER);
 		Manager.checkPath(Logger.SESSIONFOLDER);
 		Logger.fileID = Manager.newFile(Logger.ERRORLOGFILEPATH);
 		Logger.exceptionFileID = Manager.newFile(Logger.EXCEPTIONLOGFILEPATH);
+		Logger.listenerLogID = Manager.newFile(Logger.LISTENERLOGFILEPATH);
+		Logger.responderLogID = Manager.newFile(Logger.RESPONDERLOGFILEPATH);
 		Logger.myThread = new Thread(new Logger());
 		Logger.runMe = true;
 		Logger.myThread.start();

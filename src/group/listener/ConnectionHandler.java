@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import group.GroupHandler;
 import group.RequestType;
 import gui.Logger;
+import gui.Main;
 import gui.MessageOrigin;
 import gui.MessageType;
 import trigger.TriggerHandler;
@@ -28,11 +29,15 @@ public class ConnectionHandler implements Runnable {
 	private RequestType requestType;
 	private static final String[] stdCharsets = new String[] {"US-ASCII","ISO-8859-1","UTF-8","UTF-16BE","UTF-16LE","UTF-16"};
 	private final String timeoutID;
+	private String parentName;
+	private boolean log;
 	
-	public ConnectionHandler(String parentID, Socket socket, String timeoutID) {
+	public ConnectionHandler(String parentID, String parentName, boolean log, Socket socket, String timeoutID) {
 		this.parentID = parentID;
 		this.socket = socket;
 		this.timeoutID = timeoutID;
+		this.parentName = parentName;
+		this.log = log;
 	}
 	
 	@Override
@@ -42,6 +47,7 @@ public class ConnectionHandler implements Runnable {
 		boolean success = false;
 		String request = "";
 		String body = null;
+		String response = null;
 		try {
 			out = new PrintWriter(this.socket.getOutputStream());
 			in = this.socket.getInputStream();
@@ -69,18 +75,21 @@ public class ConnectionHandler implements Runnable {
 							this.requestType = RequestType.HEAD;
 							hasBody = false;
 						} else {
+							response = getResponse(500, "Not Implemented");
 							reportInformation(getResponse(500, "Not Implemented"), true);
 							out.write(getResponse(500, "Not Implemented"));
 							out.flush();
 							break;
 						}
 						if (!(protocol.equals("HTTP/1.1") || protocol.equals("HTTP"))) {
+							response = getResponse(400, "Bad Request");
 							reportInformation(getResponse(400, "Bad Request"), true);
 							out.write(getResponse(400, "Bad Request"));
 							out.flush();
 							break;
 						}
-					} else {	
+					} else {
+						response = getResponse(400, "Bad Request");
 						reportInformation(getResponse(400, "Bad Request"), true);
 						out.write(getResponse(400, "Bad Request"));
 						out.flush();
@@ -94,6 +103,7 @@ public class ConnectionHandler implements Runnable {
 						try {
 							contentLength = Integer.parseInt(matcher.group());					
 						} catch (Exception e) {
+							response = getResponse(400, "Bad Request");
 							reportInformation(getResponse(400, "Bad Request"), true);
 							out.write(getResponse(400, "Bad Request"));
 							out.flush();
@@ -115,6 +125,7 @@ public class ConnectionHandler implements Runnable {
 							try {
 								stdC = Charset.forName(charset);
 							} catch (Exception e) {
+								response = getResponse(200, "OK", "text/json", "{\"Status\":\"Charset Error\", \"Valid-Charsets\":[\"" + String.join("\",\"", ConnectionHandler.stdCharsets) + "\"]}");
 								reportInformation(getResponse(200, "OK", "text/json", "{\"Status\":\"Charset Error\", \"Valid-Charsets\":[\"" + String.join("\",\"", ConnectionHandler.stdCharsets) + "\"]}"), true);
 								out.write(getResponse(200, "OK", "text/json", "{\"Status\":\"Charset Error\", \"Valid-Charsets\":[\"" + String.join("\",\"", ConnectionHandler.stdCharsets) + "\"]}"));
 								out.flush();
@@ -123,12 +134,14 @@ public class ConnectionHandler implements Runnable {
 							byte[] bodyBuffer = new byte[contentLength];
 							in.read(bodyBuffer);
 							body = new String(bodyBuffer, stdC);
+							response = getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\"}");
 							reportInformation(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\"}"), false);
 							out.write(getResponse(200, "OK", "text/json",  "{\"Status\":\"Received Request\"}"));
 							out.flush();
 							success = true;
 							break;
 						} else {
+							response = getResponse(400, "Bad Request");
 							reportInformation(getResponse(400, "Bad Request"), false);
 							out.write(getResponse(400, "Bad Request"));
 							out.flush();
@@ -136,9 +149,11 @@ public class ConnectionHandler implements Runnable {
 						}
 					} else {
 						if (this.requestType == RequestType.HEAD) {
+							response = getResponse(200, "OK");
 							reportInformation(getResponse(200, "OK"), false);
 							out.write(getResponse(200, "OK"));
 						} else {
+							response = getResponse(200, "OK", "text/json", "{\"Status\":\"Received Request\"}");
 							reportInformation(getResponse(200, "OK", "text/json", "{\"Status\":\"Received Request\"}"), false);	
 							out.write(getResponse(200, "OK", "text/json", "{\"Status\":\"Received Request\"}"));
 						}
@@ -155,9 +170,15 @@ public class ConnectionHandler implements Runnable {
 		} catch(Exception e) {
 			Logger.reportException("ConnectionHandler", "run", e);
 		}
+		if (response != null && this.log) {
+			Logger.logListenerResponse(response, this.parentID, this.parentName);
+		}
 		if (success) {
 			Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener successfully parsed received request - Reporting to trigger", this.parentID, null, null, false);
 			TriggerHandler.reportListener(this.parentID, request, body);
+			if (this.log) {
+				Logger.logListenerRequest(request + body, this.parentID, this.parentName);
+			}
 		} else {
 			Logger.addMessage(MessageType.Warning, MessageOrigin.Listener, "Listener parsing of received request failed - Aborting trigger report", this.parentID, null, null, false);
 		}
@@ -201,7 +222,7 @@ public class ConnectionHandler implements Runnable {
 		String response = "";
 		response += "HTTP/1.1 " + responseCode + " " + responseMessage + "\r\n";
 		response += "Connection: Closed\r\n";
-		response += "Server: InterfaceOasis/0.7\r\n\r\n";
+		response += "Server: InterfaceOasis/" + Main.versionNumber + "\r\n\r\n";
 		return response;
 	}
 	

@@ -30,7 +30,7 @@ public class Listener implements Runnable {
 	
 	private ArrayList<Thread> connections = new ArrayList<Thread>(); //The threads of ConnectionHandlers to enable multiple requests at once
 	
-	protected Listener(String portString, String name, String groupID, String groupName, String listenerID, boolean log) {
+	public Listener(String portString, String name, String groupID, String groupName, String listenerID, boolean log) {
 		this.name = name;
 		this.portString = portString;
 		this.groupID = groupID;
@@ -56,7 +56,7 @@ public class Listener implements Runnable {
 		}
 	}
 	
-	protected String getName() {
+	public String getName() {
 		return this.name;
 	}
 	
@@ -93,7 +93,7 @@ public class Listener implements Runnable {
 			try {
 				Socket clientSocket = this.serverSocket.accept();
 				String timeoutID = GroupHandler.addSocketTimeout(clientSocket, 500);
-				Runnable connectionHandler = new ConnectionHandler(this.listenerID, clientSocket, timeoutID);
+				Runnable connectionHandler = new ConnectionHandler(this.listenerID, this.name, this.log, clientSocket, timeoutID);
 				this.connections.add(new Thread(connectionHandler));
 				Logger.addMessage(MessageType.Information, MessageOrigin.Listener, "Listener " + this.name + " received a request on port " + this.port, this.listenerID, new String[] {"ListenerName", "Port", "Unix"}, new String[] {this.name, String.valueOf(this.port), String.valueOf(Instant.now().getEpochSecond())}, false);
 				this.connections.get(this.connections.size() - 1).start();
@@ -125,7 +125,7 @@ public class Listener implements Runnable {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 	public boolean getLog() {
 		return this.log;
 	}
@@ -136,6 +136,10 @@ public class Listener implements Runnable {
 	
 	public String getListenerID() {
 		return this.listenerID;
+	}
+	
+	public boolean isActive() {
+		return this.isActive;
 	}
 
 }

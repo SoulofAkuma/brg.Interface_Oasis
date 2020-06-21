@@ -19,6 +19,7 @@ import gui.ParserGUIPanel;
 import indexassigner.IndexAssignerHandler;
 import settings.Setting;
 import settings.SettingHandler;
+import trigger.TriggerHandler;
 
 public class ParserHandler {
 	
@@ -241,6 +242,7 @@ public class ParserHandler {
 	}
 	
 	public static void addParser(CustomParser parser) {
+		ParserHandler.parsers.put(parser.getID(), parser);
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put(ParserHandler.IDNAME, parser.getID());
 		attributes.put(ParserHandler.NAMENAME, parser.getName());
@@ -269,6 +271,7 @@ public class ParserHandler {
 	public static void removeParser(String id) {
 		if (SettingHandler.removeParent(id, ParserHandler.IDNAME, ParserHandler.SETTINGNAME, ParserHandler.parserMasterSetting)) {
 			ParserHandler.parsers.remove(id);
+			TriggerHandler.removeParserRefernces(id);
 		}
 	}
 	

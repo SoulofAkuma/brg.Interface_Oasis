@@ -35,6 +35,8 @@ import javax.swing.SwingUtilities;
 import cc.Pair;
 import group.GroupHandler;
 import parser.ParserHandler;
+import settings.SettingHandler;
+
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 
@@ -158,7 +160,7 @@ public class TriggerGUIPanel extends JPanel {
 		add(removeTriggerElement);
 		
 		cooldownValue = new JSpinner();
-		cooldownValue.setModel(new SpinnerNumberModel(5, 5, 1000, 1));
+		cooldownValue.setModel(new SpinnerNumberModel(new Integer(0), new Integer(0), null, new Integer(1)));
 		cooldownValue.setBounds(823, 8, 112, 20);
 		add(cooldownValue);
 		
@@ -170,7 +172,11 @@ public class TriggerGUIPanel extends JPanel {
 
 		resetName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				nameValue.setText(trigger.getTriggerName());
+				if (SettingHandler.matchesRegex(SettingHandler.REGEXNAME, nameValue.getText())) {
+					nameValue.setText(trigger.getTriggerName());
+				} else {
+					Main.popupMessage("Error - The name does not match the Regex " + SettingHandler.REGEXNAME);
+				}
 			}
 		});
 		
@@ -215,7 +221,17 @@ public class TriggerGUIPanel extends JPanel {
 		removeResponder.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int index = responderList.getSelectedIndex();
-				trigger.getResponderIDs().remove(index);
+				if (index != -1) {
+					trigger.getResponderIDs().remove(index);
+				}
+			}
+		});
+		removeTriggerElement.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int index = triggeredByList.getSelectedIndex();
+				if (index != -1) {
+					trigger.getTriggeredBy().remove(index);
+				}
 			}
 		});
 		addTriggerElement.addActionListener(new ActionListener() {

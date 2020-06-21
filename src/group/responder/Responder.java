@@ -51,7 +51,6 @@ public class Responder {
 	//The response here is an http request. However, everything is considered a response here because it happens in response to a trigger
 	public void sendResponse(String host, String url, int port, String requestType, String response) {
 		try {
-			System.out.println(response);
 			Socket responder = new Socket(host, port);
 			PrintWriter out = new PrintWriter(responder.getOutputStream());
 			InputStream in = responder.getInputStream();
@@ -61,15 +60,16 @@ public class Responder {
 				responder.close();
 				return;
 			}
+			if (this.log) {
+				Logger.logResponderRequest(response, this.responderID, this.name);
+			}
 			out.write(response);
 			out.flush();
-			
-			logSend(response, host, port);
 			
 			Thread.sleep(1000);
 			
 			String timeoutID = GroupHandler.addSocketTimeout(responder, 10);
-			Runnable handler = new ConnectionHandler(this.responderID, in, url, requestType, port, timeoutID);
+			Runnable handler = new ConnectionHandler(this.responderID, this.name, this.log, in, url, requestType, port, timeoutID);
 			Thread handlerThread = new Thread(handler);
 			handlerThread.start();
 		} catch (IOException e) {
@@ -79,14 +79,6 @@ public class Responder {
 			reportError("Interrupted responder response", e.getMessage());
 			Logger.reportException("Responder", "sendResponse", e);
 		}
-	}
-	
-	private void logSend(String send, String host, int port) {
-		
-	}
-	
-	private void logReceive(String receive, String host, int port) {
-		
 	}
 	
 	private void reportError(String causes, String errorMessage) {

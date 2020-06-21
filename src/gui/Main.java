@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.Insets;
@@ -19,13 +20,17 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.JLayeredPane;
+import javax.swing.JList;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.LineBorder;
 import javax.swing.UIManager;
 
@@ -39,6 +44,7 @@ import group.listener.Listener;
 import group.listener.ListenerHandler;
 import group.responder.Body;
 import group.responder.Header;
+import group.responder.Responder;
 import group.responder.ResponderHandler;
 import indexassigner.IndexAssigner;
 import indexassigner.IndexAssignerHandler;
@@ -87,6 +93,15 @@ public class Main extends JFrame {
 	private JPanel valuesPanel;
 	
 	public static Main frame;
+	public static final String versionNumber = "1.0";
+	private JLabel lblNewLabel;
+	private JLabel label;
+	private JList listenersList;
+	private JList triggersList;
+	private JButton addListener;
+	private JButton removeListener;
+	private JButton addTrigger;
+	private JButton removeTrigger;
 	
 	/**
 	 * Launch the application.
@@ -196,15 +211,6 @@ public class Main extends JFrame {
 //		IndexAssignerHandler.getIndexAsssigner("000000130").removeIndex("000000137");
 //		IndexAssignerHandler.getIndexAsssigner("000000130").removeRegex("000000138");
 //		IndexAssignerHandler.removeIndexAssigner("000000130");
-		
-		GroupHandler.getListenerHandler(GroupHandler.ltgID("000000011")).runListener("000000011");
-		TriggerHandler.runTrigger("000000080");
-		
-		for (int i = 0; i < 20; i++) {
-			Logger.addMessage(MessageType.Error, MessageOrigin.Parser, "Test", "000000001", null, null, false);
-			Logger.addMessage(MessageType.Information, MessageOrigin.Parser, "Test", "000000001", null, null, false);
-			Logger.addMessage(MessageType.Warning, MessageOrigin.Parser, "Test", "000000001", null, null, false);
-		}
 	}
 	//TODO: Build interface for groups, which can contain Listener, Responder and Trigger. Parser are independent (makes it easier to implement the same parser for multiple groups)!
 	/**
@@ -228,6 +234,161 @@ public class Main extends JFrame {
 				settingPanel.setBackground(Color.DARK_GRAY);
 				settingPanel.setBounds(0, 0, 995, 465);
 				contentPane.add(settingPanel);
+				
+				rulesPanel = new JPanel();
+				rulesPanel.setBackground(Color.DARK_GRAY);
+				
+				rulesPane = new JScrollPane(rulesPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				rulesPane.setBackground(Color.DARK_GRAY);
+				rulesPane.setBounds(0, 30, 986, 435);
+				rulesPane.getVerticalScrollBar().setUnitIncrement(10);
+				
+				listenersPanel = new JPanel();
+				listenersPanel.setBackground(Color.DARK_GRAY);
+				
+				listenersPane = new JScrollPane(listenersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				listenersPane.setBackground(Color.DARK_GRAY);
+				listenersPane.setBounds(0, 30, 986, 435);
+				listenersPane.getVerticalScrollBar().setUnitIncrement(10);
+				
+				generalPanel = new JPanel();
+				generalPanel.setBackground(Color.DARK_GRAY);
+				
+				generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+				generalPane.setBackground(Color.DARK_GRAY);
+				generalPane.setBounds(0, 30, 986, 435);
+				generalPane.getVerticalScrollBar().setUnitIncrement(10);
+				
+				respondersPanel = new JPanel();
+				respondersPanel.setBackground(Color.DARK_GRAY);
+				
+								respondersPane = new JScrollPane(respondersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+								respondersPane.setBackground(Color.DARK_GRAY);
+								respondersPane.setBounds(0, 30, 986, 435);
+								respondersPane.getVerticalScrollBar().setUnitIncrement(10);
+								settingPanel.add(respondersPane);
+								Main.settingPanels.add(respondersPane);
+								Main.settingPanels.add(respondersPanel);
+								respondersPanel.setLayout(null);
+								respondersPanel.setPreferredSize(new Dimension(986, 435));
+				settingPanel.add(generalPane);
+				Main.settingPanels.add(generalPane);
+				Main.settingPanels.add(generalPanel);
+				generalPanel.setLayout(null);
+				generalPanel.setPreferredSize(new Dimension(986, 435));
+				
+				lblNewLabel = new JLabel("Listeners");
+				lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+				lblNewLabel.setForeground(Color.WHITE);
+				lblNewLabel.setBounds(10, 10, 83, 13);
+				generalPanel.add(lblNewLabel);
+				
+				label = new JLabel("Triggers");
+				label.setForeground(Color.WHITE);
+				label.setFont(new Font("Tahoma", Font.PLAIN, 14));
+				label.setBounds(478, 10, 83, 13);
+				generalPanel.add(label);
+				
+				JScrollPane listenersScroll = new JScrollPane();
+				listenersScroll.setBorder(null);
+				listenersScroll.setBounds(10, 33, 450, 361);
+				generalPanel.add(listenersScroll);
+
+				listenersList = new JList();
+				listenersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				listenersList.setForeground(Color.WHITE);
+				listenersList.setBackground(Color.GRAY);
+				listenersList.setModel(new DefaultListModel<ListElement>());
+				listenersScroll.setViewportView(listenersList);
+				
+				JScrollPane triggersScroll = new JScrollPane();
+				triggersScroll.setBorder(null);
+				triggersScroll.setBounds(478, 33, 450, 361);
+				generalPanel.add(triggersScroll);
+
+				triggersList = new JList();
+				triggersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				triggersList.setForeground(Color.WHITE);
+				triggersList.setBackground(Color.GRAY);
+				triggersList.setModel(new DefaultListModel<ListElement>());
+				triggersScroll.setViewportView(triggersList);
+				
+				addListener = new JButton("Add Listener");
+				addListener.setBounds(10, 404, 130, 21);
+				generalPanel.add(addListener);
+				
+				removeListener = new JButton("Remove Listener");
+				removeListener.setBounds(150, 404, 130, 21);
+				generalPanel.add(removeListener);
+				
+				addTrigger = new JButton("Add Trigger");
+				addTrigger.setBounds(478, 404, 130, 21);
+				generalPanel.add(addTrigger);
+				
+				removeTrigger = new JButton("Remove Trigger");
+				removeTrigger.setBounds(618, 404, 130, 21);
+				generalPanel.add(removeTrigger);
+				
+				addListener.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						ListElement selection = ParamSelector.getSelection(Main.frame, GroupHandler.getListenerElements(), "Listener");
+						if (selection != null) {
+							if (LaunchIDS.getListenerIDs().contains(selection.getID())) {
+								Main.popupMessage("Error - Duplicate LaunchIDs are forbidden");
+								return;
+							}
+							LaunchIDS.getListenerIDs().add(selection.getID());
+							populateGeneral();
+						}
+					}
+				});
+				
+				addTrigger.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						ListElement selection = ParamSelector.getSelection(Main.frame, TriggerHandler.getTriggerElements(), "Trigger");
+						if (selection != null) {
+							if (LaunchIDS.getTriggerIDs().contains(selection.getID())) {
+								Main.popupMessage("Error - Duplicate LaunchIDs are forbidden");
+								return;
+							}
+							LaunchIDS.getTriggerIDs().add(selection.getID());
+							populateGeneral();
+						}
+					}
+				});
+				
+				removeListener.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (listenersList.getSelectedIndex() != -1) {
+							LaunchIDS.getListenerIDs().remove(listenersList.getSelectedIndex());
+							populateGeneral();
+						}
+					}
+				});
+				
+				removeTrigger.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (triggersList.getSelectedIndex() != -1) {
+							LaunchIDS.getTriggerIDs().remove(triggersList.getSelectedIndex());
+							populateGeneral();
+						}
+					}
+				});
+				
+				settingPanel.add(listenersPane);
+				Main.settingPanels.add(listenersPane);
+				Main.settingPanels.add(listenersPanel);
+				listenersPanel.setLayout(null);
+				listenersPanel.setPreferredSize(new Dimension(986, 435));
+				settingPanel.add(rulesPane);
+				Main.settingPanels.add(rulesPane);
+				Main.settingPanels.add(rulesPanel);
+				rulesPanel.setLayout(null);
+				rulesPanel.setPreferredSize(new Dimension(986, 435));
 				
 				
 				//Header
@@ -273,20 +434,8 @@ public class Main extends JFrame {
 				constantsPanel = new JPanel();
 				constantsPanel.setBackground(Color.DARK_GRAY);
 				
-				generalPanel = new JPanel();
-				generalPanel.setBackground(Color.DARK_GRAY);
-				
-				listenersPanel = new JPanel();
-				listenersPanel.setBackground(Color.DARK_GRAY);
-				
-				respondersPanel = new JPanel();
-				respondersPanel.setBackground(Color.DARK_GRAY);
-				
 				indexAssignersPanel = new JPanel();
 				indexAssignersPanel.setBackground(Color.DARK_GRAY);
-				
-				rulesPanel = new JPanel();
-				rulesPanel.setBackground(Color.DARK_GRAY);
 				
 				valuesPanel = new JPanel();
 				valuesPanel.setBackground(Color.DARK_GRAY);
@@ -315,36 +464,12 @@ public class Main extends JFrame {
 				constantsPane.setBounds(0, 30, 986, 435);
 				constantsPane.getVerticalScrollBar().setUnitIncrement(10);
 				settingPanel.add(constantsPane);
-				
-				generalPane = new JScrollPane(generalPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				generalPane.setBackground(Color.DARK_GRAY);
-				generalPane.setBounds(0, 30, 986, 435);
-				generalPane.getVerticalScrollBar().setUnitIncrement(10);
-				settingPanel.add(generalPane);
-				
-				listenersPane = new JScrollPane(listenersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				listenersPane.setBackground(Color.DARK_GRAY);
-				listenersPane.setBounds(0, 30, 986, 435);
-				listenersPane.getVerticalScrollBar().setUnitIncrement(10);
-				settingPanel.add(listenersPane);
-
-				respondersPane = new JScrollPane(respondersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				respondersPane.setBackground(Color.DARK_GRAY);
-				respondersPane.setBounds(0, 30, 986, 435);
-				respondersPane.getVerticalScrollBar().setUnitIncrement(10);
-				settingPanel.add(respondersPane);
 
 				indexAssignersPane = new JScrollPane(indexAssignersPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				indexAssignersPane.setBackground(Color.DARK_GRAY);
 				indexAssignersPane.setBounds(0, 30, 986, 435);
 				indexAssignersPane.getVerticalScrollBar().setUnitIncrement(10);
 				settingPanel.add(indexAssignersPane);
-				
-				rulesPane = new JScrollPane(rulesPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-				rulesPane.setBackground(Color.DARK_GRAY);
-				rulesPane.setBounds(0, 30, 986, 435);
-				rulesPane.getVerticalScrollBar().setUnitIncrement(10);
-				settingPanel.add(rulesPane);
 
 				valuesPane = new JScrollPane(valuesPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				valuesPane.setBackground(Color.DARK_GRAY);
@@ -364,30 +489,14 @@ public class Main extends JFrame {
 				Main.settingPanels.add(constantsPanel);
 				constantsPanel.setLayout(null);
 				constantsPanel.setPreferredSize(new Dimension(986, 435));
-				Main.settingPanels.add(generalPane);
-				Main.settingPanels.add(generalPanel);
-				generalPanel.setLayout(null);
-				generalPanel.setPreferredSize(new Dimension(986, 435));
 				Main.settingPanels.add(triggersPane);
 				Main.settingPanels.add(triggersPanel);
 				triggersPanel.setLayout(null);
 				triggersPanel.setPreferredSize(new Dimension(986, 435));
-				Main.settingPanels.add(listenersPane);
-				Main.settingPanels.add(listenersPanel);
-				listenersPanel.setLayout(null);
-				listenersPanel.setPreferredSize(new Dimension(986, 435));
-				Main.settingPanels.add(respondersPane);
-				Main.settingPanels.add(respondersPanel);
-				respondersPanel.setLayout(null);
-				respondersPanel.setPreferredSize(new Dimension(986, 435));
 				Main.settingPanels.add(indexAssignersPane);
 				Main.settingPanels.add(indexAssignersPanel);
 				indexAssignersPanel.setLayout(null);
 				indexAssignersPanel.setPreferredSize(new Dimension(986, 435));
-				Main.settingPanels.add(rulesPane);
-				Main.settingPanels.add(rulesPanel);
-				rulesPanel.setLayout(null);
-				rulesPanel.setPreferredSize(new Dimension(986, 435));
 				Main.settingPanels.add(valuesPane);
 				Main.settingPanels.add(valuesPanel);
 				valuesPanel.setLayout(null);
@@ -438,6 +547,7 @@ public class Main extends JFrame {
 						hideAllSettingPanels();
 						groupsPane.setVisible(true);
 						groupsPanel.setVisible(true);
+						populateGroups();
 					}
 				});
 				headerTriggerButton.addActionListener(new ActionListener() {
@@ -461,6 +571,7 @@ public class Main extends JFrame {
 						hideAllSettingPanels();
 						constantsPane.setVisible(true);
 						constantsPanel.setVisible(true);
+						populateConstants();
 					}
 				});
 				headerGeneralButton.addActionListener(new ActionListener() {
@@ -468,6 +579,7 @@ public class Main extends JFrame {
 						hideAllSettingPanels();
 						generalPane.setVisible(true);
 						generalPanel.setVisible(true);
+						populateGeneral();
 					}
 				});
 				startLoggingConsole.setFont(new Font("Times New Roman", Font.PLAIN, 14));
@@ -540,7 +652,7 @@ public class Main extends JFrame {
 		return returnVal.getValue();
 	}
 	
-	private void assignPos(Component component, int x, int y) {
+	private static void assignPos(Component component, int x, int y) {
 		component.setBounds(x, y, component.getWidth(), component.getHeight());
 	}
 	
@@ -556,8 +668,20 @@ public class Main extends JFrame {
 			triggersPanel.add(panel);
 			y += 110;
 		}
+		JButton addTrigger = new JButton("Add Trigger");
+		addTrigger.setBounds(x + 5, y + 10, 100, 20);
+		triggersPanel.add(addTrigger);
+		addTrigger.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				TriggerHandler.addTrigger(new Trigger(TriggerType.Manual, Collections.synchronizedList(new ArrayList<Pair<String, String>>()), SettingHandler.getNewID(IDType.Trigger), "New Trigger", Collections.synchronizedList(new ArrayList<String>()), 0));
+				populateTrigger();
+			}
+		});
+		y += 40;
 		triggersPanel.setPreferredSize(new Dimension(986, y));
 		revalidate();
+		repaint();
 	}
 	
 	private void populateParser() {
@@ -572,8 +696,36 @@ public class Main extends JFrame {
 			parsersPanel.add(panel);
 			y += 140;
 		}
+		JButton addParser = new JButton("Add Parser");
+		addParser.setBounds(x + 5, y + 10, 100, 20);
+		parsersPanel.add(addParser);
+		addParser.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (IndexAssignerHandler.getRIDIfExists() != null) {
+					ParserHandler.addParser(new CustomParser(new ConcurrentHashMap<String, Rule>(), Collections.synchronizedList(new ArrayList<String>(Arrays.asList(new String[] {IndexAssignerHandler.getRIDIfExists()}))), Collections.synchronizedList(new ArrayList<String>()), "New Parser", SettingHandler.getNewID(IDType.Trigger)));
+					populateParser();
+				} else {
+					System.out.println("error");
+					JOptionPane.showMessageDialog(null, "Error - You need at least one IndexAssigner before adding a parser");
+				}
+			}
+		});
+		JButton manageAssigners = new JButton("Manage IndexAssigners");
+		manageAssigners.setBounds(x + 115, y + 10, 150, 20);
+		parsersPanel.add(manageAssigners);
+		manageAssigners.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Main.frame.assignersMode();
+			}
+		});
+		y += 40;
+		
+		
 		parsersPanel.setPreferredSize(new Dimension(986, y));
 		revalidate();
+		repaint();
 	}
 	
 	public static void deleteTrigger(String id) {
@@ -596,11 +748,256 @@ public class Main extends JFrame {
 		});
 	}
 	
-	public static void ruleMode() {
-		SwingUtilities.invokeLater(new Runnable() {
+	public void ruleMode(ConcurrentHashMap<String, Rule> rules, List<String> order, ParserGUIPanel parent) {
+		while (rulesPanel.getComponentCount() > 0) {
+			rulesPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		for (String ruleID : order) {
+			RuleGUIPanel panel = new RuleGUIPanel();
+			int height = panel.init(rules.get(ruleID), ruleID, parent);
+			assignPos(panel, x, y);
+			rulesPanel.add(panel);
+			y += height;
+		}
+		JButton addRule = new JButton("Add Rule");
+		addRule.setBounds(x + 5, y + 10, 80, 20);
+		rulesPanel.add(addRule);
+		y += 40;
+		addRule.addActionListener(new ActionListener() {
 			@Override
-			public void run() {
+			public void actionPerformed(ActionEvent e) {
+				ListElement[] types = new ListElement[8];
+				types[0] = new ListElement("parser.AddHeaderVal", "AddHeaderVal");
+				types[1] = new ListElement("parser.Cut", "Cut");
+				types[2] = new ListElement("parser.Discard", "Discard");
+				types[3] = new ListElement("parser.Isolate", "Isolate");
+				types[4] = new ListElement("parser.Replace", "Replace");
+				types[5] = new ListElement("parser.Split", "Split");
+				types[6] = new ListElement("xmlhandler.Trace", "XMLTrace");
+				types[7] = new ListElement("jsonhandler.Trace", "JSONTrace");
+				ListElement selection = ParamSelector.getSelection(Main.frame, types, "Rule Type");
+				if (selection != null) {
+					parent.addRule(selection.getID());
+				}
 			}
 		});
+		rulesPanel.setPreferredSize(new Dimension(986, y));
+		rulesPane.setVisible(true);
+		rulesPanel.setVisible(true);
+		parsersPanel.setVisible(false);
+		parsersPane.setVisible(false);
+		revalidate();
+		repaint();
+	}
+	
+	public void assignersMode() {
+		while (indexAssignersPanel.getComponentCount() > 0) {
+			indexAssignersPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<IndexAssignerGUIPanel> panels = IndexAssignerHandler.getAssignerPanels();
+		for (IndexAssignerGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			indexAssignersPanel.add(panel);
+			y += 110;
+		}
+		JButton addAssigner = new JButton("Add IndexAssigner");
+		addAssigner.setBounds(x + 5, y + 10, 150, 20);
+		indexAssignersPanel.add(addAssigner);
+		addAssigner.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				IndexAssignerHandler.addIndexAssigner(new IndexAssigner(SettingHandler.getNewID(IDType.IndexAssigner), "New Assigner", new ConcurrentHashMap<String, Pair<Integer, String>>(), new ConcurrentHashMap<String, Pair<String, String[]>>(), new ConcurrentHashMap<String, Integer>(), false, Collections.synchronizedList(new ArrayList<String>()), Collections.synchronizedList(new ArrayList<String>()))); 
+				assignersMode();
+			}
+		});
+		Main.frame.indexAssignersPane.setVisible(true);
+		Main.frame.indexAssignersPanel.setVisible(true);
+		Main.frame.parsersPane.setVisible(false);
+		Main.frame.parsersPanel.setVisible(false);
+		revalidate();
+		repaint();
+	}
+	
+	public void populateGeneral() {
+		
+		DefaultListModel<ListElement> listenersModel = (DefaultListModel<ListElement>) listenersList.getModel();
+		DefaultListModel<ListElement> triggersModel = (DefaultListModel<ListElement>) triggersList.getModel();
+		HashMap<String, String> listenerNames = GroupHandler.getListenerNames();
+		HashMap<String, String> triggerNames = TriggerHandler.getTriggerNames();
+		
+		listenersModel.clear();
+		triggersModel.clear();
+		
+		for (String listenerID : LaunchIDS.getListenerIDs()) {
+			listenersModel.addElement(new ListElement(listenerID, listenerNames.get(listenerID)));
+		}
+		
+		for (String triggerID : LaunchIDS.getTriggerIDs()) {
+			triggersModel.addElement(new ListElement(triggerID, triggerNames.get(triggerID)));
+		}
+	}
+	
+	public void populateConstants() {
+		while (constantsPanel.getComponentCount() > 0) {
+			constantsPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<ConstantGUIPanel> panels = ConstantHandler.getConstantPanels();
+		for (ConstantGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			constantsPanel.add(panel);
+			y += 100;
+		}
+		JButton addConstant = new JButton("Add Constant");
+		addConstant.setBounds(x + 5, y + 10, 100, 20);
+		constantsPanel.add(addConstant);
+		addConstant.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ConstantHandler.addConstant(new Constant(SettingHandler.getNewID(IDType.Constant), "New Constant", Collections.synchronizedList(new ArrayList<String>()), new ConcurrentHashMap<String, Value>()));
+				populateConstants();
+			}
+		});
+		y += 40;
+		constantsPanel.setPreferredSize(new Dimension(986, y));
+		revalidate();
+		repaint();
+	}
+	
+	public void valuesMode(ConcurrentHashMap<String, Value> values, List<String> order, ConstantGUIPanel parent) {
+		while (valuesPanel.getComponentCount() > 0) {
+			valuesPanel.remove(0);
+		}
+		int x  = 10;
+		int y = 10;
+		for (String valueID : order) {
+			ValueGUIPanel panel = new ValueGUIPanel();
+			panel.init(values.get(valueID), parent);
+			assignPos(panel, x, y);
+			valuesPanel.add(panel);
+			y += 34;
+		}
+		JButton addValue = new JButton("Add Value");
+		addValue.setBounds(x + 5, y + 10, 80, 20);
+		valuesPanel.add(addValue);
+		y += 40;
+		addValue.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				parent.addValue(new Value(SettingHandler.getNewID(IDType.Value), "", false, false, false));
+			}
+		});
+		Main.frame.constantsPane.setVisible(false);
+		Main.frame.constantsPanel.setVisible(false);
+		Main.frame.valuesPane.setVisible(true);
+		Main.frame.valuesPanel.setVisible(true);
+		revalidate();
+		repaint();
+	}
+	
+	public void populateGroups() {
+		while (groupsPanel.getComponentCount() > 0) {
+			groupsPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<GroupGUIPanel> panels = GroupHandler.getGroupPanels();
+		for (GroupGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			groupsPanel.add(panel);
+			y += 100;
+		}
+		JButton addGroup = new JButton("Add Group");
+		addGroup.setBounds(x + 5, y + 10, 100, 20);
+		groupsPanel.add(addGroup);
+		addGroup.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GroupHandler.addGroup("New Group", SettingHandler.getNewID(IDType.Group));
+				populateGroups();
+			}
+		});
+		y += 40;
+		groupsPanel.setPreferredSize(new Dimension(986, y));
+		revalidate();
+		repaint();
+	}
+	
+	public void listenersMode(ListenerHandler handler) {
+		while (listenersPanel.getComponentCount() > 0) {
+			listenersPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<ListenerGUIPanel> panels = handler.getListenerPanels();
+		for (ListenerGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			listenersPanel.add(panel);
+			y += 34;
+		}
+		JButton addListener = new JButton("Add Listener");
+		addListener.setBounds(x + 5, y + 10, 150, 20);
+		listenersPanel.add(addListener);
+		y += 40;
+		addListener.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				handler.addListener(new Listener("80", "New Listener", handler.getGroupID(), handler.getGroupName(), SettingHandler.getNewID(IDType.Listener), false));
+				Main.frame.listenersMode(handler);
+			}
+		});
+		listenersPanel.setPreferredSize(new Dimension(986, y));
+		listenersPanel.setVisible(true);
+		listenersPane.setVisible(true);
+		respondersPanel.setVisible(false);
+		respondersPane.setVisible(false);
+		groupsPanel.setVisible(false);
+		groupsPanel.setVisible(false);
+		revalidate();
+		repaint();
+	}
+	public void respondersMode(ResponderHandler handler) {
+		while (respondersPanel.getComponentCount() > 0) {
+			respondersPanel.remove(0);
+		}
+		int x = 10;
+		int y = 10;
+		List<ResponderGUIPanel> panels = handler.getResponderPanels();
+		for (ResponderGUIPanel panel : panels) {
+			assignPos(panel, x, y);
+			respondersPanel.add(panel);
+			y += 210;
+		}
+		JButton addResponder = new JButton("Add Responder");
+		addResponder.setBounds(x + 5, y + 10, 150, 20);
+		respondersPanel.add(addResponder);
+		y += 40;
+		addResponder.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String url = ConstantHandler.getRConstant();
+				if (url != null) {
+					String id = SettingHandler.getNewID(IDType.Responder);
+				handler.addResponder(new Responder(id, "New Responder", false, handler.getGroupID(), handler.getGroupName(), new Header("auto", url, "", "", Collections.synchronizedList(new ArrayList<String>()), id, "New Responder"), new Body(Collections.synchronizedList(new ArrayList<String>()), "")));
+				Main.frame.respondersMode(handler);
+				} else {
+					Main.popupMessage("Error - you need at least one constant to represent a url");
+				}
+			}
+		});
+		respondersPanel.setPreferredSize(new Dimension(986, y));
+		respondersPanel.setVisible(true);
+		respondersPane.setVisible(true);
+		listenersPanel.setVisible(false);
+		listenersPane.setVisible(false);
+		groupsPanel.setVisible(false);
+		groupsPanel.setVisible(false);
+		revalidate();
+		repaint();
 	}
 }

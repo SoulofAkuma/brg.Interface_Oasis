@@ -14,5 +14,7 @@ public enum IDType {
 	Constant,
 	Value,
 	Trigger,
-	IndexAssigner
+	IndexAssigner,
+	Index,
+	Regex
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cc.Pair;
 import group.GroupHandler;
 import group.listener.Listener;
+import gui.ListElement;
 import gui.TriggerGUIPanel;
 import parser.ParserHandler;
 import settings.Setting;
@@ -48,8 +50,8 @@ public class TriggerHandler {
 			for (int i = 0; i < responderIDArray.length; i += 2) {
 				responderIDs.add(new Pair<String, String>(responderIDArray[i], responderIDArray[i + 1]));
 			}
-			int cooldown = (type == TriggerType.Timer) ? Integer.parseInt(TriggerHandler.COOLDOWNNAME) : 0; 
-			ArrayList<String> triggeredBy = (triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).split(",")));
+			int cooldown = (type == TriggerType.Timer) ? Integer.parseInt(triggerSetting.getAttribute(TriggerHandler.COOLDOWNNAME)) : 0; 
+			ArrayList<String> triggeredBy = ((type == TriggerType.Manual || type == TriggerType.Timer) || triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).isBlank()) ? new ArrayList<String>() : new ArrayList<String>(Arrays.asList(triggerSetting.getAttribute(TriggerHandler.TRIGGEREDBYNAME).split(",")));
 			Trigger trigger = new Trigger(type, responderIDs, id, name, triggeredBy, cooldown);
 			triggers.put(id, trigger);
 			triggerThreads.put(id, new Thread(trigger));
@@ -102,6 +104,7 @@ public class TriggerHandler {
 	}
 	
 	public static void addTrigger(Trigger trigger) {
+		TriggerHandler.triggers.put(trigger.getTriggerID(), trigger);
 		HashMap<String, String> attributes = new HashMap<String, String>();
 		attributes.put(TriggerHandler.IDNAME, trigger.getTriggerID());
 		attributes.put(TriggerHandler.NAMENAME, trigger.getTriggerName());
@@ -126,7 +129,7 @@ public class TriggerHandler {
 		}
 	}
 	
-	private static String responderIDsToString(ArrayList<Pair<String, String>> responderIDs) {
+	private static String responderIDsToString(List<Pair<String, String>> responderIDs) {
 		String responderIDsVal = "";
 		for (Pair<String, String> responderIDP : responderIDs) {
 			responderIDsVal += responderIDP.getKey() + "," + responderIDP.getValue() + ",";
@@ -156,7 +159,7 @@ public class TriggerHandler {
 	}
 	
 	public static HashMap<String, String> getTriggeredByNameList(String triggerID) {
-		ArrayList<String> subject = TriggerHandler.triggers.get(triggerID).getTriggeredBy();
+		List<String> subject = TriggerHandler.triggers.get(triggerID).getTriggeredBy();
 		HashMap<String, String> resultMap = new HashMap<String, String>();
 		if (TriggerHandler.triggers.get(triggerID).getType() == TriggerType.Listener) {
 			for (String listenerID : subject) {
@@ -164,7 +167,6 @@ public class TriggerHandler {
 			}
 		} else if (TriggerHandler.triggers.get(triggerID).getType() == TriggerType.Responder) {
 			for (String responderID : subject) {
-				System.out.println(responderID);
 				resultMap.put(responderID, GroupHandler.getResponderHandler(GroupHandler.rtgID(responderID)).getResponder(responderID).getName());
 			}
 		}
@@ -172,7 +174,7 @@ public class TriggerHandler {
 	}
 	
 	public static List<Pair<Pair<String, String>, Pair<String, String>>> getRespondersByList(String triggerID) {
-		ArrayList<Pair<String, String>> subject = TriggerHandler.triggers.get(triggerID).getResponderIDs();
+		List<Pair<String, String>> subject = TriggerHandler.triggers.get(triggerID).getResponderIDs();
 		List<Pair<Pair<String, String>, Pair<String, String>>> resultList = new ArrayList<Pair<Pair<String,String>,Pair<String,String>>>();
 		for (Pair<String, String> kvp : subject) {
 			Pair<String, String> parserKVP = new Pair<String, String>(null, null);
@@ -194,6 +196,62 @@ public class TriggerHandler {
 			panels.add(panel);
 		}
 		return panels;
+	}
+	
+	public static HashMap<String, String> getTriggerNames() {
+		HashMap<String, String> triggers = new HashMap<String, String>();
+		for (Entry<String, Trigger> trigger : TriggerHandler.triggers.entrySet()) {
+			triggers.put(trigger.getKey(), trigger.getValue().getTriggerName());
+		}
+		return triggers;
+	}
+	
+	public static ListElement[] getTriggerElements() {
+		ArrayList<ListElement> triggers = new ArrayList<ListElement>();
+		for (Entry<String, Trigger> trigger : TriggerHandler.triggers.entrySet()) {
+			triggers.add(new ListElement(trigger.getKey(), trigger.getValue().getTriggerName()));
+		}
+		return triggers.toArray(new ListElement[triggers.size()]);
+	}
+
+	public static void removeParserRefernces(String id) {
+		for (Entry<String, Trigger> trigger : TriggerHandler.triggers.entrySet()) {
+			List<Pair<String, String>> responderIDs = trigger.getValue().getResponderIDs();
+			for (Iterator<Pair<String, String>> ite = responderIDs.iterator(); ite.hasNext();) {
+				Pair<String, String> responderID = ite.next();
+				if (responderID.getKey().equals(id)) {
+					TriggerHandler.stopTrigger(trigger.getKey());
+					ite.remove();
+				}
+			}
+		}
+	}
+
+	public static void removeResponderReferences(String id) {
+		for (Entry<String, Trigger> trigger : TriggerHandler.triggers.entrySet()) {
+			List<Pair<String, String>> responderIDs = trigger.getValue().getResponderIDs();
+			for (Iterator<Pair<String, String>> ite = responderIDs.iterator(); ite.hasNext();) {
+				Pair<String, String> responderID = ite.next();
+				if (responderID.getValue().equals(id)) {
+					TriggerHandler.stopTrigger(trigger.getKey());
+					ite.remove();
+				}
+			}
+		}
+	}
+
+	public static void removeListenerReferences(String id) {
+		for (Entry<String, Trigger> trigger : TriggerHandler.triggers.entrySet()) {
+			if (trigger.getValue().getType() == TriggerType.Listener) {
+				List<String> triggeredBy = trigger.getValue().getTriggeredBy();
+				for (Iterator<String> ite = triggeredBy.iterator(); ite.hasNext();) {
+					String lisID = ite.next();
+					if (lisID.equals(id)) {
+						ite.remove();
+					}
+				}
+			}
+		}
 	}
 }
 

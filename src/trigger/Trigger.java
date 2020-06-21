@@ -19,18 +19,18 @@ import parser.ParserHandler;
 public class Trigger implements Runnable {
 	
 	private TriggerType type; //Type of the trigger
-	private ArrayList<Pair<String, String>> responderIDs;//Responder details to trigger from listener (parserID, responderID)
+	private List<Pair<String, String>> responderIDs;//Responder details to trigger from listener (parserID, responderID)
 	private String triggerID; //id of the trigger
 	private String triggerName; //name of the trigger
-	private ArrayList<String> triggeredBy; //the ids which will be watched by the trigger (Type Responder: ResponderIDs, Type Listener: ListenerIDs)
+	private List<String> triggeredBy; //the ids which will be watched by the trigger (Type Responder: ResponderIDs, Type Listener: ListenerIDs)
 	private boolean trigger = false; //boolean to be set by a button in the gui to initialize a manual trigger when type is manual 
 	private boolean runMe = false; //boolean indicating whether the trigger should run or stop running
 	private int cooldown; //Timer in seconds for Type Timer
 	
 	
 	
-	public Trigger(TriggerType type, ArrayList<Pair<String, String>> responderIDs, String triggerID,
-			String triggerName, ArrayList<String> triggeredBy, int cooldown) {
+	public Trigger(TriggerType type, List<Pair<String, String>> responderIDs, String triggerID,
+			String triggerName, List<String> triggeredBy, int cooldown) {
 		this.type = type;
 		this.responderIDs = responderIDs;
 		this.triggerID = triggerID;
@@ -62,13 +62,13 @@ public class Trigger implements Runnable {
 				while (this.runMe) {
 					for (int i = 0; i < this.triggeredBy.size(); i++) {
 						if (TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).size() > lrSize.get(i)) {
-							triggerMeLis(TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).get(lrSize.get(i)));
 							lrSize.set(i, lrSize.get(i) + 1);
+							triggerMeLis(TriggerHandler.listenerReports.get(this.triggeredBy.get(i)).get(lrSize.get(i) - 1));
 						}
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {}
 					}
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {}
 				}
 			break;
 			case Timer:
@@ -147,7 +147,7 @@ public class Trigger implements Runnable {
 		this.type = type;
 	}
 
-	public ArrayList<Pair<String, String>> getResponderIDs() {
+	public List<Pair<String, String>> getResponderIDs() {
 		return responderIDs;
 	}
 
@@ -167,7 +167,7 @@ public class Trigger implements Runnable {
 		this.triggerName = triggerName;
 	}
 
-	public ArrayList<String> getTriggeredBy() {
+	public List<String> getTriggeredBy() {
 		return triggeredBy;
 	}
 

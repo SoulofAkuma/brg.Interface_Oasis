@@ -167,7 +167,39 @@ public class Split implements Rule {
 	public String printRuleLRP() {
 		String useHeader = (this.useHeader) ? "useHeader; " : "";
 		String regex = (this.regex) ? "regex; " : "";
-		return "Cut; " + useHeader + regex + this.find + "; " + String.valueOf(this.n);
+		return "Split; " + useHeader + regex + this.find + "; " + String.valueOf(this.n);
 	}
 
+	public String getFind() {
+		return find;
+	}
+
+	public void setFind(String find) {
+		this.find = find;
+	}
+
+	public int getN() {
+		return n;
+	}
+
+	public void setN(int n) {
+		this.n = n;
+	}
+
+	public boolean isRegex() {
+		return regex;
+	}
+
+	public void setRegex(boolean regex) {
+		this.regex = regex;
+	}
+
+	public boolean isUseHeader() {
+		return useHeader;
+	}
+
+	public void setUseHeader(boolean useHeader) {
+		this.useHeader = useHeader;
+	}
+	
 }

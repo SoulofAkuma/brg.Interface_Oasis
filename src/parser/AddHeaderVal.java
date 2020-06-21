@@ -13,6 +13,8 @@ public class AddHeaderVal implements Rule {
 	private AddHeaderVal(String find) {
 		this.find = find;
 	}
+	
+	public AddHeaderVal() {}
 
 	@Override
 	public Rule genRule(HashMap<String, String> constructorArgs) {
@@ -53,6 +55,14 @@ public class AddHeaderVal implements Rule {
 	@Override
 	public String printRuleLRP() {
 		return "AddHeaderVal; " + this.find;
+	}
+
+	public String getFind() {
+		return find;
+	}
+
+	public void setFind(String find) {
+		this.find = find;
 	}
 	
 }

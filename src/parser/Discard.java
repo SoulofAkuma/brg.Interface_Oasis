@@ -19,7 +19,7 @@ public class Discard implements Rule {
 	private String find;
 	private boolean inverted; //If inverted the rule will discard all strings which match the condition
 	private boolean regex;
-	private String flags[]; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
+	private ArrayList<String> flags; //Flags for the rule s: remove all subsequent elements, p: remove all preceding elements, z: push discarded elements to the end of the result list instead of deleting them, a: push discarded elements to the beginning of the result list instead of deleting them
 	private boolean useHeader;
 	private List<String> log = Collections.synchronizedList(new ArrayList<String>()); //Log for the rule
 	
@@ -29,7 +29,7 @@ public class Discard implements Rule {
 		this.find = find;
 		this.inverted = inverted;
 		this.regex = regex;
-		this.flags = flags;
+		this.flags = new ArrayList<String>(Arrays.asList(flags));
 		this.useHeader = useHeader;
 	}
 	
@@ -120,11 +120,11 @@ public class Discard implements Rule {
 				output.add(element);
 			}
 		}
-		if (Arrays.asList(this.flags).contains("z")) {
+		if (this.flags.contains("z")) {
 			for (String element : discarded) {
 				output.add(element);
 			}
-		} else if(Arrays.asList(this.flags).contains("a")) {
+		} else if(this.flags.contains("a")) {
 			ArrayList<String> dummy = new ArrayList<String>();
 			for (String element : discarded) {
 				dummy.add(element);
@@ -168,7 +168,56 @@ public class Discard implements Rule {
 		String useHeader = (this.useHeader) ? "useHeader; " : "";
 		String inverted = (this.inverted) ? "reEval; " : "";
 		String regex = (this.regex) ? "regex; " : "";
-		String flags = (this.flags.length > 0) ? String.join(",", this.flags) + "; " : "";
-		return "Cut; " + useHeader + inverted + regex + flags + this.find;
+		String flags = (this.flags.size() > 0) ? String.join(",", this.flags.toArray(new String[this.flags.size()])) + "; " : "";
+		return "Discard; " + useHeader + inverted + regex + flags + this.find;
 	}
+
+	public String getFind() {
+		return find;
+	}
+
+	public void setFind(String find) {
+		this.find = find;
+	}
+
+	public boolean isInverted() {
+		return inverted;
+	}
+
+	public void setInverted(boolean inverted) {
+		this.inverted = inverted;
+	}
+
+	public boolean isRegex() {
+		return regex;
+	}
+
+	public void setRegex(boolean regex) {
+		this.regex = regex;
+	}
+
+	public ArrayList<String> getFlags() {
+		return flags;
+	}
+
+	public void setFlags(ArrayList<String> flags) {
+		this.flags = flags;
+	}
+
+	public boolean isUseHeader() {
+		return useHeader;
+	}
+
+	public void setUseHeader(boolean useHeader) {
+		this.useHeader = useHeader;
+	}
+	
+	public void changeFlagState(String flag) {
+		if (this.flags.contains(flag)) {
+			this.flags.remove(flag);
+		} else {
+			this.flags.add(flag);
+		}
+	}
+	
 }

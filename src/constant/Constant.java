@@ -23,11 +23,11 @@ public class Constant {
 
 	public void insertValue(int index, Value value) {
 		if (index < order.size()) {
-			order.add(index, value.id);
+			order.add(index, value.getId());
 		} else {
-			order.add(value.id);
+			order.add(value.getId());
 		}
-		values.put(value.id, value);
+		values.put(value.getId(), value);
 	}
 	
 	public String getConstant(HashMap<String, String> parsedHeader, HashMap<String, String> parsedBody) {
