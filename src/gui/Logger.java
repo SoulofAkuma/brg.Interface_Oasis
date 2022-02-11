@@ -62,7 +62,7 @@ public class Logger extends JFrame implements Runnable{
 	private static ArrayList<MessageObject> messages = new ArrayList<MessageObject>(); //Messages to be viewable in log
 	private static ArrayList<String> errorElements = new ArrayList<String>();
 	private static Thread myThread;
-	private static final String BASEFOLDER = Manager.PATH + Manager.SEPARATOR + "Log";
+	public static final String BASEFOLDER = Manager.PATH + Manager.SEPARATOR + "Log";
 	private static final String SESSIONFOLDER = Logger.BASEFOLDER + Manager.SEPARATOR + "Log " + Main.SESSIONTIME;
 	private static final String ERRORLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ErrorLog_Session" + Main.SESSIONTIME + ".xml";
 	private static final String EXCEPTIONLOGFILEPATH = Logger.SESSIONFOLDER + Manager.SEPARATOR + "ExceptionLog_Session" + Main.SESSIONTIME + ".xml";
@@ -74,6 +74,7 @@ public class Logger extends JFrame implements Runnable{
 	private static int responderLogID;
 	
 	public static boolean showGUI = false;
+	private static boolean isVisible = false;
 	
 	public static boolean runMe = false;
 	
@@ -228,10 +229,12 @@ public class Logger extends JFrame implements Runnable{
 				Thread.sleep(100);
 			} catch (InterruptedException e) {}
 			
-			if (Logger.showGUI) {
+			if (Logger.showGUI && !Logger.isVisible) {
 				Logger.console.setVisible(true);
-			} else {
+				Logger.isVisible = true;
+			} else if (!Logger.showGUI && Logger.isVisible) {
 				Logger.console.setVisible(false);
+				Logger.isVisible = false;
 			}
 		}
 		Logger.console.dispose();

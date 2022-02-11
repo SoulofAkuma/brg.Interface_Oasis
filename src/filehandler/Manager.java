@@ -1,5 +1,6 @@
 package filehandler;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -129,6 +130,15 @@ public class Manager {
 	
 	public String getFileName(int fileID) {
 		return Manager.files.get(fileID).getName();
+	}
+	
+	public static void openLogFolder() {
+		try {
+			Desktop.getDesktop().open(new File(Logger.BASEFOLDER));			
+		} catch (Exception e) {
+			reportError("File Reader", "Unable to the logging directory", e.getMessage(), true);
+			Logger.reportException("Manager", "checkPath", e);
+		}
 	}
 	
 	private static void reportError(String source, String causes, String errorMessage, boolean isFatal) {

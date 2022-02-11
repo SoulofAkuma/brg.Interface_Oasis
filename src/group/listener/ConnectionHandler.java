@@ -208,7 +208,7 @@ public class ConnectionHandler implements Runnable {
 		String response = "";
 		response += "HTTP/1.1 " + responseCode + " " + responseMessage + "\r\n";
 		response += "Connection: Closed\r\n";
-		response += "Server: InterfaceOasis/0.7\r\n";
+		response += "Server: InterfaceOasis/" + Main.versionNumber + "\r\n";
 		response += "Content-Length: " + content.getBytes().length + "\r\n";
 		response += "Content-Type: " + contentType + "; charset=utf-8\r\n";
 		response += "\r\n" + content;

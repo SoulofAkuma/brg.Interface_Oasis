@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -37,6 +38,7 @@ import cc.Shell;
 import constant.Constant;
 import constant.ConstantHandler;
 import constant.Value;
+import filehandler.Manager;
 import group.GroupHandler;
 import group.listener.Listener;
 import group.listener.ListenerHandler;
@@ -220,6 +222,69 @@ public class Main extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 				
+						
+						//Main components
+						JPanel mainPanel = new JPanel();
+						mainPanel.setFocusCycleRoot(true);
+						mainPanel.setBackground(Color.DARK_GRAY);
+						mainPanel.setBounds(0, 0, 995, 465);
+						contentPane.add(mainPanel);
+						mainPanel.setLayout(null);
+						
+						JButton StartButton = new JButton("Launch Oasis");
+						StartButton.setBorder(new LineBorder(Color.BLACK));
+						StartButton.setBackground(new Color(169, 169, 169));
+						StartButton.setForeground(new Color(0, 128, 128));
+						StartButton.setBounds(397, 197, 200, 50);
+						StartButton.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+						StartButton.setMargin(new Insets(5, 5, 5, 5));
+						mainPanel.add(StartButton);
+						
+						JButton btnSetup = new JButton("Setup");
+						btnSetup.setBorder(new EmptyBorder(1, 1, 1, 1));
+						btnSetup.setBackground(Color.LIGHT_GRAY);
+						btnSetup.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+						btnSetup.setBounds(875, 424, 100, 30);
+						mainPanel.add(btnSetup);
+						
+						JButton startLoggingConsole = new JButton("Open Console");
+						startLoggingConsole.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								Logger.showGUI = true;
+							}
+						});
+						startLoggingConsole.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+						startLoggingConsole.setBorder(new EmptyBorder(1, 1, 1, 1));
+						startLoggingConsole.setBackground(Color.LIGHT_GRAY);
+						startLoggingConsole.setBounds(706, 424, 159, 30);
+						mainPanel.add(startLoggingConsole);
+						
+						JButton openLogFolder = new JButton("Open Log Folder");
+						openLogFolder.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								Manager.openLogFolder();
+							}
+						});
+						openLogFolder.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+						openLogFolder.setBorder(new EmptyBorder(1, 1, 1, 1));
+						openLogFolder.setBackground(Color.LIGHT_GRAY);
+						openLogFolder.setBounds(10, 424, 159, 30);
+						mainPanel.add(openLogFolder);
+						StartButton.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent e) {
+								if (LaunchIDS.isRunning()) {
+									LaunchIDS.stopAll();
+									StartButton.setText("Launch Oasis");
+								} else {
+									LaunchIDS.startAll();
+									StartButton.setText("Stop Oasis");
+								}
+							}
+						});
+						mainPanel.setVisible(true);
+						
+						//Setting header button Listeners
+				
 				//Setting panel
 				JLayeredPane settingPanel = new JLayeredPane();
 				settingPanel.setLayout(null);
@@ -227,6 +292,14 @@ public class Main extends JFrame {
 				settingPanel.setBackground(Color.DARK_GRAY);
 				settingPanel.setBounds(0, 0, 995, 465);
 				contentPane.add(settingPanel);
+				
+				btnSetup.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						hideAllSettingPanels();
+						settingPanel.setVisible(true);
+						mainPanel.setVisible(false);
+					}
+				});
 				
 				rulesPanel = new JPanel();
 				rulesPanel.setBackground(Color.DARK_GRAY);
@@ -497,38 +570,6 @@ public class Main extends JFrame {
 				
 				//Main Button Listeners
 				settingPanel.setVisible(false);
-		
-				
-				//Main components
-				JPanel mainPanel = new JPanel();
-				mainPanel.setFocusCycleRoot(true);
-				mainPanel.setBackground(Color.DARK_GRAY);
-				mainPanel.setBounds(0, 0, 995, 465);
-				contentPane.add(mainPanel);
-				mainPanel.setLayout(null);
-				
-				JButton StartButton = new JButton("Launch Oasis");
-				StartButton.setBorder(new LineBorder(Color.BLACK));
-				StartButton.setBackground(new Color(169, 169, 169));
-				StartButton.setForeground(new Color(0, 128, 128));
-				StartButton.setBounds(397, 197, 200, 50);
-				StartButton.setFont(new Font("Times New Roman", Font.PLAIN, 30));
-				StartButton.setMargin(new Insets(5, 5, 5, 5));
-				mainPanel.add(StartButton);
-				
-				JButton btnSetup = new JButton("Setup");
-				btnSetup.setBorder(new EmptyBorder(1, 1, 1, 1));
-				btnSetup.setBackground(Color.LIGHT_GRAY);
-				btnSetup.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-				btnSetup.setBounds(875, 424, 100, 30);
-				mainPanel.add(btnSetup);
-				
-				JButton startLoggingConsole = new JButton("Open Console");
-				startLoggingConsole.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						Logger.showGUI = true;
-					}
-				});
 				headerCloseButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						settingPanel.setVisible(false);
@@ -575,32 +616,6 @@ public class Main extends JFrame {
 						populateGeneral();
 					}
 				});
-				startLoggingConsole.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-				startLoggingConsole.setBorder(new EmptyBorder(1, 1, 1, 1));
-				startLoggingConsole.setBackground(Color.LIGHT_GRAY);
-				startLoggingConsole.setBounds(706, 424, 159, 30);
-				mainPanel.add(startLoggingConsole);
-				StartButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						if (LaunchIDS.isRunning()) {
-							LaunchIDS.stopAll();
-							StartButton.setText("Launch Oasis");
-						} else {
-							LaunchIDS.startAll();
-							StartButton.setText("Stop Oasis");
-						}
-					}
-				});
-				mainPanel.setVisible(true);
-		
-		//Setting header button Listeners
-		btnSetup.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				hideAllSettingPanels();
-				settingPanel.setVisible(true);
-				mainPanel.setVisible(false);
-			}
-		});
 		
 	}
 	

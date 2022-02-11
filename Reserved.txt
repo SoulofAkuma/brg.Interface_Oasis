@@ -1,7 +1,3 @@
 Reserved IDs: 000000000 (Static File Handler), 000000001 (Static Group Handler), 000000002 (Static Setting Handler), 000000003 (Non-Static Setting/SettingFunction), 000000004 (Static Parser Handler), 000000005 (Standard GET Parser)
 
 Reserved GroupNames: File Handler (Manager), Group Handler (Handler), Setting Handler (SettingHandler), Setting Parser (Setting, SettingFunctions), Parser Handler (ParserHandler)
-
-All reserved group names can be used as individual group names as well. However, it should be acknowledged that there are these group names used for error reporting by the corresponding classes
-
-This name is NEVER allowed as a constant name
