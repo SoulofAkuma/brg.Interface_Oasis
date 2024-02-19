@@ -1,4 +1,4 @@
-# brg.Interface_Oasis
+# Interface_Oasis
 Provides multi-layered web interfaces for web APIs.
 
 The name originates from the book "Ready Player One" in which the "Oasis" is a virtual reality space connecting people. This client connects web APIs hence is an oasis of interfaces.
